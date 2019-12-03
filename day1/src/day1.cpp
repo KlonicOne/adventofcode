@@ -6,7 +6,9 @@
 #include <string>
 #include <math.h>
 #include <fstream>
+#include "fuelcalculator.h"
 using namespace std;
+
 
 int main()
 {
@@ -14,11 +16,13 @@ int main()
   std::ifstream ifile("input.txt");
   std::string iline;
 
+  CFuelCalculator cFuelCalc;
+
   // For eachline sum up
   while (std::getline(ifile, iline))
   {
     // calculate the fuel and sum
-    sum += floor(std::stod(iline) / 3.0) - 2;
+    sum += cFuelCalc.getFuelOfModule(stoi(iline));
   }
   // result out
   std::cout << "Sum = " << sum << '\n';
