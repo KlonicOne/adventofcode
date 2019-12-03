@@ -34,7 +34,7 @@ std::vector<int> CIntcodeComputer::getVectorCode(istream& input)
     codeVector.push_back(stoi(codeElement));
   }
 
-  //this->debugOutVector(codeVector);
+//  this->debugOutVector(codeVector);
 
   return (codeVector);
 }
@@ -43,26 +43,27 @@ std::vector<int> CIntcodeComputer::progressVectorCode(std::vector<int> vectorInt
 {
   int firstVal;
   int secondVal;
+  int opcodePos = 0;
 
   // Walk through given intcode in stepsize 4 until end reached
   for (std::vector<int>::const_iterator Opcode = vectorIntcode.begin(); *Opcode != OPCODE_END; Opcode += 4)
   {
-    //std::cout << *Opcode << ' ';
     switch (*Opcode)
     {
     case (OPCODE_ADD):
-      firstVal = vectorIntcode.at(*Opcode + 1);
-      secondVal = vectorIntcode.at(*Opcode + 2);
-      vectorIntcode.at(*Opcode + 3) = firstVal + secondVal;
+      firstVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 1));
+      secondVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 2));
+      vectorIntcode.at(vectorIntcode.at(opcodePos + 3)) = firstVal + secondVal;
       break;
     case (OPCODE_MUL):
-      firstVal = vectorIntcode.at(*Opcode + 1);
-      secondVal = vectorIntcode.at(*Opcode + 2);
-      vectorIntcode.at(*Opcode + 3) = firstVal * secondVal;
+      firstVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 1));
+      secondVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 2));
+      vectorIntcode.at(vectorIntcode.at(opcodePos + 3)) = firstVal * secondVal;
       break;
     default:
       break;
     }
+    opcodePos += 4;
   }
   this->debugOutVector(vectorIntcode);
   return (vectorIntcode);
@@ -74,4 +75,5 @@ void CIntcodeComputer::debugOutVector(vector<int> inVector)
   {
     std::cout << *i << ',' << ' ';
   }
+  std::cout << std::endl;
 }
