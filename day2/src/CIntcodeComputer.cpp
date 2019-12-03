@@ -41,32 +41,71 @@ std::vector<int> CIntcodeComputer::getVectorCode(istream& input)
 
 std::vector<int> CIntcodeComputer::progressVectorCode(std::vector<int> vectorIntcode)
 {
-  int firstVal;
-  int secondVal;
+  int firstPos, secondPos, targetPos;
+  int firstVal, secondVal;
   int opcodePos = 0;
 
   // Walk through given intcode in stepsize 4 until end reached
   for (std::vector<int>::const_iterator Opcode = vectorIntcode.begin(); *Opcode != OPCODE_END; Opcode += 4)
   {
+    // Extract position and value
+    firstPos = vectorIntcode.at(opcodePos + 1);
+    secondPos = vectorIntcode.at(opcodePos + 2);
+    targetPos = vectorIntcode.at(opcodePos + 3);
+
+    firstVal = vectorIntcode.at(firstPos);
+    secondVal = vectorIntcode.at(secondPos);
+
     switch (*Opcode)
     {
     case (OPCODE_ADD):
-      firstVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 1));
-      secondVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 2));
-      vectorIntcode.at(vectorIntcode.at(opcodePos + 3)) = firstVal + secondVal;
+      vectorIntcode.at(targetPos) = firstVal + secondVal;
       break;
     case (OPCODE_MUL):
-      firstVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 1));
-      secondVal = vectorIntcode.at(vectorIntcode.at(opcodePos + 2));
-      vectorIntcode.at(vectorIntcode.at(opcodePos + 3)) = firstVal * secondVal;
+      vectorIntcode.at(targetPos) = firstVal * secondVal;
       break;
     default:
       break;
     }
     opcodePos += 4;
   }
-  this->debugOutVector(vectorIntcode);
+
+//    this->debugOutVector(vectorIntcode);
   return (vectorIntcode);
+}
+
+int CIntcodeComputer::nounVerbResultProducedInput(std::vector<int> vectorIntcode, int targetVal)
+{
+  int x, y;
+  bool exitLoop = false;
+  std::vector<int> vectorResult;
+
+  for(x = 0; x < OPCODE_END; x++)
+  {
+    for(y = 0; y < OPCODE_END; y++)
+    {
+      // Exchange two values
+      vectorIntcode.at(1) = x;
+      vectorIntcode.at(2) = y;
+
+      // Calculate result for given noun and verb
+      vectorResult = progressVectorCode(vectorIntcode);
+
+      // Check if result equals target value
+      if(vectorResult.at(0) == targetVal)
+      {
+        exitLoop = true;
+        break; // end inner loop
+      }
+    }
+
+    if (exitLoop)
+    {
+      break; // end outer loop
+    }
+  }
+
+  return(100 * x + y);
 }
 
 void CIntcodeComputer::debugOutVector(vector<int> inVector)

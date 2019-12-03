@@ -25,6 +25,7 @@ public:
 
   std::vector<int> getVectorCode(istream &input);
   std::vector<int> progressVectorCode(std::vector<int> vectorIntcode);
+  int nounVerbResultProducedInput(std::vector<int> vectorIntcode, int targetVal);
 
 private:
   void debugOutVector(vector<int> inVector);
