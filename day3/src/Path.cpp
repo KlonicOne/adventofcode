@@ -156,7 +156,7 @@ std::vector<std::tuple<int, int> > Path::getIntersections(std::vector<std::tuple
     {
       // Check for matching intersections and push back if found
       if ((std::get<0>(itw1) == std::get<0>(itw2)) // Match X
-      &&  (std::get<1>(itw1) == std::get<1>(itw2))) // Match Y
+      && (std::get<1>(itw1) == std::get<1>(itw2))) // Match Y
       {
         // Intersection found so pushback to intersections vector
         intersectionsFound.push_back(std::tuple<int, int>(std::get<0>(itw1), std::get<1>(itw1)));
@@ -165,6 +165,21 @@ std::vector<std::tuple<int, int> > Path::getIntersections(std::vector<std::tuple
   }
 
   return (intersectionsFound);
+}
+
+std::vector<int> Path::getManhattenDistance(std::vector<std::tuple<int, int> > intersections)
+{
+  std::vector<int> distances;
+
+  // Calculate distances
+  for (const auto &it : intersections)
+  {
+    distances.push_back((std::get<0>(it) + std::get<1>(it)));
+  }
+  // Sort distances
+  std::sort(distances.begin(), distances.end());
+
+  return(distances);
 }
 
 string_code Path::hashcode(std::string const& inString)

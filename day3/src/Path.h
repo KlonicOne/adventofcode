@@ -31,6 +31,7 @@ public:
   std::vector<std::string> separateWirePath(std::ifstream &inputFile);
   std::vector<std::tuple<int, int>> getPathOfString(std::string &inputString);
   std::vector<std::tuple<int, int>> getIntersections(std::vector<std::tuple<int, int>> wire1, std::vector<std::tuple<int, int>> wire2);
+  std::vector<int> getManhattenDistance(std::vector<std::tuple<int, int>> intersections);
 
 private:
   std::tuple<int, int> getNextXYPosition(std::string &pathElement);

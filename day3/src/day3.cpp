@@ -17,6 +17,7 @@ int main()
 {
   std::ifstream ifile("input.txt");
   std::vector<std::tuple<int, int>> wire1, wire2, intersections;
+  std::vector<int> manhattenDist;
   std::vector<std::string> pathTable;
 
   Path path;
@@ -28,12 +29,13 @@ int main()
   wire1 = path.getPathOfString(pathTable.at(0));
   wire2 = path.getPathOfString(pathTable.at(1));
 
+  // Calculate intersections
   intersections = path.getIntersections(wire1, wire2);
 
-  // debug out intersections
-  for (const auto &it : intersections)
-  {
-    std::cout << "X: " << std::get<0>(it) << "Y: " << std::get<1>(it) << std::endl;
-  }
+  // Manhatten distance sorted
+  manhattenDist = path.getManhattenDistance(intersections);
+
+  // Result part 1
+  std::cout << "Manhatten Distance: " << manhattenDist.at(0) << std::endl;
 }
 
