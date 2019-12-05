@@ -40,10 +40,36 @@ std::vector<std::tuple<int, int> > Path::getPathOfString(std::string &inputStrin
 
   while (getline(inStringStream, pathElement, ','))
   {
-    std::cout << pathElement << ", " << index << std::endl;
+//    std::cout << pathElement << ", " << index << std::endl;
+    this->getNextXYPosition(pathElement);
   }
-  return (retPath);
 
+  return (retPath);
 }
 
+std::tuple<int, int> Path::getNextXYPosition(std::string &pathElement)
+{
+  std::tuple<int, int> retPos(0, 0);
+  std::string commandLetter;
+  std::string stepValue;
 
+  std::vector<std::string> elvec = this->splitPathElement(pathElement);
+
+  return (retPos);
+}
+
+std::vector<std::string> Path::splitPathElement(std::string &pathElement)
+{
+  std::vector<std::string> retSplitStringVec;
+
+  retSplitStringVec.push_back(this->getStringFromCharacter(pathElement.at(0)));
+  retSplitStringVec.push_back(pathElement.substr(1));
+
+  return (retSplitStringVec);
+}
+
+std::string Path::getStringFromCharacter(char singleChar)
+{
+  std::string s(1, singleChar);
+  return s;
+}

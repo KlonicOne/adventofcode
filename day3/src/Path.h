@@ -24,6 +24,10 @@ public:
   std::vector<std::string> separateWirePath(std::ifstream &inputFile);
   std::vector<std::tuple<int, int>> getPathOfString(std::string &inputString);
 
+private:
+  std::tuple<int, int> getNextXYPosition(std::string &pathElement);
+  std::vector<std::string> splitPathElement(std::string &pathElement);
+  std::string getStringFromCharacter(char singleChar);
 };
 
 #endif /* PATH_H_ */
