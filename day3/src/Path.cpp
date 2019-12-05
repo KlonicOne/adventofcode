@@ -5,6 +5,7 @@
  *      Author: nico
  */
 #include <algorithm>
+#include <math.h>
 
 #include "Path.h"
 
@@ -174,7 +175,7 @@ std::vector<int> Path::getManhattenDistance(std::vector<std::tuple<int, int> > i
   // Calculate distances
   for (const auto &it : intersections)
   {
-    distances.push_back((std::get<0>(it) + std::get<1>(it)));
+    distances.push_back((abs(std::get<0>(it)) + abs(std::get<1>(it))));
   }
   // Sort distances
   std::sort(distances.begin(), distances.end());
