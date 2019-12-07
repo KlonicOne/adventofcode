@@ -32,6 +32,9 @@ public:
   std::vector<std::tuple<int, int>> getPathOfString(std::string &inputString);
   std::vector<std::tuple<int, int>> getIntersections(std::vector<std::tuple<int, int>> wire1, std::vector<std::tuple<int, int>> wire2);
   std::vector<int> getManhattenDistance(std::vector<std::tuple<int, int>> intersections);
+  std::vector<int> sortDistanceVector(std::vector<int> distances);
+  int getShortestWireDistance(std::vector<std::tuple<int, int>> wire1, std::vector<std::tuple<int, int>> wire2, std::vector<std::tuple<int, int>> intersections);
+  int getIndexOfDistance(std::vector<int> distances, int distanceToFindIndex);
 
 private:
   std::tuple<int, int> getNextXYPosition(std::string &pathElement);
