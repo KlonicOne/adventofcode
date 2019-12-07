@@ -36,6 +36,6 @@ int main()
   manhattenDist = path.getManhattenDistance(intersections);
 
   // Result part 1
-  std::cout << "Manhatten Distance: " << manhattenDist.at(0) << std::endl;
+  std::cout << "Manhatten Distance1: " << manhattenDist.at(1) << std::endl;
 }
 

@@ -62,14 +62,14 @@ std::vector<std::tuple<int, int> > Path::getPathOfString(std::string &inputStrin
     {
       for (index = 1; index <= posX; index++)
       {
-        retPath.push_back(std::tuple<int, int>((lastPosX + index), posY));
+        retPath.push_back(std::tuple<int, int>((lastPosX + index), lastPosY));
       }
     }
     else if (posX < 0)
     {
       for (index = -1; index >= posX; index--)
       {
-        retPath.push_back(std::tuple<int, int>((lastPosX + index), posY));
+        retPath.push_back(std::tuple<int, int>((lastPosX + index), lastPosY));
       }
     }
     else
@@ -82,14 +82,14 @@ std::vector<std::tuple<int, int> > Path::getPathOfString(std::string &inputStrin
     {
       for (index = 1; index <= posY; index++)
       {
-        retPath.push_back(std::tuple<int, int>(posX, (lastPosY + index)));
+        retPath.push_back(std::tuple<int, int>(lastPosX, (lastPosY + index)));
       }
     }
     else if (posY < 0)
     {
       for (index = -1; index >= posY; index--)
       {
-        retPath.push_back(std::tuple<int, int>(posX, (lastPosY + index)));
+        retPath.push_back(std::tuple<int, int>(lastPosX, (lastPosY + index)));
       }
     }
     else
@@ -152,9 +152,11 @@ std::vector<std::tuple<int, int> > Path::getIntersections(std::vector<std::tuple
   // find matching tuple elements and add to intersections
   for (const auto &itw1 : wire1)
   {
-    //std::cout << std::get<0>(it) << " " << std::get<1>(it) << std::endl;
+//    std::cout << std::get<0>(itw1) << " " << std::get<1>(itw1) << std::endl;
     for (const auto &itw2 : wire2)
     {
+//    	std::cout << std::get<0>(itw2) << " " << std::get<1>(itw2) << std::endl;
+
       // Check for matching intersections and push back if found
       if ((std::get<0>(itw1) == std::get<0>(itw2)) // Match X
       && (std::get<1>(itw1) == std::get<1>(itw2))) // Match Y
