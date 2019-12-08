@@ -12,18 +12,23 @@ using namespace std;
 
 #define IMAGECOLS 25
 #define IMAGEROWS 6
+#define IMAGES 100
 
 int main()
 {
   std::ifstream ifile("input.txt");
-  std::vector<std::vector<int>> decodedImage;
+  std::vector<std::vector<std::vector<int>>> decodedImages;
 
   CPictureDecoder cPicDec;
 
   cPicDec.setColSize(IMAGECOLS);
   cPicDec.setRowSize(IMAGEROWS);
+  cPicDec.setImages(IMAGES);
   cPicDec.initImageMatrix(0);
 
-  decodedImage = cPicDec.decodeImageFromInStream(ifile);
+  decodedImages = cPicDec.decodeImageFromInStream(ifile);
+
+  // Output
+  cPicDec.combineImageMatrix(decodedImages);
 
 }

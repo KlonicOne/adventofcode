@@ -14,13 +14,17 @@ public:
 
   void setRowSize(unsigned rows);
   void setColSize(unsigned cols);
+  void setImages(unsigned images);
   void initImageMatrix(int initValue);
-  std::vector<std::vector<int>> decodeImageFromInStream(istream& input);
+  void printImageMatrix(std::vector<std::vector<std::vector<int>>> imageMatrix);
+  void combineImageMatrix(std::vector<std::vector<std::vector<int>>> imageMatrix);
+  std::vector<std::vector<std::vector<int>>> decodeImageFromInStream(istream& input);
 
 private:
   unsigned mRowSize;
   unsigned mColSize;
-  std::vector<std::vector<int> > mImageMatrix;
+  unsigned mImages;
+  std::vector<std::vector<std::vector<int>>> mImageMatrix;
 };
 
 #endif // _PICTUREDECODER_
