@@ -21,5 +21,8 @@ int main()
   preparedCodeVector = codeVector;
   // Progress new code vector
   preparedCodeVector = intcodeComp.progressVectorCode(preparedCodeVector);
+
+  intcodeComp.debugOutVector(preparedCodeVector);
+
 }
 
