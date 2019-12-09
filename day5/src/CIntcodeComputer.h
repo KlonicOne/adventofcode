@@ -18,6 +18,10 @@ using namespace std;
 #define OPCODE_MUL 2
 #define OPCODE_IN 3
 #define OPCODE_OUT 4
+#define OPCODE_JIT 5
+#define OPCODE_JIF 6
+#define OPCODE_LESSTHAN 7
+#define OPCODE_EQUALS 8
 
 #define MODE_IMMEDIATE (1)
 #define MODE_POSITION (0)
@@ -39,6 +43,10 @@ private:
   int opcodeMul(std::vector<int> *vectorIntcode, int pos, unsigned mode);
   int opcodeIn(std::vector<int> *vectorIntcode, int pos, unsigned mode);
   int opcodeOut(std::vector<int> *vectorIntcode, int pos, unsigned mode);
+  int opcodeJiT(std::vector<int> *vectorIntcode, int pos, unsigned mode);
+  int opcodeJiF(std::vector<int> *vectorIntcode, int pos, unsigned mode);
+  int opcodeLessThan(std::vector<int> *vectorIntcode, int pos, unsigned mode);
+  int opcodeEquals(std::vector<int> *vectorIntcode, int pos, unsigned mode);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */

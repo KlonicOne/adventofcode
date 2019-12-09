@@ -19,10 +19,12 @@ int main()
   codeVector = intcodeComp.getVectorCode(ifile);
   // exchange positions
   preparedCodeVector = codeVector;
+
+//  intcodeComp.debugOutVector(preparedCodeVector);
+
   // Progress new code vector
   preparedCodeVector = intcodeComp.progressVectorCode(preparedCodeVector);
 
-  intcodeComp.debugOutVector(preparedCodeVector);
 
 }
 
