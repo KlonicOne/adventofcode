@@ -19,11 +19,11 @@ using namespace std;
 #define OPCODE_IN 3
 #define OPCODE_OUT 4
 
-class CIntcodeComputer
+class CDecodePW
 {
 public:
-  CIntcodeComputer();
-  virtual ~CIntcodeComputer();
+  CDecodePW();
+  virtual ~CDecodePW();
 
   std::vector<int> getVectorCode(istream &input);
   std::vector<int> progressVectorCode(std::vector<int> vectorIntcode);
@@ -31,7 +31,11 @@ public:
 
 private:
   void debugOutVector(vector<int> inVector);
-
+  // Opcodes
+  int opcodeAdd(std::vector<int> *vectorIntcode, int pos);
+  int opcodeMul(std::vector<int> *vectorIntcode, int pos);
+  int opcodeIn(std::vector<int> *vectorIntcode, int pos);
+  int opcodeOut(std::vector<int> *vectorIntcode, int pos);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */
