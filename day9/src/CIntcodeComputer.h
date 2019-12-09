@@ -41,15 +41,15 @@ public:
 
 private:
   // Opcodes
-  int opcodeAdd(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeMul(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeIn(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeOut(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeJiT(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeJiF(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeLessThan(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeEquals(std::vector<int> *vectorIntcode, int pos, unsigned mode);
-  int opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int pos, unsigned mode);
+  int opcodeAdd(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeMul(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeIn(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeOut(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeJiT(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeJiF(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeLessThan(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeEquals(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int pos, int *relBase, unsigned mode);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */

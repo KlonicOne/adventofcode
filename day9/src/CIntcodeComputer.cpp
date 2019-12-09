@@ -46,6 +46,7 @@ std::vector<int> CIntcodeComputer::progressVectorCode(std::vector<int> vectorInt
   int opcodePos = 0;
   int relativePos = 0;
   int opcode = 0;
+  int relativeBase = 0;
   unsigned mode = 0;
 
   // Walk through given intcode in stepsize based on command until end reached
@@ -60,49 +61,55 @@ std::vector<int> CIntcodeComputer::progressVectorCode(std::vector<int> vectorInt
     case (OPCODE_ADD):
     {
       // Add operation
-      relativePos = this->opcodeAdd(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeAdd(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_MUL):
     {
-      relativePos = this->opcodeMul(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeMul(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_IN):
     {
-      relativePos = this->opcodeIn(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeIn(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_OUT):
     {
-      relativePos = this->opcodeOut(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeOut(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_JIT):
     {
-      relativePos = this->opcodeJiT(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeJiT(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_JIF):
     {
-      relativePos = this->opcodeJiF(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeJiF(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_LESSTHAN):
     {
-      relativePos = this->opcodeLessThan(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeLessThan(&vectorIntcode, opcodePos, relativeBase, mode);
       break;
     }
 
     case (OPCODE_EQUALS):
     {
-      relativePos = this->opcodeEquals(&vectorIntcode, opcodePos, mode);
+      relativePos = this->opcodeEquals(&vectorIntcode, opcodePos, relativeBase, mode);
+      break;
+    }
+
+    case (OPCODE_RELBASEADJUST):
+    {
+      relativePos = this->opcodeRelBaseAdjust(&vectorIntcode, opcodePos, &relativeBase, mode);
       break;
     }
 
@@ -158,7 +165,7 @@ void CIntcodeComputer::debugOutVector(vector<int> inVector)
   std::cout << std::endl;
 }
 
-int CIntcodeComputer::opcodeAdd(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeAdd(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int modePar1 = (int) ((mode / 1) & 1);
   int modePar2 = (int) ((mode / 10) & 1);
@@ -197,7 +204,7 @@ int CIntcodeComputer::opcodeAdd(std::vector<int> *vectorIntcode, int pos, unsign
   return (4);
 }
 
-int CIntcodeComputer::opcodeMul(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeMul(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int modePar1 = (int) ((mode / 1) & 1);
   int modePar2 = (int) ((mode / 10) & 1);
@@ -236,7 +243,7 @@ int CIntcodeComputer::opcodeMul(std::vector<int> *vectorIntcode, int pos, unsign
   return (4);
 }
 
-int CIntcodeComputer::opcodeIn(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeIn(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int targetPos = vectorIntcode->at(pos + 1);
   int inVal = 0;
@@ -250,7 +257,7 @@ int CIntcodeComputer::opcodeIn(std::vector<int> *vectorIntcode, int pos, unsigne
   return (2);
 }
 
-int CIntcodeComputer::opcodeOut(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeOut(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int modePar1 = (int) ((mode / 1) & 1);
   int outPos = vectorIntcode->at(pos + 1);
@@ -272,7 +279,7 @@ int CIntcodeComputer::opcodeOut(std::vector<int> *vectorIntcode, int pos, unsign
   return (2);
 }
 
-int CIntcodeComputer::opcodeJiT(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeJiT(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int retPos = 3;
   int modePar1 = (int) ((mode / 1) & 1);
@@ -312,7 +319,7 @@ int CIntcodeComputer::opcodeJiT(std::vector<int> *vectorIntcode, int pos, unsign
   return (retPos);
 }
 
-int CIntcodeComputer::opcodeJiF(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeJiF(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int retPos = 3;
   int modePar1 = (int) ((mode / 1) & 1);
@@ -352,7 +359,7 @@ int CIntcodeComputer::opcodeJiF(std::vector<int> *vectorIntcode, int pos, unsign
   return (retPos);
 }
 
-int CIntcodeComputer::opcodeLessThan(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeLessThan(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int modePar1 = (int) ((mode / 1) & 1);
   int modePar2 = (int) ((mode / 10) & 1);
@@ -396,7 +403,7 @@ int CIntcodeComputer::opcodeLessThan(std::vector<int> *vectorIntcode, int pos, u
   return (4);
 }
 
-int CIntcodeComputer::opcodeEquals(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeEquals(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode)
 {
   int modePar1 = (int) ((mode / 1) & 1);
   int modePar2 = (int) ((mode / 10) & 1);
@@ -440,9 +447,9 @@ int CIntcodeComputer::opcodeEquals(std::vector<int> *vectorIntcode, int pos, uns
   return (4);
 }
 
-int CIntcodeComputer::opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int pos, unsigned mode)
+int CIntcodeComputer::opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int pos, int *relBase, unsigned mode)
 {
-  int retPos = 0;
+  int retPos = 2;
   int modePar1 = (int) ((mode / 1) & 1);
 
   // Get values or addresses
@@ -451,11 +458,11 @@ int CIntcodeComputer::opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int p
   // get Values for the opcode
   if (modePar1 == MODE_IMMEDIATE)
   {
-    retPos = firstPos;
+    *relBase += firstPos;
   }
   else
   {
-    retPos = vectorIntcode->at(firstPos);
+    *relBase += vectorIntcode->at(firstPos);
   }
 
   return (retPos);
