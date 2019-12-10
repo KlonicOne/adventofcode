@@ -235,6 +235,7 @@ long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, lon
 
 long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
+  long long modePar1 = (long long) (mode % 10);
   long long targetPos = vectorIntcode->at(pos + 1);
   long long inVal = 0;
 
@@ -243,7 +244,20 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
   std::cin >> inVal;
 
   // Operation
-  vectorIntcode->at(targetPos) = inVal;
+  // get Values for the opcode
+  if (modePar1 == MODE_IMMEDIATE)
+  {
+    // nor supported here
+    std::cout << "Problem immediate mode for IN" << std::endl;
+  }
+  else if (modePar1 == MODE_RELATIVE)
+  {
+    vectorIntcode->at(targetPos + relBase) = inVal;
+  }
+  else
+  {
+    vectorIntcode->at(targetPos) = inVal;
+  }
 
   return (2);
 }
