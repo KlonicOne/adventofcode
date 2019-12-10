@@ -24,6 +24,7 @@ using namespace std;
 #define OPCODE_EQUALS 8
 #define OPCODE_RELBASEADJUST 9
 
+// Mode defines
 #define MODE_RELATIVE (2)
 #define MODE_IMMEDIATE (1)
 #define MODE_POSITION (0)
@@ -34,22 +35,24 @@ public:
   CIntcodeComputer();
   virtual ~CIntcodeComputer();
 
-  std::vector<long> getVectorCode(istream &input);
-  std::vector<long> progressVectorCode(std::vector<long> vectorIntcode);
-  int nounVerbResultProducedInput(std::vector<long> vectorIntcode, int targetVal);
-  void debugOutVector(vector<long> inVector);
+  std::vector<long long> getVectorCode(istream &input);
+  std::vector<long long> progressVectorCode(std::vector<long long> vectorIntcode, long long programSize);
+  long long nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal);
+  void debugOutVector(vector<long long> inVector);
 
 private:
   // Opcodes
-  int opcodeAdd(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeMul(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeIn(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeOut(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeJiT(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeJiF(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeLessThan(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeEquals(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeRelBaseAdjust(std::vector<long> *vectorIntcode, int pos, int *relBase, unsigned mode);
+  long long opcodeAdd(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeMul(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeIn(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeOut(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeJiT(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeJiF(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeLessThan(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeEquals(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
+  long long opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos, long long *relBase, long long mode);
+  long long getParameterValue(long long modePar1, long long firstVal, long long firstPos, long long relBase,
+      std::vector<long long>* vectorIntcode);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */

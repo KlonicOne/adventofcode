@@ -13,6 +13,7 @@ using namespace std;
 
 #include "CIntcodeComputer.h"
 
+// Defines how long the opcode can be, here from 0 to 99
 #define OPCODE_RANGE (100)
 
 CIntcodeComputer::CIntcodeComputer()
@@ -26,14 +27,15 @@ CIntcodeComputer::~CIntcodeComputer()
   // TODO Auto-generated destructor stub
 }
 
-std::vector<long> CIntcodeComputer::getVectorCode(istream &input)
+std::vector<long long> CIntcodeComputer::getVectorCode(istream &input)
 {
   string codeElement;
-  std::vector<long> codeVector;
+  std::vector<long long> codeVector;
 
+  // Iterate through given istream and extract code as vector if ints
   while (getline(input, codeElement, ','))
   {
-    codeVector.push_back(stol(codeElement));
+    codeVector.push_back(stoll(codeElement));
   }
 
 //  this->debugOutVector(codeVector);
@@ -41,21 +43,23 @@ std::vector<long> CIntcodeComputer::getVectorCode(istream &input)
   return (codeVector);
 }
 
-std::vector<long> CIntcodeComputer::progressVectorCode(std::vector<long> vectorIntcode)
+std::vector<long long> CIntcodeComputer::progressVectorCode(std::vector<long long> vectorIntcode, long long programSize)
 {
-  int opcodePos = 0;
-  int relativePos = 0;
-  long opcode = 0;
-  int relativeBase = 0;
-  unsigned mode = 0;
+  long long opcodePos = 0;
+  long long relativePos = 0;
+  long long opcode = 0;
+  long long relativeBase = 0;
+  long long mode = 0;
 
   // Walk through given intcode in stepsize based on command until end reached
-  for (std::vector<long>::const_iterator opcodeIt = vectorIntcode.begin(); *opcodeIt != OPCODE_END;
-      opcodeIt += relativePos, opcodePos += relativePos)
+  for (std::vector<long long>::const_iterator opcodeIt = vectorIntcode.begin(); *opcodeIt != OPCODE_END; opcodeIt +=
+      relativePos, opcodePos += relativePos)
   {
+    // Extract opcode and modes
     opcode = (*opcodeIt) % OPCODE_RANGE;
-    mode = (unsigned) (*opcodeIt / OPCODE_RANGE);
+    mode = (long long) (*opcodeIt / OPCODE_RANGE);
 
+    // Decide function for opcode
     switch (opcode)
     {
     case (OPCODE_ADD):
@@ -122,11 +126,11 @@ std::vector<long> CIntcodeComputer::progressVectorCode(std::vector<long> vectorI
   return (vectorIntcode);
 }
 
-int CIntcodeComputer::nounVerbResultProducedInput(std::vector<long> vectorIntcode, int targetVal)
+long long CIntcodeComputer::nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal)
 {
-  int x, y;
+  long long x, y;
   bool exitLoop = false;
-  std::vector<long> vectorResult;
+  std::vector<long long> vectorResult;
 
   for (x = 0; x < OPCODE_END; x++)
   {
@@ -137,7 +141,7 @@ int CIntcodeComputer::nounVerbResultProducedInput(std::vector<long> vectorIntcod
       vectorIntcode.at(2) = y;
 
       // Calculate result for given noun and verb
-      vectorResult = progressVectorCode(vectorIntcode);
+      vectorResult = progressVectorCode(vectorIntcode, vectorIntcode.size());
 
       // Check if result equals target value
       if (vectorResult.at(0) == targetVal)
@@ -156,54 +160,50 @@ int CIntcodeComputer::nounVerbResultProducedInput(std::vector<long> vectorIntcod
   return (100 * x + y);
 }
 
-void CIntcodeComputer::debugOutVector(vector<long> inVector)
+void CIntcodeComputer::debugOutVector(vector<long long> inVector)
 {
-  for (std::vector<long>::const_iterator i = inVector.begin(); i != inVector.end(); ++i)
+  for (std::vector<long long>::const_iterator i = inVector.begin(); i != inVector.end(); ++i)
   {
     std::cout << *i << ',' << ' ';
   }
   std::cout << std::endl;
 }
 
-int CIntcodeComputer::opcodeAdd(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::getParameterValue(long long mode, long long value, long long pos, long long relBase, std::vector<long long>* vectorIntcode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
+  // get Values for the opcode
+  if (mode == MODE_IMMEDIATE)
+  {
+    value = pos;
+  }
+  else if (mode == MODE_RELATIVE)
+  {
+    value = vectorIntcode->at(pos + relBase);
+  }
+  else
+  {
+    value = vectorIntcode->at(pos);
+  }
+
+  return value;
+}
+
+long long CIntcodeComputer::opcodeAdd(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
+{
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
 
   // Get values or addresses
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
-  long targetPos = vectorIntcode->at(pos + 3);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
+  long long targetPos = vectorIntcode->at(pos + 3);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
-
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
   // Operation
   vectorIntcode->at(targetPos) = firstVal + secondVal;
@@ -211,71 +211,32 @@ int CIntcodeComputer::opcodeAdd(std::vector<long> *vectorIntcode, int pos, int r
   return (4);
 }
 
-int CIntcodeComputer::opcodeMul(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
 
   // Get values or addresses
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
-  long targetPos = vectorIntcode->at(pos + 3);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
+  long long targetPos = vectorIntcode->at(pos + 3);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
-
-//  long vecSize = (long) vectorIntcode->size();
-//
-//  // Operation
-//  std::cout << "target: " << targetPos << std::endl;
-//  std::cout << "size: " << vecSize << std::endl;
-//
-//  if(targetPos > vecSize)
-//  {
-//    int extRange = targetPos - vecSize + 1;
-//    std::cout << "extRange: " << extRange << std::endl;
-//
-//    vectorIntcode->insert(vectorIntcode->end(), extRange, result);
-//  }
-//
-//  std::cout << "size: " << vectorIntcode->size() << std::endl;
-  long result = firstVal * secondVal;
-  vectorIntcode->at(targetPos) = result;
+  vectorIntcode->at(targetPos) = firstVal * secondVal;
 
   return (4);
 }
 
-int CIntcodeComputer::opcodeIn(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  long targetPos = vectorIntcode->at(pos + 1);
-  long inVal = 0;
+  long long targetPos = vectorIntcode->at(pos + 1);
+  long long inVal = 0;
 
   // Get in value
   std::cout << "Input value: " << std::endl;
@@ -287,70 +248,37 @@ int CIntcodeComputer::opcodeIn(std::vector<long> *vectorIntcode, int pos, int re
   return (2);
 }
 
-int CIntcodeComputer::opcodeOut(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  long outPos = vectorIntcode->at(pos + 1);
-  long outVal = 0;
+  long long modePar1 = (long long) (mode % 10);
+  long long outPos = vectorIntcode->at(pos + 1);
+  long long outVal = 0;
 
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    outVal = outPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    outVal = vectorIntcode->at(relBase + outPos);
-  }
-  else
-  {
-    outVal = vectorIntcode->at(outPos);
-  }
+  // get Values for the opcode
+  outVal = getParameterValue(modePar1, outVal, outPos, relBase, vectorIntcode);
 
   // Operation
-  std::cout << outVal << ", " << std::endl;
+  std::cout << outVal << ", ";
 
   return (2);
 }
 
-int CIntcodeComputer::opcodeJiT(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
-  int retPos = 3;
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
+  long long retPos = 3;
 
   // Get values or addresses
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
-
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
   if (firstVal != 0)
   {
@@ -360,45 +288,22 @@ int CIntcodeComputer::opcodeJiT(std::vector<long> *vectorIntcode, int pos, int r
   return (retPos);
 }
 
-int CIntcodeComputer::opcodeJiF(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeJiF(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
-  int retPos = 3;
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
+  long long retPos = 3;
 
   // Get values or addresses
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
-
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
   if (firstVal == 0)
   {
@@ -408,44 +313,21 @@ int CIntcodeComputer::opcodeJiF(std::vector<long> *vectorIntcode, int pos, int r
   return (retPos);
 }
 
-int CIntcodeComputer::opcodeLessThan(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeLessThan(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
 
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
-  long targetPos = vectorIntcode->at(pos + 3);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
+  long long targetPos = vectorIntcode->at(pos + 3);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
-
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
   // Operation
   if (firstVal < secondVal)
@@ -460,44 +342,21 @@ int CIntcodeComputer::opcodeLessThan(std::vector<long> *vectorIntcode, int pos, 
   return (4);
 }
 
-int CIntcodeComputer::opcodeEquals(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode)
+long long CIntcodeComputer::opcodeEquals(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
-  int modePar1 = (int) (mode % 10);
-  int modePar2 = (int) ((mode / 10) % 10);
+  long long modePar1 = (long long) (mode % 10);
+  long long modePar2 = (long long) ((mode / 10) % 10);
 
-  long firstPos = vectorIntcode->at(pos + 1);
-  long secondPos = vectorIntcode->at(pos + 2);
-  long targetPos = vectorIntcode->at(pos + 3);
+  long long firstPos = vectorIntcode->at(pos + 1);
+  long long secondPos = vectorIntcode->at(pos + 2);
+  long long targetPos = vectorIntcode->at(pos + 3);
 
-  long firstVal = 0;
-  long secondVal = 0;
+  long long firstVal = 0;
+  long long secondVal = 0;
 
   // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    firstVal = firstPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    firstVal = vectorIntcode->at(firstPos + relBase);
-  }
-  else
-  {
-    firstVal = vectorIntcode->at(firstPos);
-  }
-
-  if (modePar2 == MODE_IMMEDIATE)
-  {
-    secondVal = secondPos;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    secondVal = vectorIntcode->at(secondPos + relBase);
-  }
-  else
-  {
-    secondVal = vectorIntcode->at(secondPos);
-  }
+  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
+  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
 
   // Operation
   if (firstVal == secondVal)
@@ -512,13 +371,12 @@ int CIntcodeComputer::opcodeEquals(std::vector<long> *vectorIntcode, int pos, in
   return (4);
 }
 
-int CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long> *vectorIntcode, int pos, int *relBase, unsigned mode)
+long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos, long long *relBase, long long mode)
 {
-  int retPos = 2;
-  int modePar1 = (int) (mode % 10);
+  long long modePar1 = (long long) (mode % 10);
 
   // Get values or addresses
-  long firstPos = vectorIntcode->at(pos + 1);
+  long long firstPos = vectorIntcode->at(pos + 1);
 
   // get Values for the opcode
   if (modePar1 == MODE_IMMEDIATE)
@@ -534,5 +392,5 @@ int CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long> *vectorIntcode, int 
     *relBase += vectorIntcode->at(firstPos);
   }
 
-  return (retPos);
+  return (2);
 }
