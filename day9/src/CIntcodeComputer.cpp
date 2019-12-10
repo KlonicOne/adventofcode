@@ -396,7 +396,7 @@ long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIn
   }
   else if (modePar1 == MODE_RELATIVE)
   {
-    *relBase = vectorIntcode->at(firstPos + *relBase);
+    *relBase += vectorIntcode->at(firstPos + *relBase);
   }
   else
   {
