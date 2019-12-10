@@ -237,12 +237,13 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
 {
   long long modePar1 = (long long) (mode % 10);
   long long writePos = vectorIntcode->at(pos + 1);
+  char inChar;
   long long inVal = 0;
 
   // Get in value
   std::cout << "Input value: " << std::endl;
-  std::cin >> inVal;
-  inVal = 1;
+  std::cin >> inChar;
+  inVal = atoi(&inChar);
 
   // Operation
   // get Values for the opcode
