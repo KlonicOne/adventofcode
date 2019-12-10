@@ -169,8 +169,10 @@ void CIntcodeComputer::debugOutVector(vector<long long> inVector)
   std::cout << std::endl;
 }
 
-long long CIntcodeComputer::getParameterValue(long long mode, long long value, long long pos, long long relBase, std::vector<long long>* vectorIntcode)
+long long CIntcodeComputer::getParameterValue(long long mode, long long pos, long long relBase, std::vector<long long>* vectorIntcode)
 {
+  long long value;
+
   // get Values for the opcode
   if (mode == MODE_IMMEDIATE)
   {
@@ -192,21 +194,20 @@ long long CIntcodeComputer::opcodeAdd(std::vector<long long> *vectorIntcode, lon
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
+  long long modePar3 = (long long) ((mode / 100) % 10);
 
   // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
   long long targetPos = vectorIntcode->at(pos + 3);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+  long long targetVal = getParameterValue(modePar3, targetPos, relBase, vectorIntcode);
 
   // Operation
-  vectorIntcode->at(targetPos) = firstVal + secondVal;
+  vectorIntcode->at(targetVal) = firstVal + secondVal;
 
   return (4);
 }
@@ -215,20 +216,20 @@ long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, lon
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
+  long long modePar3 = (long long) ((mode / 100) % 10);
 
   // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
   long long targetPos = vectorIntcode->at(pos + 3);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+  long long targetVal = getParameterValue(modePar3, targetPos, relBase, vectorIntcode);
 
-  vectorIntcode->at(targetPos) = firstVal * secondVal;
+  // Operation
+  vectorIntcode->at(targetVal) = firstVal * secondVal;
 
   return (4);
 }
@@ -240,24 +241,15 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
   long long inVal = 0;
 
   // Get in value
-  std::cout << "Input value: " << std::endl;
-  std::cin >> inVal;
+//  std::cout << "Input value: " << std::endl;
+//  std::cin >> inVal;
+  inVal = 1;
+
+  std::cout << inVal << std::endl;
 
   // Operation
-  // get Values for the opcode
-  if (modePar1 == MODE_IMMEDIATE)
-  {
-    // nor supported here
-    std::cout << "Problem immediate mode for IN" << std::endl;
-  }
-  else if (modePar1 == MODE_RELATIVE)
-  {
-    vectorIntcode->at(targetPos + relBase) = inVal;
-  }
-  else
-  {
-    vectorIntcode->at(targetPos) = inVal;
-  }
+  long long targetVal = getParameterValue(modePar1, targetPos, relBase, vectorIntcode);
+  vectorIntcode->at(targetVal) = inVal;
 
   return (2);
 }
@@ -269,7 +261,7 @@ long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, lon
   long long outVal = 0;
 
   // get Values for the opcode
-  outVal = getParameterValue(modePar1, outVal, outPos, relBase, vectorIntcode);
+  outVal = getParameterValue(modePar1, outPos, relBase, vectorIntcode);
 
   // Operation
   std::cout << outVal << ", ";
@@ -279,20 +271,18 @@ long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, lon
 
 long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
+  long long retPos = 3;
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
-  long long retPos = 3;
 
   // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+
 
   if (firstVal != 0)
   {
@@ -304,20 +294,18 @@ long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, lon
 
 long long CIntcodeComputer::opcodeJiF(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
+  long long retPos = 3;
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
-  long long retPos = 3;
 
   // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+
 
   if (firstVal == 0)
   {
@@ -331,26 +319,26 @@ long long CIntcodeComputer::opcodeLessThan(std::vector<long long> *vectorIntcode
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
+  long long modePar3 = (long long) ((mode / 100) % 10);
 
+  // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
   long long targetPos = vectorIntcode->at(pos + 3);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+  long long targetVal = getParameterValue(modePar3, targetPos, relBase, vectorIntcode);
 
   // Operation
   if (firstVal < secondVal)
   {
-    vectorIntcode->at(targetPos) = 1;
+    vectorIntcode->at(targetVal) = 1;
   }
   else
   {
-    vectorIntcode->at(targetPos) = 0;
+    vectorIntcode->at(targetVal) = 0;
   }
 
   return (4);
@@ -360,26 +348,26 @@ long long CIntcodeComputer::opcodeEquals(std::vector<long long> *vectorIntcode, 
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
+  long long modePar3 = (long long) ((mode / 100) % 10);
 
+  // Get values or addresses
   long long firstPos = vectorIntcode->at(pos + 1);
   long long secondPos = vectorIntcode->at(pos + 2);
   long long targetPos = vectorIntcode->at(pos + 3);
 
-  long long firstVal = 0;
-  long long secondVal = 0;
-
   // get Values for the opcode
-  firstVal = getParameterValue(modePar1, firstVal, firstPos, relBase, vectorIntcode);
-  secondVal = getParameterValue(modePar2, secondVal, secondPos, relBase, vectorIntcode);
+  long long firstVal = getParameterValue(modePar1, firstPos, relBase, vectorIntcode);
+  long long secondVal = getParameterValue(modePar2, secondPos, relBase, vectorIntcode);
+  long long targetVal = getParameterValue(modePar3, targetPos, relBase, vectorIntcode);
 
   // Operation
   if (firstVal == secondVal)
   {
-    vectorIntcode->at(targetPos) = 1;
+    vectorIntcode->at(targetVal) = 1;
   }
   else
   {
-    vectorIntcode->at(targetPos) = 0;
+    vectorIntcode->at(targetVal) = 0;
   }
 
   return (4);

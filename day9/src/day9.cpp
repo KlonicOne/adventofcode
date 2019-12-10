@@ -9,7 +9,7 @@
 #include "CIntcodeComputer.h"
 using namespace std;
 
-#define INIT_SIZE (10000)
+#define INIT_SIZE (100000000)
 
 int main()
 {

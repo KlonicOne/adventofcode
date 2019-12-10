@@ -51,8 +51,8 @@ private:
   long long opcodeLessThan(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
   long long opcodeEquals(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
   long long opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos, long long *relBase, long long mode);
-  long long getParameterValue(long long modePar1, long long firstVal, long long firstPos, long long relBase,
-      std::vector<long long>* vectorIntcode);
+
+  long long getParameterValue(long long mode, long long pos, long long relBase, std::vector<long long>* vectorIntcode);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */
