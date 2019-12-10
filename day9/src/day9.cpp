@@ -9,7 +9,7 @@
 #include "CIntcodeComputer.h"
 using namespace std;
 
-#define INIT_SIZE (100000000)
+#define INIT_SIZE (10000000)
 
 int main()
 {
@@ -22,10 +22,8 @@ int main()
   codeVector = intcodeComp.getVectorCode(ifile);
   programSize = codeVector.size();
 
-  // extend vector
+  // extend vector as it will happen that we write behind the program
   codeVector.resize(INIT_SIZE);
-//  std::cout << codeVector.size() << std::endl;
-//  std::cout << programSize << std::endl;
 
 //  intcodeComp.debugOutVector(codeVector);
 

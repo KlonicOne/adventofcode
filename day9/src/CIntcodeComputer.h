@@ -53,6 +53,7 @@ private:
   long long opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos, long long *relBase, long long mode);
 
   long long getParameterValue(long long mode, long long pos, long long relBase, std::vector<long long>* vectorIntcode);
+  long long getWritePos(long long mode, long long pos, long long relBase);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */
