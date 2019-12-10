@@ -9,22 +9,24 @@
 #include "CIntcodeComputer.h"
 using namespace std;
 
+#define INIT_SIZE (100000)
+
 int main()
 {
   std::ifstream ifile("input.txt");
-  std::vector<int> codeVector, preparedCodeVector;
+  std::vector<long> codeVector;
   CIntcodeComputer intcodeComp;
 
   // Get string to vector
   codeVector = intcodeComp.getVectorCode(ifile);
-  // exchange positions
-  preparedCodeVector = codeVector;
 
-//  intcodeComp.debugOutVector(preparedCodeVector);
+  // extend vector
+  codeVector.resize(INIT_SIZE);
+  std::cout << codeVector.size() << std::endl;
+
+  //intcodeComp.debugOutVector(codeVector);
 
   // Progress new code vector
-  preparedCodeVector = intcodeComp.progressVectorCode(preparedCodeVector);
-
-
+  codeVector = intcodeComp.progressVectorCode(codeVector);
 }
 

@@ -34,22 +34,22 @@ public:
   CIntcodeComputer();
   virtual ~CIntcodeComputer();
 
-  std::vector<int> getVectorCode(istream &input);
-  std::vector<int> progressVectorCode(std::vector<int> vectorIntcode);
-  int nounVerbResultProducedInput(std::vector<int> vectorIntcode, int targetVal);
-  void debugOutVector(vector<int> inVector);
+  std::vector<long> getVectorCode(istream &input);
+  std::vector<long> progressVectorCode(std::vector<long> vectorIntcode);
+  int nounVerbResultProducedInput(std::vector<long> vectorIntcode, int targetVal);
+  void debugOutVector(vector<long> inVector);
 
 private:
   // Opcodes
-  int opcodeAdd(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeMul(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeIn(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeOut(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeJiT(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeJiF(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeLessThan(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeEquals(std::vector<int> *vectorIntcode, int pos, int relBase, unsigned mode);
-  int opcodeRelBaseAdjust(std::vector<int> *vectorIntcode, int pos, int *relBase, unsigned mode);
+  int opcodeAdd(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeMul(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeIn(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeOut(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeJiT(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeJiF(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeLessThan(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeEquals(std::vector<long> *vectorIntcode, int pos, int relBase, unsigned mode);
+  int opcodeRelBaseAdjust(std::vector<long> *vectorIntcode, int pos, int *relBase, unsigned mode);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */
