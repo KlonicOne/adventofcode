@@ -40,7 +40,50 @@ std::vector<int> CDecodePW::stringToVec(std::string tempString)
 }
 
 
-bool CDecodePW::checkNumberPart2(int inputInt)
+bool CDecodePW::checkCodePart1(int inputCode)
+{
+  bool returnObject = false;
+  bool doubleDigitLock = false;
+  bool lookAhead = true;
+  std::vector<int> digits;
+
+  digits = this->stringToVec(to_string(inputCode));
+
+  for (size_t i = 0; i < digits.size() - 1; i++)
+  {
+    if (digits.at(i) <= digits.at(i + 1) && lookAhead == true)
+    {
+      returnObject = true;
+
+      if (digits.at(i) == digits.at(i + 1))
+      {
+        returnObject = true;
+        doubleDigitLock = true;
+      }
+      else
+      {
+        if (doubleDigitLock)
+        {
+          returnObject = true;
+        }
+        else
+        {
+          returnObject = false;
+        }
+      }
+    }
+    else
+    {
+      lookAhead = false;
+      returnObject = false;
+    }
+  }
+
+  return returnObject;
+}
+
+
+bool CDecodePW::checkCodePart2(int inputCode)
 {
   bool returnObject = false;
   bool doubleDigitLock = false;
@@ -49,7 +92,7 @@ bool CDecodePW::checkNumberPart2(int inputInt)
   int trippleFailInt = 0;
   std::vector<int> digits;
 
-  digits = this->stringToVec(to_string(inputInt));
+  digits = this->stringToVec(to_string(inputCode));
 
   for (size_t i = 0; i < digits.size() - 1; i++)
   {
@@ -83,48 +126,6 @@ bool CDecodePW::checkNumberPart2(int inputInt)
           {
             returnObject = false;
           }
-        }
-      }
-    }
-    else
-    {
-      lookAhead = false;
-      returnObject = false;
-    }
-  }
-
-  return returnObject;
-}
-
-bool CDecodePW::checkNumber(int inputInt)
-{
-  bool returnObject = false;
-  bool doubleDigitLock = false;
-  bool lookAhead = true;
-  std::vector<int> digits;
-
-  digits = this->stringToVec(to_string(inputInt));
-
-  for (size_t i = 0; i < digits.size() - 1; i++)
-  {
-    if (digits.at(i) <= digits.at(i + 1) && lookAhead == true)
-    {
-      returnObject = true;
-
-      if (digits.at(i) == digits.at(i + 1))
-      {
-        returnObject = true;
-        doubleDigitLock = true;
-      }
-      else
-      {
-        if (doubleDigitLock)
-        {
-          returnObject = true;
-        }
-        else
-        {
-          returnObject = false;
         }
       }
     }

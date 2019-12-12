@@ -8,14 +8,9 @@
 #ifndef CDECODEPW_H_
 #define CDECODEPW_H_
 
-#include <fstream>
-#include <sstream>
-#include <stdlib.h>
-#include <map>
-#include <set>
-
 #include <vector>
 #include <istream>
+#include <sstream>
 using namespace std;
 
 class CDecodePW
@@ -23,9 +18,10 @@ class CDecodePW
 public:
   CDecodePW();
   virtual ~CDecodePW();
+
   std::vector<int> stringToVec(std::string tempString);
-  bool checkNumber(int inputInt);
-  bool checkNumberPart2(int inputInt);
+  bool checkCodePart1(int inputCode);
+  bool checkCodePart2(int inputCode);
 };
 
 #endif /* CDECODEPW_H_ */

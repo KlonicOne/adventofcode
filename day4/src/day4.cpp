@@ -13,7 +13,7 @@
 #include "CDecodePW.h"
 using namespace std;
 
-void part1()
+int main(void)
 {
   int start = 235741;
   int stop = 706948;
@@ -21,35 +21,21 @@ void part1()
 
   CDecodePW decoder;
 
+  // Part 1
   for (int index = start; index <= stop; index++)
   {
-    counter += decoder.checkNumber(index);
+    counter += decoder.checkCodePart1(index);
   }
-  cout << "Part 1 : " << counter << endl;
-}
+  std::cout << "Part 1 : " << counter << std::endl;
 
-void part2()
-{
-  int start = 235741;
-  int stop = 706948;
-  int counter = 0;
-
-  CDecodePW decoder;
-
+  // Part 2
+  counter = 0;
   for (int index = start; index <= stop; index++)
   {
-    counter += decoder.checkNumberPart2(index);
+    counter += decoder.checkCodePart2(index);
   }
-  cout << "Part 2 : " << counter << endl;
-}
+  std::cout << "Part 2 : " << counter << std::endl;
 
-int main()
-{
-  int returnObject = 0;
-
-  part1();
-  part2();
-
-  return returnObject = 0;
+  return(0);
 }
 
