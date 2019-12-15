@@ -17,7 +17,7 @@ CPaintRobot::CPaintRobot()
   this->mIntComputer = NULL;
   this->mTypeOfOutputValue = e_color;
   this->mNumberOfColoredFields = 0;
-  tuple<long long, long long, t_robotOrientation> mCurrentPaintBotPos = std::make_tuple(0, 0, e_up);
+  this->mCurrentPaintBotPos = std::make_tuple(0, 0, e_up);
 }
 
 CPaintRobot::~CPaintRobot()
@@ -27,11 +27,10 @@ CPaintRobot::~CPaintRobot()
 
 void CPaintRobot::readInputCode(istream &input)
 {
-  this->mCodeVector = this->mIntComputer->getVectorCode(input);
-  this->mIntComputer->setProgramSizeInputCode(this->mCodeVector.size());
+  this->mIntComputer->parseVectorCode(input);
 
   // extend vector as it will happen that we write behind the program
-  this->mCodeVector.resize(INIT_SIZE);
+  this->mIntComputer->resizeIntCodePrg(INIT_SIZE);
 }
 
 long long CPaintRobot::getCameraInput(void)
@@ -52,14 +51,14 @@ void CPaintRobot::setIncodeComputer(CIntcodeComputer *IntComp)
 void CPaintRobot::progressPaintRobotCode(void)
 {
   // Progress new code vector
-  mCodeVector = mIntComputer->progressVectorCode(mCodeVector);
+  mIntComputer->progressVectorCode(mCodeVector);
 }
 
 void CPaintRobot::setCallBackFunctions(void)
 {
   // The call back functions are called on the intcode computer input and output
-  mIntComputer->setInputCallBackFunction((this->getCameraInput()));
-  mIntComputer->setOutputCallBackFunction((this->setIntCodeOutput()));
+  mIntComputer->setInputCallBackFunction(this->getCameraInput);
+  mIntComputer->setOutputCallBackFunction(this->setIntCodeOutput);
 }
 
 void CPaintRobot::setIntCodeOutput(long long outVal)
@@ -67,20 +66,20 @@ void CPaintRobot::setIntCodeOutput(long long outVal)
   // The values iterate color and movement
   switch (this->mTypeOfOutputValue)
   {
-  case (e_color): // Color given paint current position in map
-  {
-    this->colorTheCurrentPosition(outVal);
-    this->mTypeOfOutputValue = e_turn; // next time turn robot
-    break;
-  }
-  case (e_turn): // Turn given call function for movement
-  {
-    this->moveThePaintRobot(outVal);
-    this->mTypeOfOutputValue = e_color; // next time color
-    break;
-  }
-  default:
-    break;
+    case (e_color): // Color given paint current position in map
+    {
+      this->colorTheCurrentPosition(outVal);
+      this->mTypeOfOutputValue = e_turn; // next time turn robot
+      break;
+    }
+    case (e_turn): // Turn given call function for movement
+    {
+      this->moveThePaintRobot(outVal);
+      this->mTypeOfOutputValue = e_color; // next time color
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -107,15 +106,26 @@ void CPaintRobot::moveThePaintRobot(long long turnDirection)
 {
   long long nextXPos = get < 0 > (this->mCurrentPaintBotPos);
   long long nextYPos = get < 1 > (this->mCurrentPaintBotPos);
-  t_robotOrientation nextOrientation = get < 3 > (this->mCurrentPaintBotPos);
+  t_robotOrientation nextOrientation = get < 2 > (this->mCurrentPaintBotPos);
 
   if (turnDirection == 0) // left turn
   {
     // first turn
-    nextOrientation = getNextOrientation(get < 3 > (this->mCurrentPaintBotPos));
-    // then move
-    switch (nextOrientation)
-    {
+    nextOrientation = getNextOrientation(get < 2 > (this->mCurrentPaintBotPos), turnDirection);
+  }
+  else if (turnDirection == 1) // right turn
+  {
+    // first turn
+    nextOrientation = getNextOrientation(get < 2 > (this->mCurrentPaintBotPos), turnDirection);
+  }
+  else
+  {
+    std::cout << "Invalid turn" << std::endl;
+  }
+
+  // then move
+  switch (nextOrientation)
+  {
     case (e_up):
     {
       nextYPos = nextYPos - 1;
@@ -123,22 +133,25 @@ void CPaintRobot::moveThePaintRobot(long long turnDirection)
     }
     case (e_down):
     {
+      nextYPos = nextYPos + 1;
       break;
     }
     case (e_left):
     {
+      nextXPos = nextXPos - 1;
       break;
     }
     case (e_right):
     {
+      nextXPos = nextXPos + 1;
       break;
     }
-
-    }
-  } else
-  {
-
   }
+
+  // set new position for the robot
+  std::get < 0 > (this->mCurrentPaintBotPos) = nextXPos;
+  std::get < 1 > (this->mCurrentPaintBotPos) = nextYPos;
+  std::get < 2 > (this->mCurrentPaintBotPos) = nextOrientation;
 }
 
 t_robotOrientation CPaintRobot::getNextOrientation(t_robotOrientation inOrientation, long long turnDirection)
@@ -147,62 +160,70 @@ t_robotOrientation CPaintRobot::getNextOrientation(t_robotOrientation inOrientat
 
   switch (inOrientation)
   {
-  case (e_up):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_up):
     {
-      retValue = e_left;
-    } else if (turnDirection == 1) // right
-    {
-      retValue = e_right;
-    } else
-    {
-      std::cout << "Invalid turn!" << std::endl;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_left;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_right;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    break;
-  }
-  case (e_left):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_left):
     {
-      retValue = e_down;
-    } else if (turnDirection == 1) // right
-    {
-      retValue = e_up;
-    } else
-    {
-      std::cout << "Invalid turn!" << std::endl;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_down;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_up;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    break;
-  }
-  case (e_right):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_right):
     {
-      retValue = e_up;
-    } else if (turnDirection == 1) // right
-    {
-      retValue = e_down;
-    } else
-    {
-      std::cout << "Invalid turn!" << std::endl;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_up;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_down;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    break;
-  }
-  case (e_down):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_down):
     {
-      retValue = e_right;
-    } else if (turnDirection == 1) // right
-    {
-      retValue = e_left;
-    } else
-    {
-      std::cout << "Invalid turn!" << std::endl;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_right;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_left;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    break;
-  }
   }
   return (retValue);
 }

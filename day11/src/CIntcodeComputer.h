@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <istream>
+#include <functional>
+
 using namespace std;
 
 // Opcode defines
@@ -34,24 +36,30 @@ class CIntcodeComputer
 public:
   CIntcodeComputer();
   virtual ~CIntcodeComputer();
-
+  // Getter and setter for the size of the original intcode program size
   long long getProgramSizeInputCode();
   void setProgramSizeInputCode(long long codeSize);
-
-  void setInputCallBackFunction(long long (*fp)(void));
-  void setOutputCallBackFunction(void (*fp)(long long));
-
-  std::vector<long long> getVectorCode(istream &input);
-  std::vector<long long> progressVectorCode(std::vector<long long> vectorIntcode);
+  // Callback functions to be able to manipulate the input and output
+  void setInputCallBackFunction(std::function<long long(void)> fp);
+  void setOutputCallBackFunction(std::function<void(long long)> fp);
+  // Read in code an
+  void parseVectorCode(istream &input);
+  std::vector<long long> getIntCodePrg(void);
+  void resizeIntCodePrg(long long newSize);
+  void progressVectorCode(std::vector<long long> vectorIntcode);
+  std::vector<long long> getProgressedIntCodePrg(void);
   long long nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal);
-  void debugOutVector(vector<long long> inVector);
+  void debugOutVector(std::vector<long long> inVector);
 
 private:
-  // member
+  // Program size and program parsed from input string
   long long mProgramSizeInputCode;
+  std::vector<long long> mIntCodeProgram;
+  std::vector<long long> mProgressedIntCodeProgram;
 
-  long long (*inputCallBackFunction)(void);
-  void (*outputCallBackFunction)(long long outVal);
+  // Call back signature
+  std::function<long long(void)> inputCallBackFunction;
+  std::function<void(long long)> outputCallBackFunction;
 
 
   // Opcodes

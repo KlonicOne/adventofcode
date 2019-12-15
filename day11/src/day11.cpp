@@ -18,11 +18,11 @@ int main()
   CIntcodeComputer intcodeComp;
   CPaintRobot paintRobot;
 
-  // Prepare the paint robot
-  paintRobot.setCallBackFunctions();
-
   // Set brain of paint robot
   paintRobot.setIncodeComputer(&intcodeComp);
+
+  // Prepare the paint robot
+  paintRobot.setCallBackFunctions();
 
   // Read the input code for the paint robot
   paintRobot.readInputCode(ifile);

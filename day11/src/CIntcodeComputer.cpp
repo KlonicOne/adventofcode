@@ -27,23 +27,21 @@ CIntcodeComputer::~CIntcodeComputer()
   // TODO Auto-generated destructor stub
 }
 
-std::vector<long long> CIntcodeComputer::getVectorCode(istream &input)
+void CIntcodeComputer::parseVectorCode(istream &input)
 {
   string codeElement;
-  std::vector<long long> codeVector;
 
   // Iterate through given istream and extract code as vector if ints
   while (getline(input, codeElement, ','))
   {
-    codeVector.push_back(stoll(codeElement));
+    this->mIntCodeProgram.push_back(stoll(codeElement));
   }
 
-//  this->debugOutVector(codeVector);
-
-  return (codeVector);
+  // Store size of original input code
+  this->mProgramSizeInputCode = this->mIntCodeProgram.size();
 }
 
-std::vector<long long> CIntcodeComputer::progressVectorCode(std::vector<long long> vectorIntcode)
+void CIntcodeComputer::progressVectorCode(std::vector<long long> vectorIntcode)
 {
   long long opcodePos = 0;
   long long relativePos = 0;
@@ -122,8 +120,8 @@ std::vector<long long> CIntcodeComputer::progressVectorCode(std::vector<long lon
     }
   }
 
-//    this->debugOutVector(vectorIntcode);
-  return (vectorIntcode);
+  // Copy now the progressed code
+  mProgressedIntCodeProgram = vectorIntcode;
 }
 
 long long CIntcodeComputer::nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal)
@@ -141,7 +139,8 @@ long long CIntcodeComputer::nounVerbResultProducedInput(std::vector<long long> v
       vectorIntcode.at(2) = y;
 
       // Calculate result for given noun and verb
-      vectorResult = progressVectorCode(vectorIntcode);
+      this->progressVectorCode(vectorIntcode);
+      vectorResult = this->getProgressedIntCodePrg();
 
       // Check if result equals target value
       if (vectorResult.at(0) == targetVal)
@@ -178,10 +177,12 @@ long long CIntcodeComputer::getParameterValue(long long mode, long long pos, lon
   if (mode == MODE_IMMEDIATE)
   {
     value = pos;
-  } else if (mode == MODE_RELATIVE)
+  }
+  else if (mode == MODE_RELATIVE)
   {
     value = vectorIntcode->at(pos + relBase);
-  } else
+  }
+  else
   {
     value = vectorIntcode->at(pos);
   }
@@ -249,10 +250,12 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
   {
     // nor supported here
     std::cout << "Problem immediate mode for IN" << std::endl;
-  } else if (modePar1 == MODE_RELATIVE)
+  }
+  else if (modePar1 == MODE_RELATIVE)
   {
     vectorIntcode->at(writePos + relBase) = inputValue;
-  } else
+  }
+  else
   {
     vectorIntcode->at(writePos) = inputValue;
   }
@@ -338,7 +341,8 @@ long long CIntcodeComputer::opcodeLessThan(std::vector<long long> *vectorIntcode
   if (firstVal < secondVal)
   {
     vectorIntcode->at(writePos) = 1;
-  } else
+  }
+  else
   {
     vectorIntcode->at(writePos) = 0;
   }
@@ -367,7 +371,8 @@ long long CIntcodeComputer::opcodeEquals(std::vector<long long> *vectorIntcode, 
   if (firstVal == secondVal)
   {
     vectorIntcode->at(writePos) = 1;
-  } else
+  }
+  else
   {
     vectorIntcode->at(writePos) = 0;
   }
@@ -387,15 +392,32 @@ long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIn
   if (modePar1 == MODE_IMMEDIATE)
   {
     *relBase += firstPos;
-  } else if (modePar1 == MODE_RELATIVE)
+  }
+  else if (modePar1 == MODE_RELATIVE)
   {
     *relBase += vectorIntcode->at(firstPos + *relBase);
-  } else
+  }
+  else
   {
     *relBase += vectorIntcode->at(firstPos);
   }
 
   return (2);
+}
+
+std::vector<long long> CIntcodeComputer::getIntCodePrg(void)
+{
+  return(this->mIntCodeProgram);
+}
+
+std::vector<long long> CIntcodeComputer::getProgressedIntCodePrg(void)
+{
+  return(this->mProgressedIntCodeProgram);
+}
+
+void CIntcodeComputer::resizeIntCodePrg(long long newSize)
+{
+  this->mIntCodeProgram.resize(newSize);
 }
 
 long long CIntcodeComputer::getWritePos(long long mode, long long pos, long long relBase)
@@ -406,10 +428,12 @@ long long CIntcodeComputer::getWritePos(long long mode, long long pos, long long
   if (mode == MODE_IMMEDIATE)
   {
     value = pos;
-  } else if (mode == MODE_RELATIVE)
+  }
+  else if (mode == MODE_RELATIVE)
   {
     value = pos + relBase;
-  } else
+  }
+  else
   {
     value = pos;
   }
@@ -426,12 +450,12 @@ void CIntcodeComputer::setProgramSizeInputCode(long long codeSize)
   this->mProgramSizeInputCode = codeSize;
 }
 
-void CIntcodeComputer::setInputCallBackFunction(long long (*fp)(void))
+void CIntcodeComputer::setInputCallBackFunction(std::function<long long(void)> fp)
 {
-  this->inputCallBackFunction = fp;
+  this->inputCallBackFunction = std::bind(fp);
 }
 
-void CIntcodeComputer::setOutputCallBackFunction(void (*fp)(long long))
+void CIntcodeComputer::setOutputCallBackFunction(std::function<void(long long)> fp)
 {
-  this->outputCallBackFunction = fp;
+  this->outputCallBackFunction = std::bind(fp, std::placeholders::_1);
 }
