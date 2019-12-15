@@ -7,31 +7,30 @@
 #include <math.h>
 #include <fstream>
 #include "CIntcodeComputer.h"
-using namespace std;
+#include "CPaintRobot.h"
 
-#define INIT_SIZE (10000000)
+using namespace std;
 
 int main()
 {
   std::ifstream ifile("input.txt");
-  std::vector<long long> codeVector;
 
   CIntcodeComputer intcodeComp;
+  CPaintRobot paintRobot;
 
-  // Get string to vector
-  codeVector = intcodeComp.getVectorCode(ifile);
-  long long programSize = codeVector.size();
+  // Prepare the paint robot
+  paintRobot.setCallBackFunctions();
 
-  // extend vector as it will happen that we write behind the program
-  codeVector.resize(INIT_SIZE);
+  // Set brain of paint robot
+  paintRobot.setIncodeComputer(&intcodeComp);
 
-  // Set input
-  intcodeComp.setInput(1);
+  // Read the input code for the paint robot
+  paintRobot.readInputCode(ifile);
 
-  // Progress new code vector
-  codeVector = intcodeComp.progressVectorCode(codeVector, programSize);
+  // Progress the program for the color robot
+  paintRobot.progressPaintRobotCode();
 
-  // output
-  std::cout << "Output: " << intcodeComp.getOuput() << std::endl;
+  // Output
+
 }
 

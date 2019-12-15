@@ -35,18 +35,24 @@ public:
   CIntcodeComputer();
   virtual ~CIntcodeComputer();
 
-  long long getOuput(void);
-  void setInput(long long inVal);
+  long long getProgramSizeInputCode();
+  void setProgramSizeInputCode(long long codeSize);
+
+  void setInputCallBackFunction(long long (*fp)(void));
+  void setOutputCallBackFunction(void (*fp)(long long));
 
   std::vector<long long> getVectorCode(istream &input);
-  std::vector<long long> progressVectorCode(std::vector<long long> vectorIntcode, long long programSize);
+  std::vector<long long> progressVectorCode(std::vector<long long> vectorIntcode);
   long long nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal);
   void debugOutVector(vector<long long> inVector);
 
 private:
   // member
-  long long mInputValue;
-  long long mOutputValue;
+  long long mProgramSizeInputCode;
+
+  long long (*inputCallBackFunction)(void);
+  void (*outputCallBackFunction)(long long outVal);
+
 
   // Opcodes
   long long opcodeAdd(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode);
