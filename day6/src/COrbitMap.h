@@ -31,11 +31,20 @@ public:
   COrbitMap();
   virtual ~COrbitMap();
 
+  // Read input file and store the map intern as vector
   void parseInputMap(std::istream &input);
+  // Create the tree
+  void constructOrbitMap(void);
+
+  // For individual access on Orbit Map
+  // Add element
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName);
+  // Search specific element and get pointer handle
   COrbit *searchOrbit(std::string orbitName);
+  // Delete map, automatically done in destructor
   void destroyOrbitMap();
 
+  // Debuggin functions
   void printOrbitInputMap();
 
 private:

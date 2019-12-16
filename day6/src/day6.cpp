@@ -15,8 +15,11 @@ int main()
   COrbitMap orbitMap;
   std::ifstream ifile("input.txt");
 
+  // Get input data into orbit map
   orbitMap.parseInputMap(ifile);
 
+  // Create the tree based in the read data
+  orbitMap.constructOrbitMap();
 
 }
 
