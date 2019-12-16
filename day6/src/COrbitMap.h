@@ -21,6 +21,7 @@ public:
   virtual ~COrbit();
 
   std::string mOrbitName;
+  int mNumOrbitConnections;
   COrbit *mLeftOrbit;
   COrbit *mRightOrbit;
 };
@@ -35,6 +36,10 @@ public:
   void parseInputMap(std::istream &input);
   // Create the tree
   void constructOrbitMap(void);
+  // Get max orbit depth
+  int maxOrbitMapDepth(void);
+  // Get sum of all connections
+  int getSumOfOrbitConnections() const;
 
   // For individual access on Orbit Map
   // Add element
@@ -47,13 +52,16 @@ public:
   // Debuggin functions
   void printOrbitInputMap();
 
+
 private:
   COrbit *mRootOrbit;
   std::vector<std::tuple<std::string, std::string>> mInputMap;
+  int mSumOfOrbitConnections;
 
   void destroyOrbitMap(COrbit *orbit);
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName, COrbit* orbit);
   COrbit *searchOrbit(std::string orbitName, COrbit *orbit);
+  int maxOrbitMapDepth(COrbit* orbit);
 
 };
 

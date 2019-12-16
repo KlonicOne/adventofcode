@@ -11,6 +11,7 @@
 COrbitMap::COrbitMap()
 {
   this->mRootOrbit = NULL;
+  this->mSumOfOrbitConnections = 0;
 }
 
 COrbitMap::~COrbitMap()
@@ -21,6 +22,7 @@ COrbitMap::~COrbitMap()
 COrbit::COrbit()
 {
   this->mOrbitName = "";
+  this->mNumOrbitConnections = 0;
   this->mLeftOrbit = NULL;
   this->mRightOrbit = NULL;
 }
@@ -92,15 +94,15 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName,
   else
   {
     // Here current root node didn't match, so only continue if the branches are assigned
-   if (orbit->mLeftOrbit != NULL)
-   {
-    // First go through left branch then through right
-    this->insertOrbit(rootOrbitName, newOrbitName, orbit->mLeftOrbit);
-   }
-   if (orbit->mRightOrbit != NULL)
-   {
-    this->insertOrbit(rootOrbitName, newOrbitName, orbit->mRightOrbit);
-   }
+    if (orbit->mLeftOrbit != NULL)
+    {
+      // First go through left branch then through right
+      this->insertOrbit(rootOrbitName, newOrbitName, orbit->mLeftOrbit);
+    }
+    if (orbit->mRightOrbit != NULL)
+    {
+      this->insertOrbit(rootOrbitName, newOrbitName, orbit->mRightOrbit);
+    }
   }
 }
 
@@ -122,12 +124,13 @@ void COrbitMap::parseInputMap(std::istream& input)
     }
     // now make tuple and add to map
     this->mInputMap.push_back(std::make_tuple(vecOrbitElements[0], vecOrbitElements[1]));
+    //std::cout << vecOrbitElements[0] << ")" << vecOrbitElements[1] << std::endl;
   }
 }
 
 void COrbitMap::printOrbitInputMap(void)
 {
-  for(unsigned i = 0; i < this->mInputMap.size(); i++)
+  for (unsigned i = 0; i < this->mInputMap.size(); i++)
   {
     std::string root = std::get<0>(this->mInputMap[i]);
     std::string child = std::get<1>(this->mInputMap[i]);
@@ -149,4 +152,49 @@ void COrbitMap::constructOrbitMap(void)
 COrbit* COrbitMap::searchOrbit(std::string orbitName, COrbit* orbit)
 {
   return (NULL);
+}
+
+int COrbitMap::maxOrbitMapDepth(void)
+{
+  return (this->maxOrbitMapDepth(this->mRootOrbit));
+}
+
+int COrbitMap::maxOrbitMapDepth(COrbit* orbit)
+{
+  int depthOrbit;
+
+  if (orbit == NULL)
+  {
+    depthOrbit = 0;
+  }
+  else
+  {
+    /* compute the depth of each subtree */
+    int lDepth = maxOrbitMapDepth(orbit->mLeftOrbit);
+    int rDepth = maxOrbitMapDepth(orbit->mRightOrbit);
+
+    /* use the larger one */
+    if (lDepth > rDepth)
+    {
+      depthOrbit = lDepth + 1;
+    }
+    else
+    {
+      depthOrbit = rDepth + 1;
+    }
+
+    // Store own orbit value
+    orbit->mNumOrbitConnections = depthOrbit;
+  }
+
+  //std::cout << orbit->mOrbitName << ": " << depthOrbit << std::endl;
+  // Overall sum
+  this->mSumOfOrbitConnections += depthOrbit;
+
+  return (depthOrbit);
+}
+
+int COrbitMap::getSumOfOrbitConnections() const
+{
+  return mSumOfOrbitConnections;
 }
