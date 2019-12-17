@@ -24,4 +24,10 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>SYSTEM_GCC</name>
+			<value>file:/C:/msys64/usr/lib/gcc/x86_64-pc-msys/9.1.0/include/c++</value>
+		</variable>
+	</variableList>
 </projectDescription>

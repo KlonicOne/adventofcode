@@ -25,7 +25,7 @@ int main()
   unsigned orbitDepth = orbitMap.maxOrbitMapDepth();
   unsigned orbitSum = orbitMap.getSumOfOrbitConnections();
   // out part 1
-  std::cout << "Part 1: " << orbitSum + 1 << std::endl;
+  std::cout << "Part 1: " << orbitSum + 1 << " ,max depth: " << orbitDepth << std::endl;
 
 }
 

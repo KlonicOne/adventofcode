@@ -62,6 +62,7 @@ private:
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName, COrbit* orbit);
   COrbit *searchOrbit(std::string orbitName, COrbit *orbit);
   int maxOrbitMapDepth(COrbit* orbit);
+  void eraseNewLine(std::string &s);
 
 };
 
