@@ -76,9 +76,9 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName,
   int orbitCompare = rootOrbitName.compare(currentOrbitName);
 
   // debug out
-  std::cout << "Check: " << rootOrbitName << ")" << newOrbitName << " on " << currentOrbitName << std::endl;
+//  std::cout << "Check: " << rootOrbitName << ")" << newOrbitName << " on " << currentOrbitName << std::endl;
 
-  // Check if root orbit found
+// Check if root orbit found
   if (orbitCompare == 0)
   {
     // left branch of the given orbit is not assigned
@@ -107,7 +107,7 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName,
         orbit->mLeftOrbit->mRightOrbit = NULL;
 
         // debug out
-        std::cout << "L: Added: " << rootOrbitName << ") " << newOrbitName << std::endl;
+        std::cout << "L: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
       }
     }
     else if (orbit->mRightOrbit == NULL) // free branch so allocate
@@ -124,7 +124,7 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName,
           orbit->mRightOrbit->mRightOrbit = NULL;
 
           // debug out
-          std::cout << "R: Added: " << rootOrbitName << ") " << newOrbitName << std::endl;
+          std::cout << "R: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
         }
       }
       else // The other branch is NULL so we can assign it
@@ -135,14 +135,14 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName,
         orbit->mRightOrbit->mRightOrbit = NULL;
 
         // debug out
-        std::cout << "R: Added: " << rootOrbitName << ") " << newOrbitName << std::endl;
+        std::cout << "R: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
       }
     }
     else
     {
       // Here the given orbit is already assigned
       // nothing to be done
-      std::cout << "Orbits assigned already!" << std::endl;
+//      std::cout << "Orbits assigned already!" << std::endl;
     }
   }
   else
@@ -231,44 +231,35 @@ COrbit* COrbitMap::searchOrbit(std::string orbitName, COrbit *orbit)
   return (NULL);
 }
 
-int COrbitMap::maxOrbitMapDepth(void)
+void COrbitMap::calcOrbitStat(void)
 {
-  return (this->maxOrbitMapDepth(this->mRootOrbit));
+  this->maxOrbitMapDepth(this->mRootOrbit, 0);
 }
 
-int COrbitMap::maxOrbitMapDepth(COrbit *orbit)
+void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
 {
-  int depthOrbit;
+  int depthOrbit = 0;
 
   if (orbit == NULL)
   {
-    depthOrbit = 0;
+    // No additional depth to add
+    depthOrbit = currentDepth;
   }
   else
   {
-    /* compute the depth of each subtree */
-    int lDepth = maxOrbitMapDepth(orbit->mLeftOrbit);
-    int rDepth = maxOrbitMapDepth(orbit->mRightOrbit);
-
-    /* use the larger one */
-    if (lDepth > rDepth)
-    {
-      depthOrbit = lDepth + 1;
-    }
-    else
-    {
-      depthOrbit = rDepth + 1;
-    }
-
     // Store own orbit value
-    orbit->mNumOrbitConnections = depthOrbit;
+    orbit->mNumOrbitConnections = currentDepth;
+
+    // Increase depth for next layer
+    depthOrbit = currentDepth + 1;
+    /* compute the depth of each subtree */
+    maxOrbitMapDepth(orbit->mLeftOrbit, depthOrbit);
+    maxOrbitMapDepth(orbit->mRightOrbit, depthOrbit);
+
+    std::cout << orbit->mOrbitName << ": " << orbit->mNumOrbitConnections << std::endl;
+    // Overall sum
+    this->mSumOfOrbitConnections += currentDepth;
   }
-
-//std::cout << orbit->mOrbitName << ": " << depthOrbit << std::endl;
-// Overall sum
-  this->mSumOfOrbitConnections += depthOrbit;
-
-  return (depthOrbit);
 }
 
 int COrbitMap::getSumOfOrbitConnections() const

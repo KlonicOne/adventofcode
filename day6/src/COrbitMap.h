@@ -37,7 +37,7 @@ public:
   // Create the tree
   void constructOrbitMap(void);
   // Get max orbit depth
-  int maxOrbitMapDepth(void);
+  void calcOrbitStat(void);
   // Get sum of all connections
   int getSumOfOrbitConnections() const;
 
@@ -61,7 +61,7 @@ private:
   void destroyOrbitMap(COrbit *orbit);
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName, COrbit* orbit);
   COrbit *searchOrbit(std::string orbitName, COrbit *orbit);
-  int maxOrbitMapDepth(COrbit* orbit);
+  void maxOrbitMapDepth(COrbit* orbit, int currentDepth);
   void eraseNewLine(std::string &s);
 
 };
