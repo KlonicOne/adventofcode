@@ -25,6 +25,7 @@ int main()
   orbitMap.calcOrbitStat();
   unsigned orbitSum = orbitMap.getSumOfOrbitConnections();
   // out part 1
+
   std::cout << "Part 1: " << orbitSum << std::endl;
 
 }

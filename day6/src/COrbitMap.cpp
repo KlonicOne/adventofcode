@@ -18,15 +18,12 @@ COrbitMap::COrbitMap()
 
 COrbitMap::~COrbitMap()
 {
-  this->destroyOrbitMap();
 }
 
 COrbit::COrbit()
 {
   this->mOrbitName = "";
   this->mNumOrbitConnections = 0;
-  this->mLeftOrbit = NULL;
-  this->mRightOrbit = NULL;
 }
 
 COrbit::~COrbit()
@@ -35,130 +32,40 @@ COrbit::~COrbit()
 
 void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName)
 {
-  if (this->mRootOrbit == NULL)
+  if ((this->mRootOrbit == NULL) && !(rootOrbitName.compare("COM")))
   {
-    this->mRootOrbit = new COrbit;
-    this->mRootOrbit->mOrbitName = rootOrbitName;
-    this->mRootOrbit->mLeftOrbit = NULL;
-    this->mRootOrbit->mRightOrbit = NULL;
-    // On root we can already assign next tree
-    this->insertOrbit(rootOrbitName, newOrbitName, this->mRootOrbit);
+    // This is our root element
+    COrbit cOrbitParent;
+    this->mOrbitMap.emplace_back(cOrbitParent); // New element in vector for graph
+    this->mOrbitMap.back().mOrbitName = rootOrbitName; // Assign name
+    // Difference to other elements we store as root
+    this->mRootOrbit = &(this->mOrbitMap.back()); // Get reference on new COM root element
+
+    // Now create second planet
+    COrbit cOrbitChild;
+    this->mOrbitMap.emplace_back(cOrbitChild); // New element in vector for graph
+    this->mOrbitMap.back().mOrbitName = newOrbitName; // Assign name
+    // And assign parent
+    this->mOrbitMap.back().mParentOrbits.emplace_back(this->searchOrbit(rootOrbitName));
   }
   else
   {
-    this->insertOrbit(rootOrbitName, newOrbitName, this->mRootOrbit);
+
   }
 }
 
 COrbit* COrbitMap::searchOrbit(std::string orbitName)
 {
-  return (this->searchOrbit(orbitName, this->mRootOrbit));
-}
-
-void COrbitMap::destroyOrbitMap()
-{
-}
-
-void COrbitMap::destroyOrbitMap(COrbit *orbit)
-{
-  if (orbit != NULL)
+  COrbit *foundOrbit;
+  for(std::vector<COrbit>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
   {
-    this->destroyOrbitMap(orbit->mLeftOrbit);
-    this->destroyOrbitMap(orbit->mRightOrbit);
-    delete orbit;
-  }
-}
-
-void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName, COrbit *orbit)
-{
-  // Extract locals to better debug
-  std::string currentOrbitName = orbit->mOrbitName;
-  int orbitCompare = rootOrbitName.compare(currentOrbitName);
-
-  // debug out
-//  std::cout << "Check: " << rootOrbitName << ")" << newOrbitName << " on " << currentOrbitName << std::endl;
-
-// Check if root orbit found
-  if (orbitCompare == 0)
-  {
-    // left branch of the given orbit is not assigned
-    if (orbit->mLeftOrbit == NULL)
+    if(orbitName.compare((*it).mOrbitName) == 0)
     {
-      // Check if same given orbit could be already on right orbit branch
-      if (orbit->mRightOrbit != NULL) // First check if it is unequal NULL ptr
-      {
-        if (orbit->mRightOrbit->mOrbitName != newOrbitName) // check now if it is the one
-        {
-          // The given branch is not the one on right so we can assign it
-          orbit->mLeftOrbit = new COrbit; // Create orbit
-          orbit->mLeftOrbit->mOrbitName = newOrbitName;
-          orbit->mLeftOrbit->mLeftOrbit = NULL;
-          orbit->mLeftOrbit->mRightOrbit = NULL;
-
-          // debug out
-          std::cout << "L: Added: " << rootOrbitName << ") " << newOrbitName << std::endl;
-        }
-      }
-      else // The other branch is NULL so we can assign it
-      {
-        orbit->mLeftOrbit = new COrbit; // Create orbit
-        orbit->mLeftOrbit->mOrbitName = newOrbitName;
-        orbit->mLeftOrbit->mLeftOrbit = NULL;
-        orbit->mLeftOrbit->mRightOrbit = NULL;
-
-        // debug out
-        std::cout << "L: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
-      }
-    }
-    else if (orbit->mRightOrbit == NULL) // free branch so allocate
-    {
-      // Check if same given orbit could be already on left orbit branch
-      if (orbit->mLeftOrbit != NULL) // First check if it is unequal NULL ptr
-      {
-        if (orbit->mLeftOrbit->mOrbitName != newOrbitName) // check now if it is the one
-        {
-          // The given branch is not the one on left so we can assign it
-          orbit->mRightOrbit = new COrbit; // Create orbit
-          orbit->mRightOrbit->mOrbitName = newOrbitName;
-          orbit->mRightOrbit->mLeftOrbit = NULL;
-          orbit->mRightOrbit->mRightOrbit = NULL;
-
-          // debug out
-          std::cout << "R: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
-        }
-      }
-      else // The other branch is NULL so we can assign it
-      {
-        orbit->mRightOrbit = new COrbit; // Create orbit
-        orbit->mRightOrbit->mOrbitName = newOrbitName;
-        orbit->mRightOrbit->mLeftOrbit = NULL;
-        orbit->mRightOrbit->mRightOrbit = NULL;
-
-        // debug out
-        std::cout << "R: Added: " << rootOrbitName << ")" << newOrbitName << std::endl;
-      }
-    }
-    else
-    {
-      // Here the given orbit is already assigned
-      // nothing to be done
-//      std::cout << "Orbits assigned already!" << std::endl;
+      foundOrbit = &(*it);
     }
   }
-  else
-  {
-    // Here current root node didn't match, so only continue if the branches are assigned
-    if (orbit->mLeftOrbit != NULL)
-    {
-      // First go through left branch then through right
-      this->insertOrbit(rootOrbitName, newOrbitName, orbit->mLeftOrbit);
-    }
-    // Both ways to be followed when branch assigned
-    if (orbit->mRightOrbit != NULL)
-    {
-      this->insertOrbit(rootOrbitName, newOrbitName, orbit->mRightOrbit);
-    }
-  }
+
+  return(foundOrbit);
 }
 
 void COrbitMap::parseInputMap(std::istream &input)
@@ -182,6 +89,7 @@ void COrbitMap::parseInputMap(std::istream &input)
     }
     // now make tuple and add to map
     this->mInputMap.push_back(std::make_tuple(vecOrbitElements[0], vecOrbitElements[1]));
+    // debug
     //std::cout << vecOrbitElements[0] << ")" << vecOrbitElements[1] << std::endl;
   }
 }
@@ -215,51 +123,16 @@ void COrbitMap::printOrbitInputMap(void)
 
 void COrbitMap::constructOrbitMap(void)
 {
-// Walk through the map vector and create binary tree
-  for (unsigned j = 0; j < this->mInputMap.size(); j++)
+  // Walk through the map vector and create binary tree
+  for (unsigned i = 0; i < this->mInputMap.size(); i++)
   {
-    for (unsigned i = 0; i < this->mInputMap.size(); i++)
-    {
-      // Create Orbit search tree
-      this->insertOrbit(std::get < 0 > (this->mInputMap[i]), std::get < 1 > (this->mInputMap[i]));
-    }
+    // Create Orbit search tree
+    this->insertOrbit(std::get < 0 > (this->mInputMap[i]), std::get < 1 > (this->mInputMap[i]));
   }
-}
-
-COrbit* COrbitMap::searchOrbit(std::string orbitName, COrbit *orbit)
-{
-  return (NULL);
 }
 
 void COrbitMap::calcOrbitStat(void)
 {
-  this->maxOrbitMapDepth(this->mRootOrbit, 0);
-}
-
-void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
-{
-  int depthOrbit = 0;
-
-  if (orbit == NULL)
-  {
-    // No additional depth to add
-    depthOrbit = currentDepth;
-  }
-  else
-  {
-    // Store own orbit value
-    orbit->mNumOrbitConnections = currentDepth;
-
-    // Increase depth for next layer
-    depthOrbit = currentDepth + 1;
-    /* compute the depth of each subtree */
-    maxOrbitMapDepth(orbit->mLeftOrbit, depthOrbit);
-    maxOrbitMapDepth(orbit->mRightOrbit, depthOrbit);
-
-    std::cout << orbit->mOrbitName << ": " << orbit->mNumOrbitConnections << std::endl;
-    // Overall sum
-    this->mSumOfOrbitConnections += currentDepth;
-  }
 }
 
 int COrbitMap::getSumOfOrbitConnections() const

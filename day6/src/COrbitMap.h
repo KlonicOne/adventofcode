@@ -22,8 +22,9 @@ public:
 
   std::string mOrbitName;
   int mNumOrbitConnections;
-  COrbit *mLeftOrbit;
-  COrbit *mRightOrbit;
+  // References
+  std::vector<COrbit *> mParentOrbits;
+  std::vector<COrbit *> mChildOrbits;
 };
 
 class COrbitMap
@@ -41,27 +42,20 @@ public:
   // Get sum of all connections
   int getSumOfOrbitConnections() const;
 
-  // For individual access on Orbit Map
-  // Add element
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName);
   // Search specific element and get pointer handle
   COrbit *searchOrbit(std::string orbitName);
-  // Delete map, automatically done in destructor
-  void destroyOrbitMap();
 
   // Debuggin functions
   void printOrbitInputMap();
 
 
 private:
-  COrbit *mRootOrbit;
+  COrbit *mRootOrbit; // Used as anchor for COM
+  std::vector<COrbit> mOrbitMap; // Vector with all orbits
   std::vector<std::tuple<std::string, std::string>> mInputMap;
   int mSumOfOrbitConnections;
 
-  void destroyOrbitMap(COrbit *orbit);
-  void insertOrbit(std::string rootOrbitName, std::string newOrbitName, COrbit* orbit);
-  COrbit *searchOrbit(std::string orbitName, COrbit *orbit);
-  void maxOrbitMapDepth(COrbit* orbit, int currentDepth);
   void eraseNewLine(std::string &s);
 
 };
