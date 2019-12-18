@@ -48,6 +48,7 @@ public:
 
   // Debuggin functions
   void printOrbitInputMap();
+  void printOrbitMap(void);
 
 
 private:

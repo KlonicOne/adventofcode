@@ -21,11 +21,15 @@ int main()
   // Create the tree based in the read data
   orbitMap.constructOrbitMap();
 
+  // debug out the tree
+  orbitMap.printOrbitMap();
+
   // Get max depth
   orbitMap.calcOrbitStat();
   unsigned orbitSum = orbitMap.getSumOfOrbitConnections();
-  // out part 1
 
+
+  // out part 1
   std::cout << "Part 1: " << orbitSum << std::endl;
 
 }

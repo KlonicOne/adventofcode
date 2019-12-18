@@ -32,31 +32,48 @@ COrbit::~COrbit()
 
 void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName)
 {
-  if ((this->mRootOrbit == NULL) && !(rootOrbitName.compare("COM")))
-  {
-    // This is our root element
-    COrbit cOrbitParent;
-    this->mOrbitMap.emplace_back(cOrbitParent); // New element in vector for graph
-    this->mOrbitMap.back().mOrbitName = rootOrbitName; // Assign name
-    // Difference to other elements we store as root
-    this->mRootOrbit = &(this->mOrbitMap.back()); // Get reference on new COM root element
+  COrbit *foundOrbitRoot = this->searchOrbit(rootOrbitName); // Get reference on root from tree
+  // Check if the element is in the tree
 
-    // Now create second planet
-    COrbit cOrbitChild;
-    this->mOrbitMap.emplace_back(cOrbitChild); // New element in vector for graph
+  // If root is not in the tree create new root and add to tree with child
+  if (foundOrbitRoot == NULL)
+  {
+    // Create new orbits, for root and for child
+    COrbit *cOrbitRoot = new COrbit();
+    COrbit *cOrbitChild = new COrbit();
+
+    this->mOrbitMap.push_back(*cOrbitRoot); // New element in vector for graph
+    this->mOrbitMap.back().mOrbitName = rootOrbitName; // Assign name
+
+    // Difference to other elements we store as root
+    if (!rootOrbitName.compare("COM"))
+    {
+      this->mRootOrbit = &(this->mOrbitMap.back()); // Get reference on new COM root element
+    }
+
+    // Now create second planet, the child orbit
+    this->mOrbitMap.push_back(*cOrbitChild); // New element in vector for graph
     this->mOrbitMap.back().mOrbitName = newOrbitName; // Assign name
     // And assign parent
-    this->mOrbitMap.back().mParentOrbits.emplace_back(this->searchOrbit(rootOrbitName));
+    this->mOrbitMap.back().mParentOrbits.push_back(cOrbitRoot);
   }
+  // If root exists then add the child to the existing root element
   else
   {
+    // Only new child, here the assumption we will never get in input exactly same combination
+    COrbit *cOrbitChild = new COrbit();
 
+    // Now create second planet, the child orbit
+    this->mOrbitMap.push_back(*cOrbitChild); // New element in vector for graph
+    this->mOrbitMap.back().mOrbitName = newOrbitName; // Assign name
+    // And assign parent which is in the tree already
+    this->mOrbitMap.back().mParentOrbits.push_back(foundOrbitRoot);
   }
 }
 
 COrbit* COrbitMap::searchOrbit(std::string orbitName)
 {
-  COrbit *foundOrbit;
+  COrbit *foundOrbit = NULL;
   for(std::vector<COrbit>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
   {
     if(orbitName.compare((*it).mOrbitName) == 0)
@@ -118,6 +135,17 @@ void COrbitMap::printOrbitInputMap(void)
     std::string child = std::get < 1 > (this->mInputMap[i]);
 
     std::cout << root << ")" << child << std::endl;
+  }
+}
+
+void COrbitMap::printOrbitMap(void)
+{
+  for (std::vector<COrbit>::iterator itRoot = this->mOrbitMap.begin(); itRoot != this->mOrbitMap.end(); itRoot++)
+  {
+    for (std::vector<COrbit *>::iterator itChild = itRoot->mChildOrbits.begin(); itChild != itRoot->mChildOrbits.end(); itChild++)
+    {
+      std::cout << itRoot->mOrbitName << ")" << &(*itChild)->mOrbitName << std::endl;
+    }
   }
 }
 
