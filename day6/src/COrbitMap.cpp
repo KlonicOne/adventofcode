@@ -14,6 +14,7 @@ COrbitMap::COrbitMap()
 {
   this->mRootOrbit = NULL;
   this->mSumOfOrbitConnections = 0;
+  this->mSantaPathConnections = 0;
 }
 
 COrbitMap::~COrbitMap()
@@ -200,6 +201,58 @@ void COrbitMap::calcOrbitStat(void)
   this->maxOrbitMapDepth(this->mRootOrbit, 0);
 }
 
+int COrbitMap::getSantaPathConnections() const
+{
+  return (this->mSantaPathConnections);
+}
+
+void COrbitMap::calcSantaPath(void)
+{
+  std::string start = "YOU";
+  std::string target = "SAN";
+  std::string match = "";
+
+  std::vector < std::string > startToRootPath;
+  std::vector < std::string > targetToRootPath;
+  bool stringsMatching = true;
+
+  // Get the pathes
+  startToRootPath = getPathToOrbit(start);
+  targetToRootPath = getPathToOrbit(target);
+
+  // delete elements with COM
+  startToRootPath.erase(startToRootPath.end());
+  targetToRootPath.erase(targetToRootPath.end());
+
+  // Length of the vecs
+  unsigned i = startToRootPath.size();
+  unsigned j = targetToRootPath.size();
+
+  // Now check when element same and cut out the end in vector
+  while (stringsMatching)
+  {
+    // First not equal string found
+    stringsMatching = !(startToRootPath[i].compare(targetToRootPath[j]));
+
+    if (stringsMatching)
+    {
+      // We start from end to beginning less the COM which would match
+      i--;
+      j--;
+    }
+  }
+  match = startToRootPath[i+1]; // last match
+
+
+  std::cout << match << std::endl;
+  std::cout << i+1 << std::endl;
+  std::cout << j+1 << std::endl;
+
+  // Then count elements in vectors and add both
+  mSantaPathConnections = i+1 + j+1;
+
+}
+
 void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
 {
   int depthOrbit = 0;
@@ -231,4 +284,29 @@ void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
 int COrbitMap::getSumOfOrbitConnections() const
 {
   return mSumOfOrbitConnections;
+}
+
+std::vector<std::string> COrbitMap::getPathToOrbit(std::string orbitName)
+{
+  std::string currentOrbitName;
+  std::vector < std::string > pathToOrbit;
+  COrbit *startOrbit = this->searchOrbit(orbitName);
+
+  // debug
+  std::cout << startOrbit->mOrbitName;
+
+  while (currentOrbitName.compare("COM"))
+  {
+    // We have only one parent in tree
+    startOrbit = startOrbit->mParentOrbits.at(0); // Next parent
+    currentOrbitName = startOrbit->mOrbitName; // Get name
+    pathToOrbit.push_back(currentOrbitName); // Add on string path
+
+    // debug out
+    std::cout << "<-" << currentOrbitName;
+  }
+
+  // debug
+  std::cout << std::endl;
+  return (pathToOrbit);
 }

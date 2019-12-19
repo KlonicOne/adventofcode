@@ -39,8 +39,11 @@ public:
   void constructOrbitMap(void);
   // Get max orbit depth
   void calcOrbitStat(void);
+  // Calc Santa Path
+  void calcSantaPath(void);
   // Get sum of all connections
   int getSumOfOrbitConnections() const;
+  int getSantaPathConnections() const;
 
   void insertOrbit(std::string rootOrbitName, std::string newOrbitName);
   // Search specific element and get pointer handle
@@ -56,9 +59,11 @@ private:
   std::vector<COrbit *> mOrbitMap; // Vector with all orbits
   std::vector<std::tuple<std::string, std::string>> mInputMap;
   int mSumOfOrbitConnections;
+  int mSantaPathConnections;
 
   void maxOrbitMapDepth(COrbit *orbit, int currentDepth);
   void eraseNewLine(std::string &s);
+  std::vector<std::string> getPathToOrbit(std::string orbitName);
 
 };
 

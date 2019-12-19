@@ -26,11 +26,18 @@ int main()
 
   // Get max depth
   orbitMap.calcOrbitStat();
-  unsigned orbitSum = orbitMap.getSumOfOrbitConnections();
-
+  int orbitSum = orbitMap.getSumOfOrbitConnections();
 
   // out part 1
   std::cout << "Part 1: " << orbitSum << std::endl;
+
+  // Calc Santa path
+  orbitMap.calcSantaPath();
+  int SanPath = orbitMap.getSantaPathConnections();
+
+  // out part 2
+  std::cout << "Part 2: " << SanPath << std::endl;
+
 
 }
 
