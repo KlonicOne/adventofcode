@@ -57,8 +57,8 @@ void CPaintRobot::progressPaintRobotCode(void)
 void CPaintRobot::setCallBackFunctions(void)
 {
   // The call back functions are called on the intcode computer input and output
-  mIntComputer->setInputCallBackFunction(this->getCameraInput);
-  mIntComputer->setOutputCallBackFunction(this->setIntCodeOutput);
+  mIntComputer->setInputCallBackFunction(CPaintRobot::getCameraInput);
+  mIntComputer->setOutputCallBackFunction(CPaintRobot::setIntCodeOutput);
 }
 
 void CPaintRobot::setIntCodeOutput(long long outVal)
