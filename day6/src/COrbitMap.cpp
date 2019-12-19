@@ -91,15 +91,17 @@ void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName)
     cOrbitChild->mOrbitName = newOrbitName; // Assign name
     cOrbitChild->mParentOrbits.push_back(cOrbitRoot); // Root on found child
   }
-  std::cout << rootOrbitName << ")" << newOrbitName << std::endl;
-  printOrbitMap();
-  std::cout << std::endl;
+
+  // debug out
+//  std::cout << rootOrbitName << ")" << newOrbitName << std::endl;
+//  printOrbitMap();
+//  std::cout << std::endl;
 }
 
 COrbit* COrbitMap::searchOrbit(std::string orbitName)
 {
   COrbit *foundOrbit = NULL;
-  for (std::vector<COrbit *>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
+  for (std::vector<COrbit*>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
   {
     if (orbitName.compare((*it)->mOrbitName) == 0)
     {
@@ -169,13 +171,17 @@ void COrbitMap::printOrbitMap(void)
   for (itRoot = this->mOrbitMap.begin(); itRoot != this->mOrbitMap.end(); itRoot++)
   {
     std::cout << "Root: " << (*itRoot)->mOrbitName;
+    std::cout << ", connections: " << (*itRoot)->mNumOrbitConnections;
     std::cout << ", parent size: " << (*itRoot)->mParentOrbits.size();
-    std::cout << ", child size: " << (*itRoot)->mChildOrbits.size() << std::endl;
+    std::cout << ", child size: " << (*itRoot)->mChildOrbits.size() << ", childs: ";
 
-//    for (std::vector<COrbit *>::iterator itChild = itRoot->mChildOrbits.begin(); itChild != itRoot->mChildOrbits.end(); itChild++)
-//    {
-//      std::cout << itRoot->mOrbitName << ")" << &(*itChild)->mOrbitName << std::endl;
-//    }
+    for (std::vector<COrbit*>::iterator itChild = (*itRoot)->mChildOrbits.begin(); itChild != (*itRoot)->mChildOrbits.end();
+        itChild++)
+    {
+      std::cout << (*itChild)->mOrbitName << ", ";
+    }
+
+    std::cout << std::endl;
   }
 }
 
@@ -191,6 +197,35 @@ void COrbitMap::constructOrbitMap(void)
 
 void COrbitMap::calcOrbitStat(void)
 {
+  this->maxOrbitMapDepth(this->mRootOrbit, 0);
+}
+
+void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
+{
+  int depthOrbit = 0;
+
+  if (orbit == NULL)
+  {
+    // No additional depth to add
+    depthOrbit = currentDepth;
+  }
+  else
+  {
+    // Store own orbit value
+    orbit->mNumOrbitConnections = currentDepth;
+    // Increase depth for next layer
+    depthOrbit = currentDepth + 1;
+    // Get each child tree
+    std::vector<COrbit*>::iterator itChild; // iterator
+    for (itChild = orbit->mChildOrbits.begin(); itChild != orbit->mChildOrbits.end(); itChild++)
+    {
+      maxOrbitMapDepth(*itChild, depthOrbit);
+    }
+
+    std::cout << orbit->mOrbitName << ": " << orbit->mNumOrbitConnections << std::endl;
+    // Overall sum
+    this->mSumOfOrbitConnections += currentDepth;
+  }
 }
 
 int COrbitMap::getSumOfOrbitConnections() const

@@ -57,6 +57,7 @@ private:
   std::vector<std::tuple<std::string, std::string>> mInputMap;
   int mSumOfOrbitConnections;
 
+  void maxOrbitMapDepth(COrbit *orbit, int currentDepth);
   void eraseNewLine(std::string &s);
 
 };
