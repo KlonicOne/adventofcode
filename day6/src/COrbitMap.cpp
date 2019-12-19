@@ -33,56 +33,81 @@ COrbit::~COrbit()
 void COrbitMap::insertOrbit(std::string rootOrbitName, std::string newOrbitName)
 {
   COrbit *foundOrbitRoot = this->searchOrbit(rootOrbitName); // Get reference on root from tree
-  // Check if the element is in the tree
+  COrbit *foundOrbitChild = this->searchOrbit(newOrbitName); // Get reference on child from tree
 
-  // If root is not in the tree create new root and add to tree with child
-  if (foundOrbitRoot == NULL)
+  // Both elements are existing, so only new connections
+  if ((foundOrbitRoot != 0) && (foundOrbitChild != NULL))
   {
-    // Create new orbits, for root and for child
-    COrbit *cOrbitRoot = new COrbit();
-    COrbit *cOrbitChild = new COrbit();
+    foundOrbitRoot->mChildOrbits.push_back(foundOrbitChild); // Child on root
+    foundOrbitChild->mParentOrbits.push_back(foundOrbitRoot); // Root on child
+  }
+  // Root not in tree but child
+  else if ((foundOrbitRoot == NULL) && (foundOrbitChild != NULL))
+  {
+    COrbit *cOrbitRoot = new COrbit(); // New root element
 
-    this->mOrbitMap.push_back(*cOrbitRoot); // New element in vector for graph
-    this->mOrbitMap.back().mOrbitName = rootOrbitName; // Assign name
+    // Root creation
+    this->mOrbitMap.push_back(cOrbitRoot); // New element in vector for graph
+    cOrbitRoot->mOrbitName = rootOrbitName; // Assign name
+    cOrbitRoot->mChildOrbits.push_back(foundOrbitChild); // Child connection
+    foundOrbitChild->mParentOrbits.push_back(cOrbitRoot); // Root on found child
 
-    // Difference to other elements we store as root
+    // Special treatment of COM  we store as root reference
     if (!rootOrbitName.compare("COM"))
     {
-      this->mRootOrbit = &(this->mOrbitMap.back()); // Get reference on new COM root element
+      this->mRootOrbit = cOrbitRoot; // Get reference on new COM root element
     }
-
-    // Now create second planet, the child orbit
-    this->mOrbitMap.push_back(*cOrbitChild); // New element in vector for graph
-    this->mOrbitMap.back().mOrbitName = newOrbitName; // Assign name
-    // And assign parent
-    this->mOrbitMap.back().mParentOrbits.push_back(cOrbitRoot);
   }
-  // If root exists then add the child to the existing root element
+  // Root in tree but new child
+  else if ((foundOrbitRoot != NULL) && (foundOrbitChild == NULL))
+  {
+    COrbit *cOrbitChild = new COrbit(); // New child element
+
+    // Child creation
+    this->mOrbitMap.push_back(cOrbitChild); // New element in vector for graph
+    cOrbitChild->mOrbitName = newOrbitName; // Assign name
+    cOrbitChild->mParentOrbits.push_back(foundOrbitRoot); // Parent connection
+    foundOrbitRoot->mChildOrbits.push_back(cOrbitChild); // Root on found child
+  }
+  // Nothing there all new
   else
   {
-    // Only new child, here the assumption we will never get in input exactly same combination
-    COrbit *cOrbitChild = new COrbit();
+    COrbit *cOrbitRoot = new COrbit(); // New root element
+    COrbit *cOrbitChild = new COrbit(); // New child element
 
-    // Now create second planet, the child orbit
-    this->mOrbitMap.push_back(*cOrbitChild); // New element in vector for graph
-    this->mOrbitMap.back().mOrbitName = newOrbitName; // Assign name
-    // And assign parent which is in the tree already
-    this->mOrbitMap.back().mParentOrbits.push_back(foundOrbitRoot);
+    // Root creation
+    this->mOrbitMap.push_back(cOrbitRoot); // New element in vector for graph
+    cOrbitRoot->mOrbitName = rootOrbitName; // Assign name
+    cOrbitRoot->mChildOrbits.push_back(cOrbitChild); // Child connection
+
+    // Special treatment of COM  we store as root reference
+    if (!rootOrbitName.compare("COM"))
+    {
+      this->mRootOrbit = cOrbitRoot; // Get reference on new COM root element
+    }
+
+    // Child creation
+    this->mOrbitMap.push_back(cOrbitChild); // New element in vector for graph
+    cOrbitChild->mOrbitName = newOrbitName; // Assign name
+    cOrbitChild->mParentOrbits.push_back(cOrbitRoot); // Root on found child
   }
+  std::cout << rootOrbitName << ")" << newOrbitName << std::endl;
+  printOrbitMap();
+  std::cout << std::endl;
 }
 
 COrbit* COrbitMap::searchOrbit(std::string orbitName)
 {
   COrbit *foundOrbit = NULL;
-  for(std::vector<COrbit>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
+  for (std::vector<COrbit *>::iterator it = this->mOrbitMap.begin(); it != this->mOrbitMap.end(); it++)
   {
-    if(orbitName.compare((*it).mOrbitName) == 0)
+    if (orbitName.compare((*it)->mOrbitName) == 0)
     {
-      foundOrbit = &(*it);
+      foundOrbit = *it;
     }
   }
 
-  return(foundOrbit);
+  return (foundOrbit);
 }
 
 void COrbitMap::parseInputMap(std::istream &input)
@@ -140,12 +165,17 @@ void COrbitMap::printOrbitInputMap(void)
 
 void COrbitMap::printOrbitMap(void)
 {
-  for (std::vector<COrbit>::iterator itRoot = this->mOrbitMap.begin(); itRoot != this->mOrbitMap.end(); itRoot++)
+  std::vector<COrbit*>::iterator itRoot; // iterator
+  for (itRoot = this->mOrbitMap.begin(); itRoot != this->mOrbitMap.end(); itRoot++)
   {
-    for (std::vector<COrbit *>::iterator itChild = itRoot->mChildOrbits.begin(); itChild != itRoot->mChildOrbits.end(); itChild++)
-    {
-      std::cout << itRoot->mOrbitName << ")" << &(*itChild)->mOrbitName << std::endl;
-    }
+    std::cout << "Root: " << (*itRoot)->mOrbitName;
+    std::cout << ", parent size: " << (*itRoot)->mParentOrbits.size();
+    std::cout << ", child size: " << (*itRoot)->mChildOrbits.size() << std::endl;
+
+//    for (std::vector<COrbit *>::iterator itChild = itRoot->mChildOrbits.begin(); itChild != itRoot->mChildOrbits.end(); itChild++)
+//    {
+//      std::cout << itRoot->mOrbitName << ")" << &(*itChild)->mOrbitName << std::endl;
+//    }
   }
 }
 

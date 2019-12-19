@@ -53,7 +53,7 @@ public:
 
 private:
   COrbit *mRootOrbit; // Used as anchor for COM
-  std::vector<COrbit> mOrbitMap; // Vector with all orbits
+  std::vector<COrbit *> mOrbitMap; // Vector with all orbits
   std::vector<std::tuple<std::string, std::string>> mInputMap;
   int mSumOfOrbitConnections;
 
