@@ -222,7 +222,7 @@ void COrbitMap::maxOrbitMapDepth(COrbit *orbit, int currentDepth)
       maxOrbitMapDepth(*itChild, depthOrbit);
     }
 
-    std::cout << orbit->mOrbitName << ": " << orbit->mNumOrbitConnections << std::endl;
+    //std::cout << orbit->mOrbitName << ": " << orbit->mNumOrbitConnections << std::endl;
     // Overall sum
     this->mSumOfOrbitConnections += currentDepth;
   }
