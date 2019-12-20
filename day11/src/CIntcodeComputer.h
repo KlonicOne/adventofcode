@@ -75,6 +75,7 @@ private:
 
   long long getParameterValue(long long mode, long long pos, long long relBase, std::vector<long long>* vectorIntcode);
   long long getWritePos(long long mode, long long pos, long long relBase);
+  void eraseNewLine(std::string &s);
 };
 
 #endif /* CINTCODECOMPUTER_H_ */

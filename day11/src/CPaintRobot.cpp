@@ -50,15 +50,18 @@ void CPaintRobot::setIncodeComputer(CIntcodeComputer *IntComp)
 
 void CPaintRobot::progressPaintRobotCode(void)
 {
+  // Get the int code in which shall be prepared
+  this->mCodeVector = mIntComputer->getIntCodePrg();
+
   // Progress new code vector
-  mIntComputer->progressVectorCode(mCodeVector);
+  mIntComputer->progressVectorCode(this->mCodeVector);
 }
 
 void CPaintRobot::setCallBackFunctions(void)
 {
   // The call back functions are called on the intcode computer input and output
-  mIntComputer->setInputCallBackFunction(CPaintRobot::getCameraInput);
-  mIntComputer->setOutputCallBackFunction(CPaintRobot::setIntCodeOutput);
+//  mIntComputer->setInputCallBackFunction(CPaintRobot::getCameraInput);
+//  mIntComputer->setOutputCallBackFunction(CPaintRobot::setIntCodeOutput);
 }
 
 void CPaintRobot::setIntCodeOutput(long long outVal)

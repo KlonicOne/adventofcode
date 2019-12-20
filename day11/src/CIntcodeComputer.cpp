@@ -18,7 +18,7 @@ using namespace std;
 
 CIntcodeComputer::CIntcodeComputer()
 {
-  // TODO Auto-generated constructor stub
+  this->mProgramSizeInputCode = 0;
 
 }
 
@@ -34,6 +34,9 @@ void CIntcodeComputer::parseVectorCode(istream &input)
   // Iterate through given istream and extract code as vector if ints
   while (getline(input, codeElement, ','))
   {
+    // delete new line at the end
+    this->eraseNewLine(codeElement);
+
     this->mIntCodeProgram.push_back(stoll(codeElement));
   }
 
@@ -190,8 +193,28 @@ long long CIntcodeComputer::getParameterValue(long long mode, long long pos, lon
   return value;
 }
 
-long long CIntcodeComputer::opcodeAdd(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::getWritePos(long long mode, long long pos, long long relBase)
+{
+  long long value;
+
+  // get Values for the opcode
+  if (mode == MODE_IMMEDIATE)
+  {
+    value = pos;
+  }
+  else if (mode == MODE_RELATIVE)
+  {
+    value = pos + relBase;
+  }
+  else
+  {
+    value = pos;
+  }
+
+  return value;
+}
+
+long long CIntcodeComputer::opcodeAdd(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
@@ -213,8 +236,7 @@ long long CIntcodeComputer::opcodeAdd(std::vector<long long> *vectorIntcode, lon
   return (4);
 }
 
-long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long modePar1 = (long long) (mode % 10);
   long long modePar2 = (long long) ((mode / 10) % 10);
@@ -235,14 +257,18 @@ long long CIntcodeComputer::opcodeMul(std::vector<long long> *vectorIntcode, lon
   return (4);
 }
 
-long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long modePar1 = (long long) (mode % 10);
   long long writePos = vectorIntcode->at(pos + 1);
   long long inputValue = 0;
-  // Get in value
-  inputValue = this->inputCallBackFunction();
+
+  // Get in value over callback function
+  //inputValue = this->inputCallBackFunction();
+
+  // Get input value over std in
+  std::cout << "In: " << std::endl;
+  std::cin >> inputValue;
 
   // Operation
   // get Values for the opcode
@@ -263,20 +289,21 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
   return (2);
 }
 
-long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long modePar1 = (long long) (mode % 10);
   long long outPos = vectorIntcode->at(pos + 1);
 
-  // get Values for the opcode
-  this->outputCallBackFunction(getParameterValue(modePar1, outPos, relBase, vectorIntcode));
+  // get Values for the opcode and give it to call back function
+//  this->outputCallBackFunction(getParameterValue(modePar1, outPos, relBase, vectorIntcode));
+
+  // Still use standard out here
+  std::cout << "Out: " << getParameterValue(modePar1, outPos, relBase, vectorIntcode) << std::endl;
 
   return (2);
 }
 
-long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long retPos = 3;
   long long modePar1 = (long long) (mode % 10);
@@ -298,8 +325,7 @@ long long CIntcodeComputer::opcodeJiT(std::vector<long long> *vectorIntcode, lon
   return (retPos);
 }
 
-long long CIntcodeComputer::opcodeJiF(std::vector<long long> *vectorIntcode, long long pos, long long relBase,
-    long long mode)
+long long CIntcodeComputer::opcodeJiF(std::vector<long long> *vectorIntcode, long long pos, long long relBase, long long mode)
 {
   long long retPos = 3;
   long long modePar1 = (long long) (mode % 10);
@@ -380,8 +406,8 @@ long long CIntcodeComputer::opcodeEquals(std::vector<long long> *vectorIntcode, 
   return (4);
 }
 
-long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos,
-    long long *relBase, long long mode)
+long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIntcode, long long pos, long long *relBase,
+    long long mode)
 {
   long long modePar1 = (long long) (mode % 10);
 
@@ -407,38 +433,17 @@ long long CIntcodeComputer::opcodeRelBaseAdjust(std::vector<long long> *vectorIn
 
 std::vector<long long> CIntcodeComputer::getIntCodePrg(void)
 {
-  return(this->mIntCodeProgram);
+  return (this->mIntCodeProgram);
 }
 
 std::vector<long long> CIntcodeComputer::getProgressedIntCodePrg(void)
 {
-  return(this->mProgressedIntCodeProgram);
+  return (this->mProgressedIntCodeProgram);
 }
 
 void CIntcodeComputer::resizeIntCodePrg(long long newSize)
 {
   this->mIntCodeProgram.resize(newSize);
-}
-
-long long CIntcodeComputer::getWritePos(long long mode, long long pos, long long relBase)
-{
-  long long value;
-
-  // get Values for the opcode
-  if (mode == MODE_IMMEDIATE)
-  {
-    value = pos;
-  }
-  else if (mode == MODE_RELATIVE)
-  {
-    value = pos + relBase;
-  }
-  else
-  {
-    value = pos;
-  }
-
-  return value;
 }
 
 long long CIntcodeComputer::getProgramSizeInputCode()
@@ -458,4 +463,20 @@ void CIntcodeComputer::setInputCallBackFunction(std::function<long long(void)> f
 void CIntcodeComputer::setOutputCallBackFunction(std::function<void(long long)> fp)
 {
   this->outputCallBackFunction = std::bind(fp, std::placeholders::_1);
+}
+
+void CIntcodeComputer::eraseNewLine(std::string &s)
+{
+  unsigned pos;
+
+  // Windows
+  if ((pos = s.find('\n')) <= s.size())
+  {
+    s.erase(pos);
+  }
+  // Linux
+  if ((pos = s.find('\r')) <= s.size())
+  {
+    s.erase(pos);
+  }
 }
