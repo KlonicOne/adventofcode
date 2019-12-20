@@ -36,9 +36,9 @@ void CPaintRobot::readInputCode(istream &input)
 long long CPaintRobot::getCameraInput(void)
 {
   long long colorCurrentPos;
-  // Color of current position of paint robot
-  colorCurrentPos = this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1
-      > (this->mCurrentPaintBotPos)];
+
+  std::cout << "In: " << std::endl;
+  std::cin >> colorCurrentPos;
 
   return (colorCurrentPos);
 }
@@ -60,23 +60,25 @@ void CPaintRobot::progressPaintRobotCode(void)
 void CPaintRobot::setIntCodeOutput(long long outVal)
 {
   // The values iterate color and movement
-  switch (this->mTypeOfOutputValue)
-  {
-    case (e_color): // Color given paint current position in map
-    {
-      this->colorTheCurrentPosition(outVal);
-      this->mTypeOfOutputValue = e_turn; // next time turn robot
-      break;
-    }
-    case (e_turn): // Turn given call function for movement
-    {
-      this->moveThePaintRobot(outVal);
-      this->mTypeOfOutputValue = e_color; // next time color
-      break;
-    }
-    default:
-      break;
-  }
+//  switch (this->mTypeOfOutputValue)
+//  {
+//    case (e_color): // Color given paint current position in map
+//    {
+//      this->colorTheCurrentPosition(outVal);
+//      this->mTypeOfOutputValue = e_turn; // next time turn robot
+//      break;
+//    }
+//    case (e_turn): // Turn given call function for movement
+//    {
+//      this->moveThePaintRobot(outVal);
+//      this->mTypeOfOutputValue = e_color; // next time color
+//      break;
+//    }
+//    default:
+//      break;
+//  }
+
+  std::cout << "Out: " << outVal << std::endl;
 }
 
 CIntcodeComputer* CPaintRobot::getIntcodeComputer(void)

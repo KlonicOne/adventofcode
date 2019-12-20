@@ -264,11 +264,11 @@ long long CIntcodeComputer::opcodeIn(std::vector<long long> *vectorIntcode, long
   long long inputValue = 0;
 
   // Get in value over callback function
-  //inputValue = this->inputCallBackFunction();
+  inputValue = this->inputCallBackFunction();
 
   // Get input value over std in
-  std::cout << "In: " << std::endl;
-  std::cin >> inputValue;
+//  std::cout << "In: " << std::endl;
+//  std::cin >> inputValue;
 
   // Operation
   // get Values for the opcode
@@ -295,10 +295,10 @@ long long CIntcodeComputer::opcodeOut(std::vector<long long> *vectorIntcode, lon
   long long outPos = vectorIntcode->at(pos + 1);
 
   // get Values for the opcode and give it to call back function
-//  this->outputCallBackFunction(getParameterValue(modePar1, outPos, relBase, vectorIntcode));
+  this->outputCallBackFunction(getParameterValue(modePar1, outPos, relBase, vectorIntcode));
 
   // Still use standard out here
-  std::cout << "Out: " << getParameterValue(modePar1, outPos, relBase, vectorIntcode) << std::endl;
+//  std::cout << "Out: " << getParameterValue(modePar1, outPos, relBase, vectorIntcode) << std::endl;
 
   return (2);
 }
