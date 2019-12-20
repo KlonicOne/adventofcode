@@ -6,6 +6,7 @@
 #include <string>
 #include <math.h>
 #include <fstream>
+#include <functional>
 #include "CIntcodeComputer.h"
 #include "CPaintRobot.h"
 
@@ -14,11 +15,12 @@ using namespace std;
 int main()
 {
   std::ifstream ifile("input.txt");
-  auto callbackIn = std::bind(&CPaintRobot::getCameraInput, CPaintRobot());
-  auto callbackOut = std::bind(&CPaintRobot::setIntCodeOutput, CPaintRobot(), std::placeholders::_1);
 
   CIntcodeComputer intcodeComp;
   CPaintRobot paintRobot;
+
+  auto callbackIn = std::bind(&CPaintRobot::getCameraInput, &paintRobot);
+  auto callbackOut = std::bind(&CPaintRobot::setIntCodeOutput, &paintRobot, std::placeholders::_1);
 
   // Set brain of paint robot
   paintRobot.setIncodeComputer(&intcodeComp);
