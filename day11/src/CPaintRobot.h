@@ -35,8 +35,8 @@ public:
   virtual ~CPaintRobot();
 
   void readInputCode(istream &input);
-  void setCallBackFunctions(void);
 
+  // These two functions to be used as callbacks on input and output for intcomp
   long long getCameraInput(void);
   void setIntCodeOutput(long long outVal);
 

@@ -57,13 +57,6 @@ void CPaintRobot::progressPaintRobotCode(void)
   mIntComputer->progressVectorCode(this->mCodeVector);
 }
 
-void CPaintRobot::setCallBackFunctions(void)
-{
-  // The call back functions are called on the intcode computer input and output
-//  mIntComputer->setInputCallBackFunction(CPaintRobot::getCameraInput);
-//  mIntComputer->setOutputCallBackFunction(CPaintRobot::setIntCodeOutput);
-}
-
 void CPaintRobot::setIntCodeOutput(long long outVal)
 {
   // The values iterate color and movement
