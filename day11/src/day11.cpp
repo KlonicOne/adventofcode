@@ -35,7 +35,11 @@ int main()
   // Progress the program for the color robot
   paintRobot.progressPaintRobotCode();
 
+  paintRobot.printPathOfPaintBot();
+
   // Output
+  int coloredFields = paintRobot.getNumberOfColoredFields();
+  std::cout << "Colored fields: " << coloredFields << std::endl;
 
 }
 

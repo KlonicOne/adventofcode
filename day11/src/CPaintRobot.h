@@ -12,8 +12,8 @@
 #include <tuple>
 #include "CIntcodeComputer.h"
 
-#define YDIM 1000
-#define XDIM 1000
+#define YDIM 200
+#define XDIM 200
 
 typedef enum t_OutputValueType
 {
@@ -45,6 +45,10 @@ public:
   void setIncodeComputer(CIntcodeComputer *IntComp);
   CIntcodeComputer* getIntcodeComputer(void);
 
+  int getNumberOfColoredFields(void);
+
+  void printPathOfPaintBot(void);
+
 private:
   CIntcodeComputer *mIntComputer; // Reference to the brain, the intcode computer
   std::vector<long long> mCodeVector; // Store the code program
@@ -53,7 +57,7 @@ private:
   long long mYMapDim = YDIM;
   long long mXMapDim = XDIM;
   tuple<long long, long long, t_robotOrientation> mCurrentPaintBotPos;
-  std::vector<tuple<long long, long long>> mPathOfPaintBot;
+  std::vector<tuple<long long, long long, int>> mPathOfPaintBot;
   long long mColorMap[XDIM][YDIM];
 
   // The output value alternate between color and turning direction this tells the type
