@@ -35,7 +35,8 @@ int main()
   // Progress the program for the color robot
   paintRobot.progressPaintRobotCode();
 
-  paintRobot.printPathOfPaintBot();
+  // Calc statistics for colored field
+  paintRobot.calcPaintedFieldStat();
 
   // Output
   int coloredFields = paintRobot.getNumberOfColoredFields();

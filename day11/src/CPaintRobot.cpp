@@ -19,7 +19,7 @@ CPaintRobot::CPaintRobot()
   this->mNumberOfColoredFields = 0;
   // We set the bot in the middle of the map
   this->mCurrentPaintBotPos = std::make_tuple(XDIM / 2, YDIM / 2, e_up);
-  this->mPathOfPaintBot.push_back(std::make_tuple(XDIM / 2, YDIM / 2, 0));
+  this->mPathOfPaintBot.push_back(std::make_tuple(XDIM / 2, YDIM / 2));
 }
 
 CPaintRobot::~CPaintRobot()
@@ -39,7 +39,8 @@ long long CPaintRobot::getCameraInput(void)
 {
   long long colorCurrentPos;
 
-  colorCurrentPos = this->mColorMap[std::get<0>(this->mCurrentPaintBotPos)][std::get<1>(this->mCurrentPaintBotPos)];
+  colorCurrentPos = this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1
+      > (this->mCurrentPaintBotPos)][0];
 
 //  std::cout << "In: " << std::endl;
 //  std::cin >> colorCurrentPos;
@@ -69,20 +70,20 @@ void CPaintRobot::setIntCodeOutput(long long outVal)
 // The values iterate color and movement
   switch (this->mTypeOfOutputValue)
   {
-  case (e_color): // Color given paint current position in map
-  {
-    this->colorTheCurrentPosition(outVal);
-    this->mTypeOfOutputValue = e_turn; // next time turn robot
-    break;
-  }
-  case (e_turn): // Turn given call function for movement
-  {
-    this->moveThePaintRobot(outVal);
-    this->mTypeOfOutputValue = e_color; // next time color
-    break;
-  }
-  default:
-    break;
+    case (e_color): // Color given paint current position in map
+    {
+      this->colorTheCurrentPosition(outVal);
+      this->mTypeOfOutputValue = e_turn; // next time turn robot
+      break;
+    }
+    case (e_turn): // Turn given call function for movement
+    {
+      this->moveThePaintRobot(outVal);
+      this->mTypeOfOutputValue = e_color; // next time color
+      break;
+    }
+    default:
+      break;
   }
 }
 
@@ -93,7 +94,8 @@ CIntcodeComputer* CPaintRobot::getIntcodeComputer(void)
 
 void CPaintRobot::colorTheCurrentPosition(long long color)
 {
-  long long currentColor = this->mColorMap[std::get<0>(this->mCurrentPaintBotPos)][std::get<1>(this->mCurrentPaintBotPos)];
+  long long currentColor = this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1
+      > (this->mCurrentPaintBotPos)][0];
   long long newColor = color;
 
 //  std::cout << color << ", " << currentColor << std::endl;
@@ -101,29 +103,27 @@ void CPaintRobot::colorTheCurrentPosition(long long color)
   // Check if the field need to be colored
   if (currentColor != newColor)
   {
-    // Change color
-    this->mColorMap[std::get<0>(this->mCurrentPaintBotPos)][std::get<1>(this->mCurrentPaintBotPos)] = color;
-    // Store in the path if color was changed
-    unsigned lastPos = this->mPathOfPaintBot.size() - 1;
-    std::get<2>(this->mPathOfPaintBot[lastPos]) = 1;
+    // Change color and count up how often the field was colored
+    this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][0] = color;
+    this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][1]++;
   }
 }
 
 void CPaintRobot::moveThePaintRobot(long long turnDirection)
 {
-  long long nextXPos = get<0>(this->mCurrentPaintBotPos);
-  long long nextYPos = get<1>(this->mCurrentPaintBotPos);
-  t_robotOrientation nextOrientation = get<2>(this->mCurrentPaintBotPos);
+  long long nextXPos = get < 0 > (this->mCurrentPaintBotPos);
+  long long nextYPos = get < 1 > (this->mCurrentPaintBotPos);
+  t_robotOrientation nextOrientation = get < 2 > (this->mCurrentPaintBotPos);
 
   if (turnDirection == 0) // left turn
   {
     // first turn
-    nextOrientation = getNextOrientation(get<2>(this->mCurrentPaintBotPos), turnDirection);
+    nextOrientation = getNextOrientation(get < 2 > (this->mCurrentPaintBotPos), turnDirection);
   }
   else if (turnDirection == 1) // right turn
   {
     // first turn
-    nextOrientation = getNextOrientation(get<2>(this->mCurrentPaintBotPos), turnDirection);
+    nextOrientation = getNextOrientation(get < 2 > (this->mCurrentPaintBotPos), turnDirection);
   }
   else
   {
@@ -133,35 +133,35 @@ void CPaintRobot::moveThePaintRobot(long long turnDirection)
   // then move
   switch (nextOrientation)
   {
-  case (e_up):
-  {
-    nextYPos = nextYPos - 1;
-    break;
-  }
-  case (e_down):
-  {
-    nextYPos = nextYPos + 1;
-    break;
-  }
-  case (e_left):
-  {
-    nextXPos = nextXPos - 1;
-    break;
-  }
-  case (e_right):
-  {
-    nextXPos = nextXPos + 1;
-    break;
-  }
+    case (e_up):
+    {
+      nextYPos = nextYPos - 1;
+      break;
+    }
+    case (e_down):
+    {
+      nextYPos = nextYPos + 1;
+      break;
+    }
+    case (e_left):
+    {
+      nextXPos = nextXPos - 1;
+      break;
+    }
+    case (e_right):
+    {
+      nextXPos = nextXPos + 1;
+      break;
+    }
   }
 
   // set new position for the robot
-  std::get<0>(this->mCurrentPaintBotPos) = nextXPos;
-  std::get<1>(this->mCurrentPaintBotPos) = nextYPos;
-  std::get<2>(this->mCurrentPaintBotPos) = nextOrientation;
+  std::get < 0 > (this->mCurrentPaintBotPos) = nextXPos;
+  std::get < 1 > (this->mCurrentPaintBotPos) = nextYPos;
+  std::get < 2 > (this->mCurrentPaintBotPos) = nextOrientation;
 
   // Store path of robot
-  this->mPathOfPaintBot.push_back(std::make_tuple(nextXPos, nextYPos, 0)); // new position and color not changed
+  this->mPathOfPaintBot.push_back(std::make_tuple(nextXPos, nextYPos)); // new position and color not changed
 
   // Debug out the position to check how often we hit same position
 //  std::cout << "RoPos: " << nextXPos << ", " << nextYPos << ", " << nextOrientation << std::endl;
@@ -174,12 +174,28 @@ int CPaintRobot::getNumberOfColoredFields(void)
 
 void CPaintRobot::printPathOfPaintBot(void)
 {
-  std::vector<std::tuple<long long, long long, int>>::iterator it;
+  std::vector<std::tuple<long long, long long>>::iterator it;
 
   for (it = this->mPathOfPaintBot.begin(); it != this->mPathOfPaintBot.end(); it++)
   {
-    std::cout << "RoPath: " << get<0>(*it) << ", " << get<1>(*it) << ", " << get<2>(*it) << std::endl;
+    std::cout << "RoPath: " << get < 0 > (*it) << ", " << get < 1 > (*it) << std::endl;
   }
+}
+
+void CPaintRobot::calcPaintedFieldStat(void)
+{
+  // go through map and check how many fields are colored at least once
+  for (unsigned i = 0; i < this->mXMapDim; i++)
+  {
+    for (unsigned j = 0; j < this->mYMapDim; j++)
+    {
+      if (this->mColorMap[i][j][1] != 0) // at least colored once
+      {
+        this->mNumberOfColoredFields++;
+      }
+    }
+  }
+
 }
 
 t_robotOrientation CPaintRobot::getNextOrientation(t_robotOrientation inOrientation, long long turnDirection)
@@ -188,70 +204,70 @@ t_robotOrientation CPaintRobot::getNextOrientation(t_robotOrientation inOrientat
 
   switch (inOrientation)
   {
-  case (e_up):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_up):
     {
-      retValue = e_left;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_left;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_right;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    else if (turnDirection == 1) // right
+    case (e_left):
     {
-      retValue = e_right;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_down;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_up;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    else
+    case (e_right):
     {
-      std::cout << "Invalid turn!" << std::endl;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_up;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_down;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    break;
-  }
-  case (e_left):
-  {
-    if (turnDirection == 0) // turn left
+    case (e_down):
     {
-      retValue = e_down;
+      if (turnDirection == 0) // turn left
+      {
+        retValue = e_right;
+      }
+      else if (turnDirection == 1) // right
+      {
+        retValue = e_left;
+      }
+      else
+      {
+        std::cout << "Invalid turn!" << std::endl;
+      }
+      break;
     }
-    else if (turnDirection == 1) // right
-    {
-      retValue = e_up;
-    }
-    else
-    {
-      std::cout << "Invalid turn!" << std::endl;
-    }
-    break;
-  }
-  case (e_right):
-  {
-    if (turnDirection == 0) // turn left
-    {
-      retValue = e_up;
-    }
-    else if (turnDirection == 1) // right
-    {
-      retValue = e_down;
-    }
-    else
-    {
-      std::cout << "Invalid turn!" << std::endl;
-    }
-    break;
-  }
-  case (e_down):
-  {
-    if (turnDirection == 0) // turn left
-    {
-      retValue = e_right;
-    }
-    else if (turnDirection == 1) // right
-    {
-      retValue = e_left;
-    }
-    else
-    {
-      std::cout << "Invalid turn!" << std::endl;
-    }
-    break;
-  }
   }
   return (retValue);
 }
