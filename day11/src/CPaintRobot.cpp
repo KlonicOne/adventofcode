@@ -65,7 +65,7 @@ void CPaintRobot::progressPaintRobotCode(void)
 void CPaintRobot::setIntCodeOutput(long long outVal)
 {
   // Standard out for debugging
-//  std::cout << "Out(" << this->mTypeOfOutputValue << "): " << outVal << std::endl;
+  std::cout << "Out(" << this->mTypeOfOutputValue << "): " << outVal << std::endl;
 
 // The values iterate color and movement
   switch (this->mTypeOfOutputValue)
@@ -98,14 +98,19 @@ void CPaintRobot::colorTheCurrentPosition(long long color)
       > (this->mCurrentPaintBotPos)][0];
   long long newColor = color;
 
-//  std::cout << color << ", " << currentColor << std::endl;
+  std::cout << "New: " << newColor << " Current " << currentColor << std::endl;
 
   // Check if the field need to be colored
   if (currentColor != newColor)
   {
     // Change color and count up how often the field was colored
     this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][0] = color;
-    this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][1]++;
+    // Count fields colored once
+    if (this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][1] == 0)
+    {
+      this->mNumberOfColoredFields += 1; // The field is colored the first time
+    }
+    this->mColorMap[std::get < 0 > (this->mCurrentPaintBotPos)][std::get < 1 > (this->mCurrentPaintBotPos)][1] += 1;
   }
 }
 
@@ -164,7 +169,7 @@ void CPaintRobot::moveThePaintRobot(long long turnDirection)
   this->mPathOfPaintBot.push_back(std::make_tuple(nextXPos, nextYPos)); // new position and color not changed
 
   // Debug out the position to check how often we hit same position
-//  std::cout << "RoPos: " << nextXPos << ", " << nextYPos << ", " << nextOrientation << std::endl;
+  std::cout << "RoPos: " << nextXPos << ", " << nextYPos << ", " << nextOrientation << std::endl;
 }
 
 int CPaintRobot::getNumberOfColoredFields(void)
