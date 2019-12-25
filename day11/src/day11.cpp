@@ -35,12 +35,12 @@ int main()
   // Progress the program for the color robot
   paintRobot.progressPaintRobotCode();
 
-  // Calc statistics for colored field
-//  paintRobot.calcPaintedFieldStat();
-
   // Output
   int coloredFields = paintRobot.getNumberOfColoredFields();
   std::cout << "Colored fields: " << coloredFields << std::endl;
+
+  // Image
+  paintRobot.printImage();
 
 }
 

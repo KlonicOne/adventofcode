@@ -20,6 +20,8 @@ CPaintRobot::CPaintRobot()
   // We set the bot in the middle of the map
   this->mCurrentPaintBotPos = std::make_tuple(XDIM / 2, YDIM / 2, e_up);
   this->mPathOfPaintBot.push_back(std::make_tuple(XDIM / 2, YDIM / 2));
+  // Second part the start is white
+  this->mColorMap[XDIM / 2][YDIM / 2][0] = 1;
 }
 
 CPaintRobot::~CPaintRobot()
@@ -201,6 +203,25 @@ void CPaintRobot::calcPaintedFieldStat(void)
     }
   }
 
+}
+
+void CPaintRobot::printImage(void)
+{
+  for (unsigned j = 0; j < this->mYMapDim; j++)
+  {
+    for (unsigned i = 0; i < this->mXMapDim; i++)
+    {
+      if (this->mColorMap[i][j][0] == 0) // black
+      {
+        std::cout << ".";
+      }
+      else
+      {
+        std::cout << "#"; // White
+      }
+    }
+    std::cout << std::endl;
+  }
 }
 
 t_robotOrientation CPaintRobot::getNextOrientation(t_robotOrientation inOrientation, long long turnDirection)

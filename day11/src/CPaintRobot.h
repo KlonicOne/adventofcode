@@ -56,6 +56,7 @@ public:
   // Outputs of robot
   int getNumberOfColoredFields(void);
   void printPathOfPaintBot(void);
+  void printImage(void);
 
 private:
   CIntcodeComputer *mIntComputer; // Reference to the brain, the intcode computer
