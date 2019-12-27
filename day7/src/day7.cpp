@@ -48,6 +48,12 @@ int main()
     intcomp->setOutputCallBackFunction(callbackOut);
 
     Amplifier.push_back(amp); // new amp to vector of pointer
+
+    // Read the input code for the paint robot
+    Amplifier[itAmp]->readInputCode(ifile);
+    // File stream used so rewind for next loop
+    ifile.clear();
+    ifile.seekg(0);
   }
 
   // Here we loop until we find maximum through permutation
@@ -64,15 +70,10 @@ int main()
       // Set current phase for amp
       currentPhasePos = itAmp;
 
-      // Read the input code for the paint robot
-      Amplifier[itAmp]->readInputCode(ifile);
-      // File stream used so rewind for next loop
-      ifile.clear();
-      ifile.seekg(0);
-
       // Progress the program for the color robot
       Amplifier[itAmp]->progressCode();
     }
+
     // Final output value from the loop calculated now check if it is new max
     if (outputValue > currentMaxValue) // we found new max
     {
@@ -80,11 +81,12 @@ int main()
       currentMaxValue = outputValue;
       std::copy(std::begin(amplifierPhase), std::end(amplifierPhase), std::begin(currentAmplifierMaxPhase));
 
-      std::cout << "Max: " << currentMaxValue << std::endl;
-      std::cout << "Max phases: "
-          << currentAmplifierMaxPhase[0] << ", " << currentAmplifierMaxPhase[1] << ", "
-          << currentAmplifierMaxPhase[2] << ", " << currentAmplifierMaxPhase[3] << ", " << currentAmplifierMaxPhase[4] << ", "
-          << std::endl;
+      // deug out
+//      std::cout << "Max: " << currentMaxValue << std::endl;
+//      std::cout << "Max phases: "
+//          << currentAmplifierMaxPhase[0] << ", " << currentAmplifierMaxPhase[1] << ", "
+//          << currentAmplifierMaxPhase[2] << ", " << currentAmplifierMaxPhase[3] << ", " << currentAmplifierMaxPhase[4] << ", "
+//          << std::endl;
     }
 
   } while (next_permutation(amplifierPhase, amplifierPhase + numAmps));
