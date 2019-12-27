@@ -18,7 +18,7 @@ long long getAmpInputs(void);
 
 const unsigned numAmps = 5;
 static long long outputValue = 0;
-static std::vector<int> amplifierPhase = { 4, 3, 2, 1, 0 };
+static std::vector<int> amplifierPhase = { 1, 0, 4, 3, 2 };
 
 int main()
 {
@@ -57,13 +57,16 @@ int main()
     // Progress the program for the color robot
     Amplifier[i]->progressCode();
   }
+
+  // output final value
+  std::cout << "Result: " << outputValue << std::endl;
 }
 
 // Callbacks
 void setAmpOutput(long long outVal)
 {
   // Standard out for debugging
-  std::cout << "Out: " << outVal << std::endl;
+//  std::cout << "Out: " << outVal << std::endl;
   outputValue = outVal;
 }
 
@@ -91,9 +94,8 @@ long long getAmpInputs(void)
     std::cout << "Something went wrong!" << std::endl;
   }
 
-  std::cout << "In: " << std::endl;
-  std::cout << inputVal << std::endl;
-  ;
+//  std::cout << "In: " << std::endl;
+//  std::cout << inputVal << std::endl;
 
   return (inputVal);
 }
