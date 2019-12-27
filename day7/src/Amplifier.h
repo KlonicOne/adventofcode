@@ -16,11 +16,13 @@
 class CAmplifier
 {
 public:
-  CAmplifier();
+  CAmplifier(int phase);
   virtual ~CAmplifier();
 
   // Read the input stream from file and store inside the intcode computer
   void readInputCode(istream &input);
+  void setPhase(int phase);
+  int getPhase(void);
 
   // These two functions to be used as callbacks on input and output for intcomp
   long long getIntcodeInput(void);
@@ -36,6 +38,8 @@ public:
 private:
   CIntcodeComputer *mIntComputer; // Reference to the brain, the intcode computer
   std::vector<long long> mCodeVector;
+
+  int mPhase;
 };
 
 #endif /* AMPLIFIER_H_ */

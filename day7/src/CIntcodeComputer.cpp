@@ -30,14 +30,17 @@ CIntcodeComputer::~CIntcodeComputer()
 void CIntcodeComputer::parseVectorCode(istream &input)
 {
   string codeElement;
+  long long intcodeElement;
 
   // Iterate through given istream and extract code as vector if ints
   while (getline(input, codeElement, ','))
   {
     // delete new line at the end
     this->eraseNewLine(codeElement);
-
-    this->mIntCodeProgram.push_back(stoll(codeElement));
+    // Convert to long long
+    intcodeElement = stoll(codeElement);
+    // Add to Intcode program
+    this->mIntCodeProgram.push_back(intcodeElement);
   }
 
   // Store size of original input code

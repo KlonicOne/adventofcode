@@ -11,10 +11,12 @@
 
 using namespace std;
 
-#define INIT_SIZE (10000000)
+#define INIT_SIZE (1000)
 
-CAmplifier::CAmplifier()
+CAmplifier::CAmplifier(int phase)
 {
+  this->mPhase = phase;
+  this->mIntComputer = NULL;
 }
 
 CAmplifier::~CAmplifier()
@@ -61,4 +63,14 @@ void CAmplifier::setIntcodeOutput(long long outVal)
 CIntcodeComputer* CAmplifier::getIntcodeComputer(void)
 {
   return (this->mIntComputer);
+}
+
+void CAmplifier::setPhase(int phase)
+{
+  this->mPhase = phase;
+}
+
+int CAmplifier::getPhase(void)
+{
+  return(this->mPhase);
 }

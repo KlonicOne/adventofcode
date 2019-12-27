@@ -13,28 +13,88 @@
 
 using namespace std;
 
+void setAmpOutput(long long outVal);
+long long getAmpInputs(void);
+
+const unsigned numAmps = 5;
+static long long outputValue = 0;
+static std::vector<int> amplifierPhase = { 4, 3, 2, 1, 0 };
+
 int main()
 {
   std::ifstream ifile("input.txt");
+  std::vector<CAmplifier*> Amplifier;
 
-  CIntcodeComputer intcodeCompA;
-  CAmplifier AmplifierA;
+  // callbacks
+  auto callbackIn = std::bind(&getAmpInputs);
+  auto callbackOut = std::bind(&setAmpOutput, std::placeholders::_1);
 
-  auto callbackIn = std::bind(&CAmplifier::getIntcodeInput, &AmplifierA);
-  auto callbackOut = std::bind(&CAmplifier::setIntcodeOutput, &AmplifierA, std::placeholders::_1);
+  // Add amplifier to the vector, init with phase and set callbacks
+  for (unsigned i = 0; i < numAmps; i++)
+  {
+    CAmplifier *amp = new CAmplifier(amplifierPhase[i]); // new object of amplifier
+    CIntcodeComputer *intcomp = new CIntcodeComputer; // new object of amplifier
 
-  // Set brain of paint robot
-  AmplifierA.setIncodeComputer(&intcodeCompA);
+    // Set brain of paint robot
+    amp->setIncodeComputer(intcomp);
 
-  // Prepare the paint robot callbacks
-  intcodeCompA.setInputCallBackFunction(callbackIn);
-  intcodeCompA.setOutputCallBackFunction(callbackOut);
+    // Prepare the paint robot call backs
+    intcomp->setInputCallBackFunction(callbackIn);
+    intcomp->setOutputCallBackFunction(callbackOut);
 
-  // Read the input code for the paint robot
-  AmplifierA.readInputCode(ifile);
+    Amplifier.push_back(amp); // new amp to vector of pointer
+  }
 
-  // Progress the program for the color robot
-  AmplifierA.progressCode();
+  // Execute the amplifier and pass inputs and outputs
+  for (unsigned i = 0; i < numAmps; i++)
+  {
+    // Read the input code for the paint robot
+    Amplifier[i]->readInputCode(ifile);
+    // File stream used so rewind for next loop
+    ifile.clear();
+    ifile.seekg(0);
 
+    // Progress the program for the color robot
+    Amplifier[i]->progressCode();
+  }
+}
+
+// Callbacks
+void setAmpOutput(long long outVal)
+{
+  // Standard out for debugging
+  std::cout << "Out: " << outVal << std::endl;
+  outputValue = outVal;
+}
+
+long long getAmpInputs(void)
+{
+  static int toggle = 0;
+  static int currentPhasePos = 0;
+  long long inputVal;
+
+  // First input is phase
+  if (toggle == 0)
+  {
+    inputVal = amplifierPhase[currentPhasePos];
+    currentPhasePos++;
+    toggle = 1;
+  }
+  // second is output from previous
+  else if (toggle == 1)
+  {
+    inputVal = outputValue;
+    toggle = 0;
+  }
+  else
+  {
+    std::cout << "Something went wrong!" << std::endl;
+  }
+
+  std::cout << "In: " << std::endl;
+  std::cout << inputVal << std::endl;
+  ;
+
+  return (inputVal);
 }
 
