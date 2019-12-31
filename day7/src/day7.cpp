@@ -19,8 +19,9 @@ long long getAmpInputs(void);
 
 const unsigned numAmps = 5;
 static long long outputValue = 0;
-int amplifierPhase[numAmps] = { 9, 8, 7, 6, 5 };
-int currentAmplifierMaxPhase[numAmps] = { 0 };
+static bool phasePassed[numAmps] = { false, false, false, false, false };
+static int amplifierPhase[numAmps] = { 5, 6, 7, 8, 9 };
+static int currentAmplifierMaxPhase[numAmps] = { 0 };
 static long long currentMaxValue = 0;
 static int currentPhasePos = 0;
 
@@ -43,11 +44,11 @@ int main()
     // Set brain of paint robot
     amp->setIncodeComputer(intcomp);
 
-    // Prepare the paint robot call backs
+    // Prepare the call backs
     intcomp->setInputCallBackFunction(callbackIn);
     intcomp->setOutputCallBackFunction(callbackOut);
 
-    Amplifier.push_back(amp); // new amp to vector of pointer
+    Amplifier.push_back(amp); // new amp to vector of pointer for loops
 
     // Read the input code for the amp
     Amplifier[itAmp]->readInputCode(ifile);
@@ -57,17 +58,18 @@ int main()
   }
 
   // Here we loop until we find maximum through permutation
-  //std::sort(amplifierPhase, amplifierPhase + numAmps);
+  std::sort(amplifierPhase, amplifierPhase + numAmps);
 
   do
   {
     // Reset output value for next loop over amps
+    // Not done in second part as we have used as feedback
 //    outputValue = 0;
 
     // loop through all amps with new permutation
     for (unsigned itAmp = 0; itAmp < numAmps; itAmp++)
     {
-      // Set current phase for amp
+      // Set current phase pos for amp
       currentPhasePos = itAmp;
 
       // Progress the program for the color robot
@@ -89,8 +91,7 @@ int main()
 //          << std::endl;
     }
 
-//  } while (next_permutation(amplifierPhase, amplifierPhase + numAmps));
-  } while (true);
+  } while (next_permutation(amplifierPhase, amplifierPhase + numAmps));
 
   // output final value
   std::cout << "Result: " << currentMaxValue << std::endl;
@@ -100,35 +101,28 @@ int main()
 void setAmpOutput(long long outVal)
 {
   // Standard out for debugging
-//  std::cout << "Out: " << outVal << std::endl;
+  std::cout << "Out: " << outVal << std::endl;
   outputValue = outVal;
 }
 
 long long getAmpInputs(void)
 {
-  static bool returnPhases = true;
   long long inputVal;
 
-  // First input is phase
-  if (returnPhases)
-  {
-    inputVal = amplifierPhase[currentPhasePos];
-
-    if(currentPhasePos == (numAmps-1))
-    {
-      returnPhases = false;
-      std::cout << "All phases written!" << std::endl;
-    }
-    outputValue = 0; // keep output 0
-  }
-  // second input is output from previous
-  else
+  // input is output from previous
+  if (phasePassed[currentPhasePos])
   {
     inputVal = outputValue;
   }
+  // First input is phase
+  else
+  {
+    inputVal = amplifierPhase[currentPhasePos];
+    phasePassed[currentPhasePos] = true;
+  }
 
-//  std::cout << "In: " << std::endl;
-//  std::cout << inputVal << std::endl;
+  std::cout << "In: " << std::endl;
+  std::cout << inputVal << std::endl;
 
   return (inputVal);
 }

@@ -47,11 +47,8 @@ void CAmplifier::setIncodeComputer(CIntcodeComputer *IntComp)
 
 void CAmplifier::progressCode(void)
 {
-  // Get the int code in which shall be prepared
-  this->mCodeVector = mIntComputer->getIntCodePrg();
-
   // Progress new code vector
-  mIntComputer->progressVectorCode(this->mCodeVector);
+  mIntComputer->progressVectorCode();
 }
 
 void CAmplifier::setIntcodeOutput(long long outVal)

@@ -39,6 +39,7 @@ public:
   // Getter and setter for the size of the original intcode program size
   long long getProgramSizeInputCode();
   void setProgramSizeInputCode(long long codeSize);
+  void resetProgramCounter(void);
   // Callback functions to be able to manipulate the input and output
   void setInputCallBackFunction(std::function<long long(void)> fp);
   void setOutputCallBackFunction(std::function<void(long long)> fp);
@@ -46,16 +47,14 @@ public:
   void parseVectorCode(istream &input);
   std::vector<long long> getIntCodePrg(void);
   void resizeIntCodePrg(long long newSize);
-  void progressVectorCode(std::vector<long long> vectorIntcode);
-  std::vector<long long> getProgressedIntCodePrg(void);
-  long long nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal);
+  void progressVectorCode();
   void debugOutVector(std::vector<long long> inVector);
 
 private:
   // Program size and program parsed from input string
   long long mProgramSizeInputCode;
+  long long mProgramCounter;
   std::vector<long long> mIntCodeProgram;
-  std::vector<long long> mProgressedIntCodeProgram;
 
   // Call back signature
   std::function<long long(void)> inputCallBackFunction;

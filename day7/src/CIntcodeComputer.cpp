@@ -19,7 +19,7 @@ using namespace std;
 CIntcodeComputer::CIntcodeComputer()
 {
   this->mProgramSizeInputCode = 0;
-
+  this->mProgramCounter = 0;
 }
 
 CIntcodeComputer::~CIntcodeComputer()
@@ -47,21 +47,21 @@ void CIntcodeComputer::parseVectorCode(istream &input)
   this->mProgramSizeInputCode = this->mIntCodeProgram.size();
 }
 
-void CIntcodeComputer::progressVectorCode(std::vector<long long> vectorIntcode)
+void CIntcodeComputer::progressVectorCode()
 {
-  long long opcodePos = 0;
   long long relativePos = 0;
   long long opcode = 0;
   long long relativeBase = 0;
   long long mode = 0;
+  bool returnOnOutput = false;
 
   // Walk through given intcode in stepsize based on command until end reached
-  for (std::vector<long long>::const_iterator opcodeIt = vectorIntcode.begin(); *opcodeIt != OPCODE_END; opcodeIt +=
-      relativePos, opcodePos += relativePos)
+  while((this->mIntCodeProgram.at(this->mProgramCounter) != OPCODE_END)
+      && (!returnOnOutput))
   {
     // Extract opcode and modes
-    opcode = (*opcodeIt) % OPCODE_RANGE;
-    mode = (long long) (*opcodeIt / OPCODE_RANGE);
+    opcode = this->mIntCodeProgram.at(this->mProgramCounter) % OPCODE_RANGE;
+    mode = (long long) (this->mIntCodeProgram.at(this->mProgramCounter) / OPCODE_RANGE);
 
     // Decide function for opcode
     switch (opcode)
@@ -69,100 +69,66 @@ void CIntcodeComputer::progressVectorCode(std::vector<long long> vectorIntcode)
     case (OPCODE_ADD):
     {
       // Add operation
-      relativePos = this->opcodeAdd(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeAdd(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_MUL):
     {
-      relativePos = this->opcodeMul(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeMul(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_IN):
     {
-      relativePos = this->opcodeIn(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeIn(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_OUT):
     {
-      relativePos = this->opcodeOut(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeOut(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
+      returnOnOutput = true;
       break;
     }
 
     case (OPCODE_JIT):
     {
-      relativePos = this->opcodeJiT(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeJiT(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_JIF):
     {
-      relativePos = this->opcodeJiF(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeJiF(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_LESSTHAN):
     {
-      relativePos = this->opcodeLessThan(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeLessThan(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_EQUALS):
     {
-      relativePos = this->opcodeEquals(&vectorIntcode, opcodePos, relativeBase, mode);
+      relativePos = this->opcodeEquals(&(this->mIntCodeProgram), this->mProgramCounter, relativeBase, mode);
       break;
     }
 
     case (OPCODE_RELBASEADJUST):
     {
-      relativePos = this->opcodeRelBaseAdjust(&vectorIntcode, opcodePos, &relativeBase, mode);
+      relativePos = this->opcodeRelBaseAdjust(&(this->mIntCodeProgram), this->mProgramCounter, &relativeBase, mode);
       break;
     }
 
     default:
       break;
     }
+
+    // Next pos in code
+    this->mProgramCounter += relativePos;
   }
-
-  // Copy now the progressed code
-  mProgressedIntCodeProgram = vectorIntcode;
-}
-
-long long CIntcodeComputer::nounVerbResultProducedInput(std::vector<long long> vectorIntcode, long long targetVal)
-{
-  long long x, y;
-  bool exitLoop = false;
-  std::vector<long long> vectorResult;
-
-  for (x = 0; x < OPCODE_END; x++)
-  {
-    for (y = 0; y < OPCODE_END; y++)
-    {
-      // Exchange two values
-      vectorIntcode.at(1) = x;
-      vectorIntcode.at(2) = y;
-
-      // Calculate result for given noun and verb
-      this->progressVectorCode(vectorIntcode);
-      vectorResult = this->getProgressedIntCodePrg();
-
-      // Check if result equals target value
-      if (vectorResult.at(0) == targetVal)
-      {
-        exitLoop = true;
-        break; // end inner loop
-      }
-    }
-
-    if (exitLoop)
-    {
-      break; // end outer loop
-    }
-  }
-
-  return (100 * x + y);
 }
 
 void CIntcodeComputer::debugOutVector(vector<long long> inVector)
@@ -439,11 +405,6 @@ std::vector<long long> CIntcodeComputer::getIntCodePrg(void)
   return (this->mIntCodeProgram);
 }
 
-std::vector<long long> CIntcodeComputer::getProgressedIntCodePrg(void)
-{
-  return (this->mProgressedIntCodeProgram);
-}
-
 void CIntcodeComputer::resizeIntCodePrg(long long newSize)
 {
   this->mIntCodeProgram.resize(newSize);
@@ -466,6 +427,11 @@ void CIntcodeComputer::setInputCallBackFunction(std::function<long long(void)> f
 void CIntcodeComputer::setOutputCallBackFunction(std::function<void(long long)> fp)
 {
   this->outputCallBackFunction = std::bind(fp, std::placeholders::_1);
+}
+
+void CIntcodeComputer::resetProgramCounter(void)
+{
+  this->mProgramCounter = 0;
 }
 
 void CIntcodeComputer::eraseNewLine(std::string &s)
