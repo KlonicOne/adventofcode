@@ -45,10 +45,10 @@ void CAmplifier::setIncodeComputer(CIntcodeComputer *IntComp)
   this->mIntComputer = IntComp;
 }
 
-void CAmplifier::progressCode(void)
+bool CAmplifier::progressCode(void)
 {
   // Progress new code vector
-  mIntComputer->progressVectorCode();
+  return( mIntComputer->progressVectorCode());
 }
 
 void CAmplifier::setIntcodeOutput(long long outVal)
@@ -70,4 +70,9 @@ void CAmplifier::setPhase(int phase)
 int CAmplifier::getPhase(void)
 {
   return(this->mPhase);
+}
+
+void CAmplifier::resetIntcodeComputer(void)
+{
+  this->mIntComputer->resetProgramCounter();
 }

@@ -47,7 +47,7 @@ void CIntcodeComputer::parseVectorCode(istream &input)
   this->mProgramSizeInputCode = this->mIntCodeProgram.size();
 }
 
-void CIntcodeComputer::progressVectorCode()
+bool CIntcodeComputer::progressVectorCode()
 {
   long long relativePos = 0;
   long long opcode = 0;
@@ -129,6 +129,8 @@ void CIntcodeComputer::progressVectorCode()
     // Next pos in code
     this->mProgramCounter += relativePos;
   }
+
+  return(this->mIntCodeProgram.at(this->mProgramCounter) != OPCODE_END);
 }
 
 void CIntcodeComputer::debugOutVector(vector<long long> inVector)
