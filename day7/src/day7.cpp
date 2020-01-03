@@ -22,7 +22,8 @@ bool ampsRunning(void);
 const unsigned numAmps = 5;
 static long long outputValue = 0;
 static bool phasePassed[numAmps] = { false, false, false, false, false };
-static int amplifierPhase[numAmps] = { 5, 6, 7, 8, 9 };
+//static int amplifierPhase[numAmps] = { 5, 6, 7, 8, 9 };
+static int amplifierPhase[numAmps] = { 9,8,7,6,5 };
 static int currentAmplifierMaxPhase[numAmps] = { 0 };
 static bool amplifierRunning[numAmps] = { 0 };
 static long long currentMaxValue = 0;
@@ -67,8 +68,7 @@ int main()
   do
   {
     // Reset output value for next loop over amps
-    // Not done in second part as we have used as feedback
-//    outputValue = 0;
+    outputValue = 0;
 
     do
     {
