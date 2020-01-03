@@ -18,12 +18,13 @@ void setAmpOutput(long long outVal);
 long long getAmpInputs(void);
 void delAmps(void);
 bool ampsRunning(void);
+void resetAllAmpsComputer();
+void isNewMax(long long value);
 
 const unsigned numAmps = 5;
 static long long outputValue = 0;
 static bool phasePassed[numAmps] = { false, false, false, false, false };
-//static int amplifierPhase[numAmps] = { 5, 6, 7, 8, 9 };
-static int amplifierPhase[numAmps] = { 9,8,7,6,5 };
+static int amplifierPhase[numAmps] = { 5, 6, 7, 8, 9 };
 static int currentAmplifierMaxPhase[numAmps] = { 0 };
 static bool amplifierRunning[numAmps] = { 0 };
 static long long currentMaxValue = 0;
@@ -46,12 +47,10 @@ int main()
     CAmplifier *amp = new CAmplifier(amplifierPhase[itAmp]); // new object of amplifier
     CIntcodeComputer *intcomp = new CIntcodeComputer; // new object of amplifier
 
-    // Set brain of paint robot
-    amp->setIncodeComputer(intcomp);
-
+    amp->setIncodeComputer(intcomp); // Set brain of paint robot
     // Prepare the call backs
-    intcomp->setInputCallBackFunction(callbackIn);
-    intcomp->setOutputCallBackFunction(callbackOut);
+    intcomp->setInputCallBackFunction(callbackIn); // Callback for input
+    intcomp->setOutputCallBackFunction(callbackOut); // and output
 
     Amplifier.push_back(amp); // new amp to vector of pointer for loops
 
@@ -62,56 +61,31 @@ int main()
     ifile.seekg(0);
   }
 
-  // Here we loop until we find maximum through permutation
+  // First sort the vector of phases to iterate over all permutations
   std::sort(amplifierPhase, amplifierPhase + numAmps);
 
-  do
+  do // Loop over all permutations
   {
     // Reset output value for next loop over amps
     outputValue = 0;
-
-    do
+    do // Loop until all amps are returning FASLSE which means they are on a stop opcode
     {
-      // loop through all amps with new permutation
-      for (unsigned itAmp = 0; itAmp < numAmps; itAmp++)
+      for (unsigned itAmp = 0; itAmp < numAmps; itAmp++) // Call amps in order A-B-C-D-E-F
       {
-        // Set current phase pos for amp
-        currentPhasePos = itAmp;
-
-        // Progress the program for the color robot
-        amplifierRunning[itAmp] = Amplifier[itAmp]->progressCode();
+        currentPhasePos = itAmp; // Set current amp iterator, used in callback functions
+        amplifierRunning[itAmp] = Amplifier[itAmp]->progressCode(); // Progress the program for the color robot
       }
 
       // Final output value from the loop calculated now check if it is new max
-      if (outputValue > currentMaxValue)    // we found new max
-      {
-        // take over new max and phase settings
-        currentMaxValue = outputValue;
-        std::copy(std::begin(amplifierPhase), std::end(amplifierPhase), std::begin(currentAmplifierMaxPhase));
+      isNewMax(outputValue);
 
-        // deug out
-        std::cout << "Max: " << currentMaxValue << std::endl;
-//        std::cout << "Max phases: " << currentAmplifierMaxPhase[0] << ", " << currentAmplifierMaxPhase[1] << ", "
-//            << currentAmplifierMaxPhase[2] << ", " << currentAmplifierMaxPhase[3] << ", " << currentAmplifierMaxPhase[4]
-//            << ", " << std::endl;
-      }
     } while (ampsRunning());
 
-    for (unsigned itAmp = 0; itAmp < numAmps; itAmp++)
-    {
-      // for next permutation we need to reset the intcomp computers
-      phasePassed[itAmp] = false; // all get new the phase as first inputs
-      Amplifier[itAmp]->resetIntcodeComputer();
-    }
-
-    std::cout << "Phase setting: "
-        << amplifierPhase[0] << ", " << amplifierPhase[1] << ", "
-        << amplifierPhase[2] << ", " << amplifierPhase[3] << ", " << amplifierPhase[4]
-        << ", " << std::endl;
-
+    // The permutation is checked, so reset intcode computer and pass again the phases on first calls
+    resetAllAmpsComputer();
   } while (next_permutation(amplifierPhase, amplifierPhase + numAmps));
 
-// output final value
+  // output final value
   std::cout << "Result: " << currentMaxValue << std::endl;
 
   delAmps();
@@ -123,6 +97,33 @@ void delAmps(void)
   {
     delete (Amplifier[itAmp - 1]->getIntcodeComputer());
     delete (Amplifier[itAmp - 1]);
+  }
+}
+
+void resetAllAmpsComputer()
+{
+  // The permutation is checked, so reset intcode computer and pass again the phases on first calls
+  for (unsigned itAmp = 0; itAmp < numAmps; itAmp++)
+  {
+    // for next permutation we need to reset the intcomp computers
+    phasePassed[itAmp] = false; // all get new the phase as first inputs
+    Amplifier[itAmp]->resetIntcodeComputer();
+  }
+}
+
+void isNewMax(long long value)
+{
+  // Final output value from the loop calculated now check if it is new max
+  if (value > currentMaxValue) // we found new max
+  {
+    // take over new max and phase settings
+    currentMaxValue = value;
+    std::copy(std::begin(amplifierPhase), std::end(amplifierPhase), std::begin(currentAmplifierMaxPhase));
+    // deug out current max and the phases for it
+    //        std::cout << "Max: " << currentMaxValue << std::endl;
+    //        std::cout << "Max phases: " << currentAmplifierMaxPhase[0] << ", " << currentAmplifierMaxPhase[1] << ", "
+    //            << currentAmplifierMaxPhase[2] << ", " << currentAmplifierMaxPhase[3] << ", " << currentAmplifierMaxPhase[4]
+    //            << ", " << std::endl;
   }
 }
 
