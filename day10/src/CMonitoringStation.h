@@ -8,9 +8,6 @@
 #ifndef CMONITORINGSTATION_H_
 #define CMONITORINGSTATION_H_
 
-#include <iostream>
-#include <string>
-#include <math.h>
 #include <fstream>
 #include <vector>
 
@@ -23,14 +20,18 @@ public:
   virtual ~CMonitoringStation();
 
   void parseMap(istream &input);
+  void calcCandidates(void);
 
   void plotAsteroidMap(void);
+  void plotCandidatesdMap(void);
 
 private:
   unsigned mSizeX;
   unsigned mSizeY;
 
   std::vector<std::vector<int>> mAsteroidMap;
+  std::vector<std::vector<int>> mAsteroidCountMap;
+  std::vector<std::vector<int>> mAsteroidSightMap;
 };
 
 #endif /* CMONITORINGSTATION_H_ */

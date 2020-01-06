@@ -14,7 +14,9 @@ int main()
   CMonitoringStation monStation;
 
   monStation.parseMap(ifile);
+  monStation.calcCandidates();
 
   monStation.plotAsteroidMap();
+  monStation.plotCandidatesdMap();
 
 }

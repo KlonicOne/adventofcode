@@ -4,6 +4,11 @@
  *  Created on: 6 Jan 2020
  *      Author: nico
  */
+#include <numeric>
+#include <iostream>
+#include <string>
+#include <math.h>
+#include <fstream>
 
 #include "CMonitoringStation.h"
 
@@ -52,6 +57,46 @@ void CMonitoringStation::parseMap(istream &input)
   // Take over the map size
   this->mSizeX = X;
   this->mSizeY = Y;
+
+  // debug out size
+  std::cout << "x(" << X << "), y(" << Y << ")" << std::endl;
+
+  // fit other maps to same size
+  this->mAsteroidCountMap.resize(X, vector<int>(Y));
+  this->mAsteroidSightMap.resize(X, vector<int>(Y));
+}
+
+void CMonitoringStation::calcCandidates(void)
+{
+  std::vector<int> xCounts;
+  std::vector<int> yCounts;
+
+  // Size for the x and y vectors
+  xCounts.resize(this->mSizeX, 0);
+  yCounts.resize(this->mSizeY, 0);
+
+  // Calculate the x and y counts
+  for (unsigned y = 0; y < mSizeY; y++)
+  {
+    for (unsigned x = 0; x < mSizeX; x++)
+    {
+      xCounts.at(y) += mAsteroidMap[y].at(x);
+      yCounts.at(x) += mAsteroidMap[y].at(x);
+    }
+  }
+
+  // Store to the map for candidates
+  for (unsigned y = 0; y < mSizeY; y++)
+  {
+    for (unsigned x = 0; x < mSizeX; x++)
+    {
+      // Only add how many in row and column when there is a asteroid
+      if (mAsteroidMap[y].at(x) != 0)
+      {
+        mAsteroidCountMap[y].at(x) = xCounts.at(y) + yCounts.at(x);
+      }
+    }
+  }
 }
 
 void CMonitoringStation::plotAsteroidMap(void)
@@ -61,6 +106,19 @@ void CMonitoringStation::plotAsteroidMap(void)
     for (unsigned x = 0; x < mSizeX; x++)
     {
       std::cout << this->mAsteroidMap[y].at(x);
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+}
+
+void CMonitoringStation::plotCandidatesdMap(void)
+{
+  for (unsigned y = 0; y < mSizeY; y++)
+  {
+    for (unsigned x = 0; x < mSizeX; x++)
+    {
+      std::cout << this->mAsteroidCountMap[y].at(x);
     }
     std::cout << std::endl;
   }
