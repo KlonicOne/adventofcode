@@ -47,7 +47,7 @@ public:
   void parseVectorCode(istream &input);
   std::vector<long long> getIntCodePrg(void);
   void resizeIntCodePrg(long long newSize);
-  void progressVectorCode();
+  bool progressVectorCode();
   void debugOutVector(std::vector<long long> inVector);
 
 private:

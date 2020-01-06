@@ -29,11 +29,12 @@ public:
   void setIntcodeOutput(long long outVal);
 
   // Go through the intcode computer code, for in and out callbacks are used
-  void progressCode(void);
+  bool progressCode(void);
 
   // To set and get the brain of the paint robot
   void setIncodeComputer(CIntcodeComputer *IntComp);
   CIntcodeComputer* getIntcodeComputer(void);
+  void resetIntcodeComputer(void);
 
 private:
   CIntcodeComputer *mIntComputer; // Reference to the brain, the intcode computer
