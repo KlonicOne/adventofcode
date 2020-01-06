@@ -62,7 +62,6 @@ void CMonitoringStation::parseMap(istream &input)
   std::cout << "x(" << X << "), y(" << Y << ")" << std::endl;
 
   // fit other maps to same size
-  this->mAsteroidCountMap.resize(X, vector<int>(Y));
   this->mAsteroidSightMap.resize(X, vector<int>(Y));
 }
 
@@ -73,19 +72,6 @@ void CMonitoringStation::plotAsteroidMap(void)
     for (unsigned x = 0; x < mSizeX; x++)
     {
       std::cout << this->mAsteroidMap[y].at(x);
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-}
-
-void CMonitoringStation::plotCandidatesdMap(void)
-{
-  for (unsigned y = 0; y < mSizeY; y++)
-  {
-    for (unsigned x = 0; x < mSizeX; x++)
-    {
-      std::cout << this->mAsteroidCountMap[y].at(x) << ",";
     }
     std::cout << std::endl;
   }

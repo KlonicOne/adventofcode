@@ -20,17 +20,14 @@ public:
   virtual ~CMonitoringStation();
 
   void parseMap(istream &input);
-  void calcCandidates(void);
 
   void plotAsteroidMap(void);
-  void plotCandidatesdMap(void);
 
 private:
   unsigned mSizeX;
   unsigned mSizeY;
 
   std::vector<std::vector<int>> mAsteroidMap;
-  std::vector<std::vector<int>> mAsteroidCountMap;
   std::vector<std::vector<int>> mAsteroidSightMap;
 };
 
