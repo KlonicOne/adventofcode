@@ -36,7 +36,7 @@ void CMonitoringStation::parseMap(istream &input)
     std::vector<int> tempMapLine;
     X = 0; // reset x size
     // loop over string
-    for (char& asteroidElement : asteroidMapLine)
+    for (char &asteroidElement : asteroidMapLine)
     {
       if (asteroidElement == '#')
       {
@@ -63,6 +63,13 @@ void CMonitoringStation::parseMap(istream &input)
 
   // fit other maps to same size
   this->mAsteroidSightMap.resize(X, vector<int>(Y));
+}
+
+void CMonitoringStation::calcAsteroidsInLine(void)
+{
+  std::vector<int> currentPos; // x and y pos of current field evaluated
+  std::vector<int> gradient; // gradient used at the moment for calculation
+
 }
 
 void CMonitoringStation::plotAsteroidMap(void)

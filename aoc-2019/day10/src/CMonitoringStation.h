@@ -20,6 +20,7 @@ public:
   virtual ~CMonitoringStation();
 
   void parseMap(istream &input);
+  void calcAsteroidsInLine(void);
 
   void plotAsteroidMap(void);
 
