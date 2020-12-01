@@ -41,14 +41,16 @@ int main(int, char **) {
        i != inputTable.end(); ++i) {
     for (std::vector<std::string>::const_iterator j = inputTable.begin();
          j != inputTable.end(); ++j) {
-      sum = stoi(*i) + stoi(*j);
-      // check if sum is 2020
-      if (sum == LIMIT_YEAR) {
-        std::cout << "First number: " << stoi(*i) << std::endl;
-        std::cout << "Second number: " << stoi(*j) << std::endl;
-        std::cout << "Sum: " << sum << std::endl;
-        result = stoi(*i) * stoi(*j);
-        std::cout << "Result: " << result << std::endl;
+      for (std::vector<std::string>::const_iterator k = inputTable.begin();
+           k != inputTable.end(); ++k) {
+        sum = stoi(*i) + stoi(*j) + stoi(*k);
+        // check if sum is 2020
+        if (sum == LIMIT_YEAR) {
+          std::cout << "Summanden: " << stoi(*i) << " + " << stoi(*j) << " + " << stoi(*k) << std::endl;
+          std::cout << "Sum: " << sum << std::endl;
+          result = stoi(*i) * stoi(*j) * stoi(*k);
+          std::cout << "Result: " << result << std::endl;
+        }
       }
     }
   }
