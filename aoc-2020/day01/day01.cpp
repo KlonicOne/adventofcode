@@ -1,5 +1,5 @@
 /**
- * @file day02.cpp
+ * @file day01.cpp
  * @author klonicone
  * @version 0.1
  * @date 2020-12-01
@@ -11,17 +11,17 @@
 #include <iostream>
 #include <vector>
 
-#include "day02.h"
+#include "day01.h"
 
 using namespace std;
 
 #define LIMIT_YEAR (2020)
 
-day02::day02(/* args */) {}
+day01::day01(/* args */) {}
 
-day02::~day02() {}
+day01::~day01() {}
 
-void day02::solver_part1(std::vector<int> inputVectorInt) {
+void day01::solver_part1(std::vector<int> inputVectorInt) {
   bool result_found = false;
   int result = 0;
   int sum = 0;
@@ -49,7 +49,7 @@ void day02::solver_part1(std::vector<int> inputVectorInt) {
   }
 }
 
-void day02::solver_part2(std::vector<int> inputVectorInt) {
+void day01::solver_part2(std::vector<int> inputVectorInt) {
   bool result_found = false;
   int result = 0;
   int sum = 0;
