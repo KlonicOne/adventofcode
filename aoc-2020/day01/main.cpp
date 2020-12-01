@@ -19,6 +19,8 @@
 
 using namespace std;
 
+#define LIMIT_YEAR (2020)
+
 /**
  * @brief main function calling process
  *
@@ -26,15 +28,30 @@ using namespace std;
  */
 int main(int, char **) {
   std::ifstream ifile_one("input1.txt");
-  std::ifstream ifile_two("input2.txt");
-
   std::vector<std::string> inputTable;
-  std::vector<int> inputVector;
+  int result;
+  int sum;
 
   load_data Load_Data;
 
+  // get data
   inputTable = Load_Data.getInputTable(ifile_one);
-  inputVector = Load_Data.getInputVector(ifile_two);
+
+  for (std::vector<std::string>::const_iterator i = inputTable.begin();
+       i != inputTable.end(); ++i) {
+    for (std::vector<std::string>::const_iterator j = inputTable.begin();
+         j != inputTable.end(); ++j) {
+      sum = stoi(*i) + stoi(*j);
+      // check if sum is 2020
+      if (sum == LIMIT_YEAR) {
+        std::cout << "First number: " << stoi(*i) << std::endl;
+        std::cout << "Second number: " << stoi(*j) << std::endl;
+        std::cout << "Sum: " << sum << std::endl;
+        result = stoi(*i) * stoi(*j);
+        std::cout << "Result: " << result << std::endl;
+      }
+    }
+  }
 
   return (0);
 }
