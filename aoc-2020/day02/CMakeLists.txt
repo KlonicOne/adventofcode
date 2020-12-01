@@ -4,7 +4,10 @@ project(day02 VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(day02 main.cpp)
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-Wall")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall")
+
+add_executable(${PROJECT_NAME} main.cpp load_data.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
