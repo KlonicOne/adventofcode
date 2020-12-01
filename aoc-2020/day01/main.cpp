@@ -23,35 +23,53 @@ using namespace std;
 
 /**
  * @brief main function calling process
- *
- * @return int
+ * 
+ * @return int alway 0
  */
 int main(int, char **) {
   std::ifstream ifile_one("input1.txt");
   std::vector<std::string> inputTable;
-  int result;
-  int sum;
+  std::vector<int> inputVectorInt;
+  bool result_found = false;
+  int result = 0;
+  int sum = 0;
 
+  // Class to prepare the data
   load_data Load_Data;
 
   // get data
-  inputTable = Load_Data.getInputTable(ifile_one);
+  inputTable = Load_Data.getInputVectorString(ifile_one);
+  inputVectorInt = Load_Data.getInputVectorInt(inputTable);
 
-  for (std::vector<std::string>::const_iterator i = inputTable.begin();
-       i != inputTable.end(); ++i) {
-    for (std::vector<std::string>::const_iterator j = inputTable.begin();
-         j != inputTable.end(); ++j) {
-      for (std::vector<std::string>::const_iterator k = inputTable.begin();
-           k != inputTable.end(); ++k) {
-        sum = stoi(*i) + stoi(*j) + stoi(*k);
+  // Go processing
+  std::cout << "Start caclulation" << std::endl;
+
+  for (std::vector<int>::const_iterator i = inputVectorInt.begin();
+       i != inputVectorInt.end(); ++i) {
+    for (std::vector<int>::const_iterator j = inputVectorInt.begin();
+         j != inputVectorInt.end(); ++j) {
+      for (std::vector<int>::const_iterator k = inputVectorInt.begin();
+           k != inputVectorInt.end(); ++k) {
+        sum = (*i) + (*j) + (*k);
         // check if sum is 2020
         if (sum == LIMIT_YEAR) {
-          std::cout << "Summanden: " << stoi(*i) << " + " << stoi(*j) << " + " << stoi(*k) << std::endl;
+          std::cout << "Summanden: " << (*i) << " + " << (*j) << " + " << (*k)
+                    << std::endl;
           std::cout << "Sum: " << sum << std::endl;
-          result = stoi(*i) * stoi(*j) * stoi(*k);
+          result = (*i) * (*j) * (*k);
           std::cout << "Result: " << result << std::endl;
+          result_found = true;
+        }
+        if (result_found) {
+          break;
         }
       }
+      if (result_found) {
+        break;
+      }
+    }
+    if (result_found) {
+      break;
     }
   }
 

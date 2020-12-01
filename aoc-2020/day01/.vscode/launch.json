@@ -2,11 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
+      "name": "Launch Linux",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/build/day01",
+      "stopAtEntry": true,
+      "cwd": "${workspaceRoot}",
+    },
+    {
+      "name": "Launch WinMsys",
       "type": "gdb",
       "request": "launch",
       "target": "${workspaceRoot}/build/day01.exe",
       "cwd": "${workspaceRoot}",
+      "stopAtEntry": true,
     },
   ]
 }

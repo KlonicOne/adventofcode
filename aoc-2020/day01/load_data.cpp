@@ -20,6 +20,8 @@
 
 using namespace std;
 
+#define DEBUG_OUT false
+
 /**
  * @brief constructor
  *
@@ -38,7 +40,8 @@ load_data::~load_data() {}
  * @param inputFile
  * @return std::vector<std::string>
  */
-std::vector<std::string> load_data::getInputTable(std::ifstream &inputFile) {
+std::vector<std::string>
+load_data::getInputVectorString(std::ifstream &inputFile) {
   std::string Element;
   std::vector<std::string> retVector;
 
@@ -46,7 +49,9 @@ std::vector<std::string> load_data::getInputTable(std::ifstream &inputFile) {
     retVector.push_back(Element);
   }
 
-  this->debugOutTable(retVector);
+  if (DEBUG_OUT) {
+    this->debugOutTable(retVector);
+  }
 
   return (retVector);
 }
@@ -54,19 +59,23 @@ std::vector<std::string> load_data::getInputTable(std::ifstream &inputFile) {
 /**
  * @brief Load data and return vector of int
  *
- * @param input
+ * @param input inputVector
  * @return std::vector<int>
  */
-std::vector<int> load_data::getInputVector(istream &input) {
+std::vector<int>
+load_data::getInputVectorInt(std::vector<std::string> inputVector) {
   string codeElement;
   std::vector<int> codeVector;
 
-  while (getline(input, codeElement, ',')) {
-    codeVector.push_back(stoi(codeElement));
+  for (std::vector<std::string>::const_iterator codeElement =
+           inputVector.begin();
+       codeElement != inputVector.end(); ++codeElement) {
+    codeVector.push_back(stoi(*codeElement));
   }
 
-  this->debugOutVector(codeVector);
-
+  if (DEBUG_OUT) {
+    this->debugOutVector(codeVector);
+  }
   return (codeVector);
 }
 
@@ -89,7 +98,7 @@ void load_data::debugOutVector(vector<int> inVector) {
  * @param inTable
  */
 void load_data::debugOutTable(std::vector<std::string> inTable) {
-    for (std::vector<std::string>::const_iterator i = inTable.begin();
+  for (std::vector<std::string>::const_iterator i = inTable.begin();
        i != inTable.end(); ++i) {
     std::cout << *i << std::endl;
   }

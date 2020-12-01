@@ -33,8 +33,8 @@ public:
   load_data(/* args */);
   virtual ~load_data();
 
-  std::vector<std::string> getInputTable(std::ifstream &inputFile);
-  std::vector<int> getInputVector(istream &input);
+  std::vector<std::string> getInputVectorString(std::ifstream &inputFile);
+  std::vector<int> getInputVectorInt(std::vector<std::string>);
 };
 
 #endif // !_LOAD_DATA_
