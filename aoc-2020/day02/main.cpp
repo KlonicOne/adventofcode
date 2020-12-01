@@ -16,10 +16,9 @@
 #include <vector>
 
 #include "load_data.h"
+#include "day02.h"
 
 using namespace std;
-
-#define LIMIT_YEAR (2020)
 
 /**
  * @brief main function calling process
@@ -30,12 +29,11 @@ int main(int, char **) {
   std::ifstream ifile_one("input.txt");
   std::vector<std::string> inputTable;
   std::vector<int> inputVectorInt;
-  bool result_found = false;
-  int result = 0;
-  int sum = 0;
 
   // Class to prepare the data
   load_data Load_Data;
+  // Class to solve day problem
+  day02 Day02;
 
   // get data
   inputTable = Load_Data.getInputVectorString(ifile_one);
@@ -44,34 +42,9 @@ int main(int, char **) {
   // Go processing
   std::cout << "Start caclulation" << std::endl;
 
-  for (std::vector<int>::const_iterator i = inputVectorInt.begin();
-       i != inputVectorInt.end(); ++i) {
-    for (std::vector<int>::const_iterator j = inputVectorInt.begin();
-         j != inputVectorInt.end(); ++j) {
-      for (std::vector<int>::const_iterator k = inputVectorInt.begin();
-           k != inputVectorInt.end(); ++k) {
-        sum = (*i) + (*j) + (*k);
-        // check if sum is 2020
-        if (sum == LIMIT_YEAR) {
-          std::cout << "Summanden: " << (*i) << " + " << (*j) << " + " << (*k)
-                    << std::endl;
-          std::cout << "Sum: " << sum << std::endl;
-          result = (*i) * (*j) * (*k);
-          std::cout << "Result: " << result << std::endl;
-          result_found = true;
-        }
-        if (result_found) {
-          break;
-        }
-      }
-      if (result_found) {
-        break;
-      }
-    }
-    if (result_found) {
-      break;
-    }
-  }
+  // Solve problems
+  Day02.solver_part1(inputVectorInt);
+  Day02.solver_part2(inputVectorInt);
 
   return (0);
 }
