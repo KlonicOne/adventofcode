@@ -7,6 +7,8 @@
  * @copyright Copyright (c) 2020
  *
  */
+#include "day02.h"
+
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -15,43 +17,41 @@
 #include <tuple>
 #include <vector>
 
-#include "day02.h"
-
 using namespace std;
 
-#define LIMIT_YEAR (2020)
+/**
+ * @brief constructor
+ *
+ */
+day02::day02(/* args */) {
+  number_valid_policies_p1 = 0;
+  number_valid_policies_p2 = 0;
+}
 
-day02::day02(/* args */) { number_valid_policies = 0; }
-
+/**
+ * @brief Destroy the day02::day02
+ *
+ */
 day02::~day02() {}
 
 /**
  * @brief Solve part 1
  *
- * @param inTable
  */
-void day02::solver_part1(std::vector<std::string> inTable) {
-  bool result_found = false;
-  int result = 0;
-
+void day02::solver_part1(void) {
+  // Info out
   std::cout << "Policy check part 1" << std::endl;
 
-  // Format code
-  this->format_code(inTable);
-
   // Check all valid policies
-  this->count_valid_policies();
+  this->count_valid_policies_p1();
 }
 
 /**
- * @brief Solve part 1
+ * @brief Solve part 2
  *
- * @param inTable
  */
-void day02::solver_part2(std::vector<std::string> inTable) {
-  bool result_found = false;
-  int result = 0;
-
+void day02::solver_part2(void) {
+  // Info out
   std::cout << "Policy check part 2" << std::endl;
 
   // Check all valid policies
@@ -64,11 +64,13 @@ void day02::solver_part2(std::vector<std::string> inTable) {
  * @param inTable
  */
 void day02::format_code(std::vector<std::string> inTable) {
+  // Separate to better debug and use the input
   std::string string_line = "";
   std::string element = "";
 
   for (std::vector<std::string>::const_iterator i = inTable.begin();
        i != inTable.end(); ++i) {
+    // variables to loop through string
     std::vector<std::string> string_vec_element;
     std::string::size_type start{0};
     std::string::size_type pos;
@@ -77,15 +79,19 @@ void day02::format_code(std::vector<std::string> inTable) {
     // Get single line as string_line
     string_line = (*i);
 
-    // Split string_line
+    // Split string_line and store in vector of strings
     do {
+      // get pos from start to first delimiter
       pos = string_line.find_first_of(delimiter, start);
+      // get substring until delimiter
       element = string_line.substr(start, pos - start);
+      // add element to end of vector
       string_vec_element.push_back(element);
+      // next position to start searching for delimiter
       start = pos + 1;
     } while (pos != std::string::npos);
 
-    // add to code list
+    // add to code list with required format
     this->format_code_list.push_back(t_code_element(
         stoi(string_vec_element.at(0)), stoi(string_vec_element.at(1)),
         string_vec_element.at(2), string_vec_element.at(3)));
@@ -108,9 +114,9 @@ void day02::format_code(std::vector<std::string> inTable) {
  * @return true policy valid
  * @return false invalid
  */
-bool day02::check_single_policy(t_code_element password_element) {
+bool day02::check_single_policy_p1(t_code_element password_element) {
   bool is_password_valid = false;
-  int counted_characters_in_string = 0;
+  int num_matching_chars = 0;
   int min_occurrences = get<0>(password_element);
   int max_occurrences = get<1>(password_element);
   std::string eval_character = get<2>(password_element);
@@ -119,14 +125,14 @@ bool day02::check_single_policy(t_code_element password_element) {
   // Split string to characters and loop through string
   for (int i = 0; i < eval_string.length(); i++) {
     if ((char)eval_string.at(i) ==
-        (char)eval_character.at(0)) { // Check if equal
-      counted_characters_in_string++;
+        (char)eval_character.at(0)) {  // Check if equal
+      num_matching_chars++;
     }
   }
 
   // Now check if number fits to policy
-  if (min_occurrences <= counted_characters_in_string &&
-      counted_characters_in_string <= max_occurrences) {
+  if (min_occurrences <= num_matching_chars &&
+      num_matching_chars <= max_occurrences) {
     is_password_valid = true;
   }
 
@@ -142,20 +148,16 @@ bool day02::check_single_policy(t_code_element password_element) {
  */
 bool day02::check_single_policy_p2(t_code_element password_element) {
   bool is_password_valid = false;
-  int counted_characters_in_string = 0;
-  int min_occurrences = get<0>(password_element);
-  int max_occurrences = get<1>(password_element);
+  int pos_one = get<0>(password_element);
+  int pos_two = get<1>(password_element);
   std::string eval_character = get<2>(password_element);
   std::string eval_string = get<3>(password_element);
 
   // Check if only one pos contains char
-  if ((char)eval_string.at(min_occurrences - 1) == (char)eval_character.at(0) &&
-          !((char)eval_string.at(max_occurrences - 1) ==
-            (char)eval_character.at(0)) ||
-      !((char)eval_string.at(min_occurrences - 1) ==
-        (char)eval_character.at(0)) &&
-          (char)eval_string.at(max_occurrences - 1) ==
-              (char)eval_character.at(0)) {
+  if ((char)eval_string.at(pos_one - 1) == (char)eval_character.at(0) &&
+          !((char)eval_string.at(pos_two - 1) == (char)eval_character.at(0)) ||
+      !((char)eval_string.at(pos_one - 1) == (char)eval_character.at(0)) &&
+          (char)eval_string.at(pos_two - 1) == (char)eval_character.at(0)) {
     is_password_valid = true;
   }
 
@@ -168,23 +170,23 @@ bool day02::check_single_policy_p2(t_code_element password_element) {
  *
  * @return int number of valid passwords
  */
-int day02::count_valid_policies(void) {
-  int valid_passwords = 0;
+int day02::count_valid_policies_p1(void) {
   bool policy_valid = false;
 
   // Loop thorugh tuple formatted code and call policy check
   for (const auto &itcoli : format_code_list) {
-    policy_valid = this->check_single_policy(itcoli);
+    policy_valid = this->check_single_policy_p1(itcoli);
 
     // count events
     if (policy_valid) {
-      valid_passwords++;
+      number_valid_policies_p1++;
     }
   }
 
-  std::cout << "Found valid policies: " << valid_passwords << std::endl;
+  std::cout << "Found valid policies: " << number_valid_policies_p1
+            << std::endl;
 
-  return (valid_passwords);
+  return (number_valid_policies_p1);
 }
 
 /**
@@ -194,7 +196,6 @@ int day02::count_valid_policies(void) {
  * @return int number of valid passwords
  */
 int day02::count_valid_policies_p2(void) {
-  int valid_passwords = 0;
   bool policy_valid = false;
 
   // Loop thorugh tuple formatted code and call policy check
@@ -203,11 +204,12 @@ int day02::count_valid_policies_p2(void) {
 
     // count events
     if (policy_valid) {
-      valid_passwords++;
+      number_valid_policies_p2++;
     }
   }
 
-  std::cout << "Found valid policies: " << valid_passwords << std::endl;
+  std::cout << "Found valid policies: " << number_valid_policies_p2
+            << std::endl;
 
-  return (valid_passwords);
+  return (number_valid_policies_p2);
 }

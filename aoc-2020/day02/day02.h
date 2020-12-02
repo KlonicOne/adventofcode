@@ -27,20 +27,21 @@ class day02 {
 private:
   /* data */
   std::vector<t_code_element> format_code_list;
-  int number_valid_policies;
+  int number_valid_policies_p1;
+  int number_valid_policies_p2;
 
 public:
   day02(/* args */);
   ~day02();
 
-  void solver_part1(std::vector<std::string> inTable);
-  void solver_part2(std::vector<std::string> inTable);
+  void solver_part1(void);
+  void solver_part2(void);
 
   // part 1
   void format_code(std::vector<std::string> inTable);
-  bool check_single_policy(t_code_element password_element);
+  bool check_single_policy_p1(t_code_element password_element);
   bool check_single_policy_p2(t_code_element password_element);
-  int count_valid_policies(void);
+  int count_valid_policies_p1(void);
   int count_valid_policies_p2(void);
 };
 

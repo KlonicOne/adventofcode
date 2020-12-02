@@ -40,9 +40,11 @@ int main(int, char **) {
   // Go processing
   std::cout << "Start solving day02" << std::endl;
 
+  // Fill formatted code
+  Day02.format_code(inputTable);
   // Solve problems
-  Day02.solver_part1(inputTable);
-  Day02.solver_part2(inputTable);
+  Day02.solver_part1();
+  Day02.solver_part2();
 
   return (0);
 }
