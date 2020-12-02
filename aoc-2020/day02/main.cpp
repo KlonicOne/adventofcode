@@ -28,7 +28,6 @@ using namespace std;
 int main(int, char **) {
   std::ifstream ifile_one("input.txt");
   std::vector<std::string> inputTable;
-  std::vector<int> inputVectorInt;
 
   // Class to prepare the data
   load_data Load_Data;
@@ -37,14 +36,13 @@ int main(int, char **) {
 
   // get data
   inputTable = Load_Data.getInputVectorString(ifile_one);
-  inputVectorInt = Load_Data.getInputVectorInt(inputTable);
 
   // Go processing
   std::cout << "Start caclulation" << std::endl;
 
   // Solve problems
-  Day02.solver_part1(inputVectorInt);
-  Day02.solver_part2(inputVectorInt);
+  Day02.solver_part1(inputTable);
+  Day02.solver_part2(inputTable);
 
   return (0);
 }

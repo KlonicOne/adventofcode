@@ -8,7 +8,11 @@
  *
  */
 #include <cstring>
+#include <fstream>
 #include <iostream>
+#include <istream>
+#include <sstream>
+#include <tuple>
 #include <vector>
 
 #include "day02.h"
@@ -17,69 +21,66 @@ using namespace std;
 
 #define LIMIT_YEAR (2020)
 
-day02::day02(/* args */) {}
+day02::day02(/* args */) {
+    number_valid_policies = 0;
+}
 
 day02::~day02() {}
 
-void day02::solver_part1(std::vector<int> inputVectorInt) {
+/**
+ * @brief Solve part 1
+ * 
+ * @param inTable 
+ */
+void day02::solver_part1(std::vector<std::string> inTable) {
   bool result_found = false;
   int result = 0;
-  int sum = 0;
+  std::string element = "";
 
-  for (std::vector<int>::const_iterator i = inputVectorInt.begin();
-       i != inputVectorInt.end(); ++i) {
-    for (std::vector<int>::const_iterator j = inputVectorInt.begin();
-         j != inputVectorInt.end(); ++j) {
-      sum = (*i) + (*j);
-      // check if sum is 2020
-      if (sum == LIMIT_YEAR) {
-        std::cout << "Summanden: " << (*i) << " + " << (*j) << std::endl;
-        std::cout << "Sum: " << sum << std::endl;
-        result = (*i) * (*j);
-        std::cout << "Result Part 1: " << result << std::endl;
-        result_found = true;
-      }
-      if (result_found) {
-        break;
-      }
-    }
-    if (result_found) {
-      break;
-    }
+  for (std::vector<std::string>::const_iterator i = inTable.begin();
+       i != inTable.end(); ++i) {
+    element = (*i);
+
+    std::cout << "Line: " << element << std::endl;
   }
 }
 
-void day02::solver_part2(std::vector<int> inputVectorInt) {
-  bool result_found = false;
-  int result = 0;
-  int sum = 0;
+/**
+ * @brief Split the intput string and store in class code list
+ *
+ * @param inTable
+ */
+void day02::format_code(std::vector<std::string> inTable) {}
 
-  for (std::vector<int>::const_iterator i = inputVectorInt.begin();
-       i != inputVectorInt.end(); ++i) {
-    for (std::vector<int>::const_iterator j = inputVectorInt.begin();
-         j != inputVectorInt.end(); ++j) {
-      for (std::vector<int>::const_iterator k = inputVectorInt.begin();
-           k != inputVectorInt.end(); ++k) {
-        sum = (*i) + (*j) + (*k);
-        // check if sum is 2020
-        if (sum == LIMIT_YEAR) {
-          std::cout << "Summanden: " << (*i) << " + " << (*j) << " + " << (*k)
-                    << std::endl;
-          std::cout << "Sum: " << sum << std::endl;
-          result = (*i) * (*j) * (*k);
-          std::cout << "Result Part 2: " << result << std::endl;
-          result_found = true;
-        }
-        if (result_found) {
-          break;
-        }
-      }
-      if (result_found) {
-        break;
-      }
+/**
+ * @brief Check if given password fits to policy
+ *
+ * @param password_element contains password and policy
+ * @return true policy valid
+ * @return false invalid
+ */
+bool day02::check_single_policy(
+    std::tuple<int, int, char, std::string> password_element) {
+      bool is_password_valid = false;
+
+      return(false);
     }
-    if (result_found) {
-      break;
-    }
-  }
+
+/**
+ * @brief Iterates through the complete password list and counts up all valid
+ * once and stor in private result variable and print result
+ *
+ * @return int number of valid passwords
+ */
+int day02::count_valid_policies(void) {
+  int valid_passwords = 0;
+
+  return (valid_passwords);
 }
+
+/**
+ * @brief Solve part 1
+ * 
+ * @param inTable 
+ */
+void day02::solver_part2(std::vector<std::string> inTable) {}
