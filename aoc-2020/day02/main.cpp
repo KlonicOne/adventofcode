@@ -38,7 +38,7 @@ int main(int, char **) {
   inputTable = Load_Data.getInputVectorString(ifile_one);
 
   // Go processing
-  std::cout << "Start caclulation" << std::endl;
+  std::cout << "Start solving day02" << std::endl;
 
   // Solve problems
   Day02.solver_part1(inputTable);
