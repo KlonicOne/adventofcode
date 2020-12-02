@@ -148,7 +148,7 @@ bool day02::check_single_policy_p2(t_code_element password_element) {
   std::string eval_character = get<2>(password_element);
   std::string eval_string = get<3>(password_element);
 
-  // Split string to characters and loop through string
+  // Check if only one pos contains char
   if ((char)eval_string.at(min_occurrences - 1) == (char)eval_character.at(0) &&
           !((char)eval_string.at(max_occurrences - 1) ==
             (char)eval_character.at(0)) ||
