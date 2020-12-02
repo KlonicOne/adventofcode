@@ -39,7 +39,9 @@ public:
   // part 1
   void format_code(std::vector<std::string> inTable);
   bool check_single_policy(t_code_element password_element);
+  bool check_single_policy_p2(t_code_element password_element);
   int count_valid_policies(void);
+  int count_valid_policies_p2(void);
 };
 
 #endif // _DAY02_H_
