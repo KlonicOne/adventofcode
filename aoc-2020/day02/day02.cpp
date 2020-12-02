@@ -35,9 +35,10 @@ void day02::solver_part1(std::vector<std::string> inTable) {
   int result = 0;
 
   // Format code
-  format_code(inTable);
+  this->format_code(inTable);
 
   // Check all valid policies
+  this->count_valid_policies();
 }
 
 /**
@@ -74,10 +75,12 @@ void day02::format_code(std::vector<std::string> inTable) {
 
     // debug out
     // std::cout << "Line: " << string_line << std::endl;
-    std::cout << "min: " << get<0>(*(this->format_code_list.end()-1)) << ", max: "
-              << get<1>((*(this->format_code_list.end()-1))) << ", char: "
-              << get<2>((*(this->format_code_list.end()-1))) << ", string: "
-              << get<3>((*(this->format_code_list.end()-1))) << std::endl;
+    // std::cout << "min: " << get<0>(*(this->format_code_list.end() - 1))
+    //           << ", max: " << get<1>((*(this->format_code_list.end() - 1)))
+    //           << ", char: " << get<2>((*(this->format_code_list.end() - 1)))
+    //           << ", string: " << get<3>((*(this->format_code_list.end() -
+    //           1)))
+    //           << std::endl;
   }
 }
 
@@ -90,8 +93,26 @@ void day02::format_code(std::vector<std::string> inTable) {
  */
 bool day02::check_single_policy(t_code_element password_element) {
   bool is_password_valid = false;
+  int counted_characters_in_string = 0;
+  int min_occurrences = get<0>(password_element);
+  int max_occurrences = get<1>(password_element);
+  std::string eval_character = get<2>(password_element);
+  std::string eval_string = get<3>(password_element);
 
-  return (false);
+  // Split string to characters and loop through string
+  for (int i = 0; i < eval_string.length(); i++) {
+    if ((char)eval_string.at(i) ==
+        (char)eval_character.at(0)) { // Check if equal
+      counted_characters_in_string++;
+    }
+  }
+
+  // Now check if number fits to policy
+  if (min_occurrences <= counted_characters_in_string <= max_occurrences) {
+    is_password_valid = true;
+  }
+
+  return (is_password_valid);
 }
 
 /**
@@ -102,6 +123,18 @@ bool day02::check_single_policy(t_code_element password_element) {
  */
 int day02::count_valid_policies(void) {
   int valid_passwords = 0;
+  bool policy_valid = false;
+
+  // Loop thorugh tuple formatted code and call policy check
+  for (const auto &itcoli : format_code_list) {
+    policy_valid = this->check_single_policy(itcoli);
+
+    // count events
+    if (policy_valid)
+    {
+      valid_passwords++;
+    }
+  }
 
   std::cout << "Found valid policies: " << valid_passwords << std::endl;
 
