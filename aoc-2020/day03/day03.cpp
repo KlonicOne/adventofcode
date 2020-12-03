@@ -43,14 +43,12 @@ day03::~day03() {}
  *
  */
 void day03::solver_part1(void) {
-  int result_1 = 0;
-
   // Info out
-  std::cout << "Part 1 how many trees" << std::endl;
+  std::cout << "\n --> Part 1 how many trees" << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(3, 1);
-  result_1 = this->calc_trees_on_path();
+  int result_1 = this->calc_trees_on_path();
   std::cout << "Found trees: " << this->found_trees << std::endl;
 }
 
@@ -59,39 +57,35 @@ void day03::solver_part1(void) {
  *
  */
 void day03::solver_part2(void) {
-  int result_1 = 0;
-  int result_2 = 0;
-  int result_3 = 0;
-  int result_4 = 0;
-  int result_5 = 0;
-  unsigned long long int final_result = 0;
+  // Final result
+  long long int final_result = 0;
 
   // Info out
-  std::cout << "Part 2 how many trees" << std::endl;
+  std::cout << "\n --> Part 2 how many trees multiplied" << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(1, 1);
-  result_1 = this->calc_trees_on_path();
+  int result_1 = this->calc_trees_on_path();
   std::cout << "Found trees: " << result_1 << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(3, 1);
-  result_2 = this->calc_trees_on_path();
+  int result_2 = this->calc_trees_on_path();
   std::cout << "Found trees: " << result_2 << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(5, 1);
-  result_3 = this->calc_trees_on_path();
+  int result_3 = this->calc_trees_on_path();
   std::cout << "Found trees: " << result_3 << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(7, 1);
-  result_4 = this->calc_trees_on_path();
+  int result_4 = this->calc_trees_on_path();
   std::cout << "Found trees: " << result_4 << std::endl;
 
   // Calculate the path and count trees
   this->calc_path(1, 2);
-  result_5 = this->calc_trees_on_path();
+  int result_5 = this->calc_trees_on_path();
   std::cout << "Found trees: " << result_5 << std::endl;
 
   // Final result !!! Must be multiplied not in one step
@@ -137,9 +131,10 @@ void day03::create_map(std::vector<std::string> inTable) {
         m_treemap[i + offset_i][k] = int_line[i];
       }
     }
+    // Store real used x length of map
     this->m_xdim = m_map_multiplier * int_line.size();
   }
-
+  // Store real used y length of map
   this->m_ydim = inTable.size();
 
   // debug out
