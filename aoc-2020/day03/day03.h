@@ -21,16 +21,30 @@
 
 using namespace std;
 
-typedef std::tuple<int, int, std::string, std::string> t_code_element;
+typedef tuple<long long, long long, long long> map_element_t;
+
+#define YDIM 512  // Map y
+#define XDIM 1024  // Map z
+#define ZDIM 2  // Value in zdim, 0 free, 1 tree
 
 class day03 {
-private:
+ private:
   /* data */
-  std::vector<t_code_element> format_code_list;
-  int number_valid_policies_p1;
-  int number_valid_policies_p2;
+  // max positiond in dimensions
+  long long m_ydim;
+  long long m_xdim;
+  long long m_zdim;
 
-public:
+  map_element_t current_pos;               // position of mower
+  std::vector<map_element_t> m_path;       // path trhough map with value
+  long long m_tree_map[XDIM][YDIM][ZDIM];  // Map with tree info on z dim
+  int m_map_multiplier;  // how often is the map repeated to right
+  int slope_right;       // input from puzzle
+  int slope_down;        // intput from puzzle
+
+  long long found_trees;  // result with found trees on path
+
+ public:
   day03(/* args */);
   ~day03();
 
@@ -38,11 +52,9 @@ public:
   void solver_part2(void);
 
   // part 1
-  void format_code(std::vector<std::string> inTable);
-  bool check_single_policy_p1(t_code_element password_element);
-  bool check_single_policy_p2(t_code_element password_element);
-  int count_valid_policies_p1(void);
-  int count_valid_policies_p2(void);
+  void create_map(std::vector<std::string> inTable);
+  void calc_path(void);
+  void calc_trees_on_path(void);
 };
 
-#endif // _DAY03_H_
+#endif  // _DAY03_H_

@@ -26,7 +26,7 @@ using namespace std;
  * @return int alway 0
  */
 int main(int, char **) {
-  std::ifstream ifile_one("input.txt");
+  std::ifstream ifile_one("input_test.txt");
   std::vector<std::string> inputTable;
 
   // Class to prepare the data
@@ -40,8 +40,8 @@ int main(int, char **) {
   // Go processing
   std::cout << "Start solving day03" << std::endl;
 
-  // Fill formatted code
-  Day03.format_code(inputTable);
+  // Fill formatted map
+  Day03.create_map(inputTable);
   // Solve problems
   Day03.solver_part1();
   Day03.solver_part2();
