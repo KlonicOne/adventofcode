@@ -24,14 +24,14 @@ using namespace std;
  *
  */
 day03::day03(/* args */) {
-  current_pos = std::make_tuple(0, 0, 0);
-  m_ydim = YDIM;
-  m_ydim = XDIM;
-  m_zdim = ZDIM;
-  found_trees = 0;
-  m_map_multiplier = 8;
-  slope_right = 3;
-  slope_down = 1;
+  this->current_pos = std::make_tuple(0, 0, 0);
+  this->found_trees = 0;
+  this->m_map_multiplier = 8;
+  this->m_ydim = XDIM;
+  this->m_ydim = YDIM;
+  this->m_zdim = ZDIM;
+  this->slope_down = 1;
+  this->slope_right = 3;
 }
 
 /**
@@ -77,13 +77,18 @@ void day03::create_map(std::vector<std::string> inTable) {
   for (std::vector<std::string>::const_iterator i = inTable.begin();
        i != inTable.end(); ++i) {
     // variables to loop through string
-    std::vector<long long> int_line;
+    std::vector<int> int_line;
+    int int_element = 0;
 
     // Get single line as string_line
     string_line = (*i);
     // convert line to vector of ints
     for (auto &element : string_line) {
-      int_line.push_back(stoi(&element));
+      int_element = stoi(&element);
+      int_line.push_back(int_element);
+
+      // debug out
+      std::cout << int_line[int_line.size()-1] << std::endl;
     }
 
     // // Split string to characters and loop through string
