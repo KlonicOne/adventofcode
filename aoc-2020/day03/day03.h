@@ -21,7 +21,12 @@
 
 using namespace std;
 
-typedef tuple<int, int, int> map_element_t;
+typedef struct path_element_t {
+  int x;
+  int y;
+  int value;
+} path_element_t;
+
 typedef std::vector<int> vec_1d_t;
 typedef std::vector<vec_1d_t> vec_2d_t;
 typedef std::vector<vec_2d_t> vec_3d_t;
@@ -36,13 +41,13 @@ class day03 {
 private:
   /* data */
   // max positiond in dimensions
-  int m_map_multiplier;              // how often is the map repeated to right
-  int m_xdim;                        // real used xdimension
-  int m_ydim;                        // real used ydimension
-  int slope_down;                    // intput from puzzle
-  int slope_right;                   // input from puzzle
-  map_element_t current_pos;         // position of mower
-  std::vector<map_element_t> m_path; // path trhough map with value
+  int m_map_multiplier;               // how often is the map repeated to right
+  int m_xdim;                         // real used xdimension
+  int m_ydim;                         // real used ydimension
+  int slope_down;                     // intput from puzzle
+  int slope_right;                    // input from puzzle
+  path_element_t current_pos;         // position of mower
+  std::vector<path_element_t> m_path; // path trhough map with value
   vec_2d_t m_treemap; // map with trees in x,y and value on pos(x,y)
 
   int found_trees; // result with found trees on path

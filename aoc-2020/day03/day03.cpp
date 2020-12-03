@@ -24,7 +24,7 @@ using namespace std;
  *
  */
 day03::day03(/* args */) {
-  this->current_pos = std::make_tuple(0, 0, 0);
+  this->current_pos = {0, 0, 0};
   this->found_trees = 0;
   this->m_map_multiplier = 8;
   this->m_xdim = XDIM;
@@ -126,9 +126,24 @@ void day03::plotTreeMap(void) {
  *
  */
 void day03::calc_path(void) {
-  // Calculate with slope next position
+  // Calculate with slope next position and check for boundary
+  bool loop_path = true;
+  this->current_pos.x = 0;
+  this->current_pos.y = 0;
 
-  // Store next position with value in path
+  while (loop_path) {
+    // add position with value in path
+    this->current_pos.value = m_treemap[current_pos.x].at(current_pos.y);
+    this->m_path.push_back(current_pos);
+    // next pos calculation
+    this->current_pos.x += this->slope_right;
+    this->current_pos.y += this->slope_down;
+    // Check limits exceeded then stop
+    if (this->current_pos.x > this->m_xdim ||
+        this->current_pos.y > this->m_ydim) {
+      loop_path = false;
+    }
+  }
 }
 
 /**
@@ -137,6 +152,9 @@ void day03::calc_path(void) {
  */
 void day03::calc_trees_on_path(void) {
   // Iterate through path and check for hit trees
-
+  for (int i = 0; i < this->m_path.size(); ++i) {
+    this->found_trees += this->m_path.at(i).value;
+  }
   // print out result
+  std::cout << "Found trees: " << this->found_trees << std::endl;;
 }
