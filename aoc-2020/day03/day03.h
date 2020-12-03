@@ -22,29 +22,34 @@
 using namespace std;
 
 typedef tuple<int, int, int> map_element_t;
+typedef std::vector<int> vec_1d_t;
+typedef std::vector<vec_1d_t> vec_2d_t;
+typedef std::vector<vec_2d_t> vec_3d_t;
 
 #define XDIM (1024)
 #define YDIM (512)
-#define ZDIM (2) 
+#define ZDIM (2)
+
+const char tree_sym = '#';
+const char free_sym = '.';
 
 class day03 {
- private:
+private:
   /* data */
   // max positiond in dimensions
-  int m_ydim;
+  int m_map_multiplier; // how often is the map repeated to right
   int m_xdim;
+  int m_ydim;
   int m_zdim;
+  int slope_down;                    // intput from puzzle
+  int slope_right;                   // input from puzzle
+  map_element_t current_pos;         // position of mower
+  std::vector<map_element_t> m_path; // path trhough map with value
+  vec_3d_t m_treemap;                // map with trees in 3dimensions
 
-  map_element_t current_pos;               // position of mower
-  std::vector<map_element_t> m_path;       // path trhough map with value
-  int m_tree_map[XDIM][YDIM][ZDIM];  // Map with tree info on z dim !!! seg fault ???
-  int m_map_multiplier;  // how often is the map repeated to right
-  int slope_right;       // input from puzzle
-  int slope_down;        // intput from puzzle
+  int found_trees; // result with found trees on path
 
-  int found_trees;  // result with found trees on path
-
- public:
+public:
   day03(/* args */);
   ~day03();
 
@@ -57,4 +62,4 @@ class day03 {
   void calc_trees_on_path(void);
 };
 
-#endif  // _DAY03_H_
+#endif // _DAY03_H_

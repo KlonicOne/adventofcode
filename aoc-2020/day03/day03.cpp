@@ -32,6 +32,7 @@ day03::day03(/* args */) {
   this->m_zdim = ZDIM;
   this->slope_down = 1;
   this->slope_right = 3;
+  m_treemap.resize(XDIM, vec_2d_t(YDIM, vec_1d_t(ZDIM)));
 }
 
 /**
@@ -78,18 +79,25 @@ void day03::create_map(std::vector<std::string> inTable) {
        i != inTable.end(); ++i) {
     // variables to loop through string
     std::vector<int> int_line;
-    int int_element = 0;
 
     // Get single line as string_line
     string_line = (*i);
     // convert line to vector of ints
-    for (auto &element : string_line) {
-      int_element = stoi(&element);
-      int_line.push_back(int_element);
+    for (char const element : string_line) {
 
-      // debug out
-      std::cout << int_line[int_line.size()-1] << std::endl;
+      if (element == tree_sym) {
+        int_line.push_back(1);
+      } else {
+        int_line.push_back(0);
+      }
     }
+
+    // debug out
+    for (std::vector<int>::const_iterator i = int_line.begin();
+         i != int_line.end(); ++i) {
+      std::cout << *i << ' ';
+    }
+    std::cout << std::endl;
 
     // // Split string to characters and loop through string
     // for (int i = 0; i < eval_string.length(); i++) {
