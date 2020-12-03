@@ -27,12 +27,11 @@ day03::day03(/* args */) {
   this->current_pos = std::make_tuple(0, 0, 0);
   this->found_trees = 0;
   this->m_map_multiplier = 8;
-  this->m_ydim = XDIM;
+  this->m_xdim = XDIM;
   this->m_ydim = YDIM;
-  this->m_zdim = ZDIM;
   this->slope_down = 1;
   this->slope_right = 3;
-  m_treemap.resize(XDIM, vec_2d_t(YDIM, vec_1d_t(ZDIM)));
+  m_treemap.resize(XDIM, vec_1d_t(YDIM));
 }
 
 /**
@@ -47,7 +46,7 @@ day03::~day03() {}
  */
 void day03::solver_part1(void) {
   // Info out
-  std::cout << "Policy check part 1" << std::endl;
+  std::cout << "Part 1 how many trees" << std::endl;
 
   // Calculate the path
   this->calc_path();
@@ -75,16 +74,16 @@ void day03::create_map(std::vector<std::string> inTable) {
   std::string string_line = "";
   std::string element = "";
 
-  for (std::vector<std::string>::const_iterator i = inTable.begin();
-       i != inTable.end(); ++i) {
+  // for (std::vector<std::string>::const_iterator i = inTable.begin();
+  //      i != inTable.end(); ++i)
+  for (int k = 0; k < inTable.size(); ++k) {
     // variables to loop through string
     std::vector<int> int_line;
 
-    // Get single line as string_line
-    string_line = (*i);
+    // Get single line as vector of ints
+    string_line = inTable.at(k);
     // convert line to vector of ints
     for (char const element : string_line) {
-
       if (element == tree_sym) {
         int_line.push_back(1);
       } else {
@@ -92,21 +91,34 @@ void day03::create_map(std::vector<std::string> inTable) {
       }
     }
 
-    // debug out
-    for (std::vector<int>::const_iterator i = int_line.begin();
-         i != int_line.end(); ++i) {
-      std::cout << *i << ' ';
+    // copy vector to map
+    for (int j = 0; j < m_map_multiplier; ++j) {
+      int offset_i = j * int_line.size();
+      for (int i = 0; i < int_line.size(); ++i) {
+        m_treemap[i + offset_i][k] = int_line[i];
+      }
+    }
+    this->m_xdim = m_map_multiplier * int_line.size();
+  }
+
+  this->m_ydim = inTable.size();
+
+  // debug out
+  this->plotTreeMap();
+}
+
+/**
+ * @brief To print out the used map
+ *
+ */
+void day03::plotTreeMap(void) {
+  for (unsigned y = 0; y < this->m_ydim; y++) {
+    for (unsigned x = 0; x < this->m_xdim; x++) {
+      std::cout << this->m_treemap[x].at(y);
     }
     std::cout << std::endl;
-
-    // // Split string to characters and loop through string
-    // for (int i = 0; i < eval_string.length(); i++) {
-    //   if ((char)eval_string.at(i) ==
-    //       (char)eval_character.at(0)) {  // Check if equal
-    //     num_matching_chars++;
-    //   }
-    // }
   }
+  std::cout << std::endl;
 }
 
 /**
