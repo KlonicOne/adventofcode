@@ -48,5 +48,6 @@
     "optional": "cpp",
     "random": "cpp",
     "ranges": "cpp"
-  }
+  },
+  "ccls.codeLens.enabled": false
 }

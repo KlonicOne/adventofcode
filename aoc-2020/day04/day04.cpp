@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <istream>
+#include <regex>
 #include <sstream>
 #include <tuple>
 #include <vector>
@@ -281,6 +282,14 @@ bool day04::check_single_policy_p1(passport_type pp_element) {
 bool day04::check_single_policy_p2(passport_type pp_element) {
   bool is_password_valid = false;
 
+  is_password_valid = this->value_check_byr(pp_element.byr.value) &&
+                      this->value_check_iyr(pp_element.iyr.value) &&
+                      this->value_check_eyr(pp_element.eyr.value) &&
+                      this->value_check_hgt(pp_element.hgt.value) &&
+                      this->value_check_hcl(pp_element.hcl.value) &&
+                      this->value_check_ecl(pp_element.ecl.value) &&
+                      this->value_check_pid(pp_element.pid.value);
+
   return (is_password_valid);
 }
 
@@ -332,4 +341,195 @@ int day04::count_valid_policies_p2(void) {
             << std::endl;
 
   return (this->number_valid_policies_p2);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_byr(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    int value_num = stoi(value);
+    int value_digits = 4;
+    const int value_min = 1920;
+    const int value_max = 2002;
+
+    // Check number digits
+    policy_result = (value.size() == value_digits);
+    // Check limits
+    policy_result = policy_result && (value_num >= value_min);
+    policy_result = policy_result && (value_num <= value_max);
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_iyr(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    int value_num = stoi(value);
+    int value_digits = 4;
+    const int value_min = 2010;
+    const int value_max = 2020;
+
+    // Check number digits
+    policy_result = (value.size() == value_digits);
+    // Check limits
+    policy_result = policy_result && (value_num >= value_min);
+    policy_result = policy_result && (value_num <= value_max);
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_eyr(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    int value_num = stoi(value);
+    int value_digits = 4;
+    const int value_min = 2020;
+    const int value_max = 2030;
+
+    // Check number digits
+    policy_result = (value.size() == value_digits);
+    // Check limits
+    policy_result = policy_result && (value_num >= value_min);
+    policy_result = policy_result && (value_num <= value_max);
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_hgt(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    const int value_min_cm = 150;
+    const int value_max_cm = 193;
+    const int value_min_in = 59;
+    const int value_max_in = 76;
+    int value_num;
+    std::string::size_type startpos{0};
+    std::string::size_type currentpos;
+
+    // Check for inch
+    currentpos = value.find_first_of("in", startpos);
+    if (currentpos != std::string::npos) {
+      policy_result = true; // we found correct unit
+      std::string num_element =
+          value.substr(startpos, value.size() - (currentpos - 1));
+      value_num = stoi(num_element);
+      policy_result = policy_result && (value_num >= value_min_in); // min check
+      policy_result = policy_result && (value_num <= value_max_in); // max check
+    }
+    // Check for cm
+    currentpos = value.find_first_of("cm", startpos);
+    if (currentpos != std::string::npos) {
+      policy_result = true; // we found correct unit
+      std::string num_element =
+          value.substr(startpos, value.size() - (currentpos - 1));
+      value_num = stoi(num_element);
+      policy_result = policy_result && (value_num >= value_min_cm);
+      policy_result = policy_result && (value_num <= value_max_cm);
+    }
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_hcl(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    int value_digits = 7;
+    static const std::regex re{"^#.....[a-f0-9]$"};
+
+    policy_result = (value.size() == value_digits);
+    policy_result = policy_result && std::regex_match(value, re);
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_ecl(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    // amb blu brn gry grn hzl oth
+    policy_result = !value.compare("amb");
+    policy_result = policy_result || !value.compare("blu");
+    policy_result = policy_result || !value.compare("brn");
+    policy_result = policy_result || !value.compare("gry");
+    policy_result = policy_result || !value.compare("grn");
+    policy_result = policy_result || !value.compare("hzl");
+    policy_result = policy_result || !value.compare("oth");
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_pid(std::string value) {
+  bool policy_result = false;
+  if (value != "") {
+    int value_digits = 9;
+    static const std::regex re{"\\d{9}"};
+
+    policy_result = (value.size() == value_digits);
+    policy_result = policy_result && std::regex_match(value, re);
+  }
+  return (policy_result);
+}
+
+/**
+ * @brief Check policy
+ *
+ * @param value
+ * @return true
+ * @return false
+ */
+bool day04::value_check_cid(std::string value) {
+  bool policy_result = false;
+  int value_num = stoi(value);
+  int value_digits = 4;
+  const int value_min = 1920;
+  const int value_max = 2002;
+
+  return (policy_result);
 }
