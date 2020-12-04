@@ -26,7 +26,7 @@ using namespace std;
  * @return int alway 0
  */
 int main(int, char **) {
-  std::ifstream ifile_one("input_test.txt");
+  std::ifstream ifile_one("input.txt");
   std::vector<std::string> inputTable;
 
   // Class to prepare the data

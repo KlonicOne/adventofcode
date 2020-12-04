@@ -92,7 +92,7 @@ void day04::format_input(std::vector<std::string> inTable) {
       this->init_element_pp_list(current_pp_index);
 
       // std::cout << "Next pp element " << current_pp_index << std::endl;
-      continue;  // This line is not to be considered, eval next line
+      continue; // This line is not to be considered, eval next line
     }
 
     // Split string_line and store in vector of strings
@@ -136,7 +136,7 @@ void day04::format_input(std::vector<std::string> inTable) {
 void day04::print_element_pp_list(void) {
   int current_index = 0;
   for (auto &pplistel : format_pp_list) {
-    std::cout << "Passport: " << current_index+1 << std::endl;
+    std::cout << "Passport: " << current_index + 1 << std::endl;
     std::cout << pplistel.byr.name << ", " << pplistel.byr.value << ", "
               << pplistel.byr.optional << std::endl;
     std::cout << pplistel.iyr.name << ", " << pplistel.iyr.value << ", "
@@ -156,7 +156,8 @@ void day04::print_element_pp_list(void) {
 
     // only elements to plot
     current_index++;
-    if (current_index > this->format_list_size) break;
+    if (current_index > this->format_list_size)
+      break;
   }
   std::cout << std::endl;
 }
@@ -214,8 +215,8 @@ void day04::set_value_pp_list(int element_pos, std::string element_name,
   } else if (element_name.compare(this->format_pp_list[element_pos].iyr.name) ==
              0) {
     this->format_pp_list[element_pos].iyr.value = element_value;
-  } else if (element_name.compare(
-                 this->format_pp_list[element_pos].eyr.name) == 0) {
+  } else if (element_name.compare(this->format_pp_list[element_pos].eyr.name) ==
+             0) {
     this->format_pp_list[element_pos].eyr.value = element_value;
   } else if (element_name.compare(this->format_pp_list[element_pos].hgt.name) ==
              0) {
@@ -248,6 +249,24 @@ void day04::set_value_pp_list(int element_pos, std::string element_name,
  */
 bool day04::check_single_policy_p1(passport_type pp_element) {
   bool is_password_valid = false;
+
+  // Check for all fields in passport
+  is_password_valid = (pp_element.byr.value != "" ||
+                       pp_element.byr.optional) // check field present
+                      && (pp_element.iyr.value != "" ||
+                          pp_element.iyr.optional) // check field present
+                      && (pp_element.eyr.value != "" ||
+                          pp_element.eyr.optional) // check field present
+                      && (pp_element.hgt.value != "" ||
+                          pp_element.hgt.optional) // check field present
+                      && (pp_element.hcl.value != "" ||
+                          pp_element.hcl.optional) // check field present
+                      && (pp_element.ecl.value != "" ||
+                          pp_element.ecl.optional) // check field present
+                      && (pp_element.pid.value != "" ||
+                          pp_element.pid.optional) // check field present
+                      && (pp_element.cid.value != "" ||
+                          pp_element.cid.optional); // check field present
 
   return (is_password_valid);
 }
@@ -284,7 +303,7 @@ int day04::count_valid_policies_p1(void) {
     }
   }
 
-  std::cout << "Found valid policies: " << number_valid_policies_p1
+  std::cout << "Found valid passports: " << number_valid_policies_p1
             << std::endl;
 
   return (this->number_valid_policies_p1);
