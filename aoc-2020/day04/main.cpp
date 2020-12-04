@@ -42,6 +42,7 @@ int main(int, char **) {
 
   // Fill formatted code
   Day04.format_input(inputTable);
+  Day04.print_element_pp_list();
   // Solve problems
   Day04.solver_part1();
   Day04.solver_part2();

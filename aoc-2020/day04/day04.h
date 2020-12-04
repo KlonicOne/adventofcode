@@ -30,7 +30,7 @@ typedef struct pp_entry_type {
 typedef struct passport_type {
   pp_entry_type byr;   // (Birth Year)
   pp_entry_type iyr;   // (Issue Year)
-  pp_entry_type eeyr;  // (Expiration Year)
+  pp_entry_type eyr;  // (Expiration Year)
   pp_entry_type hgt;   // (Height)
   pp_entry_type hcl;   // (Hair Color)
   pp_entry_type ecl;   // (Eye Color)
@@ -41,7 +41,7 @@ typedef struct passport_type {
 class day04 {
  private:
   /* data */
-  std::vector<passport_type> fromat_pp_list;
+  std::vector<passport_type> format_pp_list;
   int number_valid_policies_p1;
   int number_valid_policies_p2;
   int format_list_size;
@@ -57,9 +57,14 @@ class day04 {
   // part 1
   void format_input(std::vector<std::string> inTable);
   bool check_single_policy_p1(passport_type passport_type);
-  bool check_single_policy_p2(passport_type passport_type);
   int count_valid_policies_p1(void);
+  // part 2
+  bool check_single_policy_p2(passport_type passport_type);
   int count_valid_policies_p2(void);
+  //
+  void init_element_pp_list(int element_pos);
+  void set_value_pp_list(int element_pos, std::string element_name, std::string element_value);
+  void print_element_pp_list(void);
 };
 
 #endif  // _DAY04_H_
