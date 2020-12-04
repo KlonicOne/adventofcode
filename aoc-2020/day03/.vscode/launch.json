@@ -2,6 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "gdb",
+      "request": "launch",
+      "name": "Launch Msys",
+      "target": "${workspaceRoot}/build/day03.exe",
+      "cwd": "${workspaceRoot}",
+      "valuesFormatting": "parseText"
+    },
+    {
       "name": "Launch Linux",
       "type": "cppdbg",
       "request": "launch",
@@ -9,13 +17,6 @@
       "stopAtEntry": true,
       "cwd": "${workspaceRoot}",
     },
-    {
-      "name": "Launch WinMsys",
-      "type": "gdb",
-      "request": "launch",
-      "target": "${workspaceRoot}/build/day03.exe",
-      "cwd": "${workspaceRoot}",
-      "stopAtEntry": true,
-    },
+
   ]
 }
