@@ -7,6 +7,8 @@
  * @copyright Copyright (c) 2020
  *
  */
+#include "day04.h"
+
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -15,8 +17,6 @@
 #include <tuple>
 #include <vector>
 
-#include "day04.h"
-
 using namespace std;
 
 /**
@@ -24,8 +24,10 @@ using namespace std;
  *
  */
 day04::day04(/* args */) {
-  number_valid_policies_p1 = 0;
-  number_valid_policies_p2 = 0;
+  this->number_valid_policies_p1 = 0;
+  this->number_valid_policies_p2 = 0;
+  this->fromat_pp_list.resize(this->passport_length);
+  this->format_list_size = 0;
 }
 
 /**
@@ -63,10 +65,16 @@ void day04::solver_part2(void) {
  *
  * @param inTable
  */
-void day04::format_code(std::vector<std::string> inTable) {
+void day04::format_input(std::vector<std::string> inTable) {
   // Separate to better debug and use the input
+  int current_pp_index = 0;
   std::string string_line = "";
   std::string element = "";
+
+  // Init first pp element
+  fromat_pp_list[current_pp_index].byr.name = "";
+  fromat_pp_list[current_pp_index].byr.value = "";
+  fromat_pp_list[current_pp_index].byr.optional = false;
 
   for (std::vector<std::string>::const_iterator i = inTable.begin();
        i != inTable.end(); ++i) {
@@ -74,10 +82,22 @@ void day04::format_code(std::vector<std::string> inTable) {
     std::vector<std::string> string_vec_element;
     std::string::size_type start{0};
     std::string::size_type pos;
-    std::string delimiter = " -";
+    std::string delimiter = " :";
 
     // Get single line as string_line
     string_line = (*i);
+
+    // If only newline in line, go over to next pp and init it
+    if (string_line.length() == 0) {
+      current_pp_index++;
+      // Init next pp element
+      fromat_pp_list[current_pp_index].byr.name = "";
+      fromat_pp_list[current_pp_index].byr.value = "";
+      fromat_pp_list[current_pp_index].byr.optional = false;
+
+      std::cout << "Next pp element." << std::endl;
+      continue;
+    }
 
     // Split string_line and store in vector of strings
     do {
@@ -91,17 +111,18 @@ void day04::format_code(std::vector<std::string> inTable) {
       start = pos + 1;
     } while (pos != std::string::npos);
 
-    // add to pport list with required format
-
+    // add to pport list with required format for current pp index
+    // catch all available elements
+    for (std::string vecel : string_vec_element) {
+      std::cout << vecel << ", ";
+    }
+    std::cout << std::endl;
 
     // debug out
-    // std::cout << "Line: " << string_line << std::endl;
-    // std::cout << "min: " << get<0>(*(this->format_code_list.end() - 1))
-    //           << ", max: " << get<1>((*(this->format_code_list.end() - 1)))
-    //           << ", char: " << get<2>((*(this->format_code_list.end() - 1)))
-    //           << ", string: " << get<3>((*(this->format_code_list.end() -
-    //           1)))
-    //           << std::endl;
+    // for (std::string vecel : string_vec_element) {
+    //   std::cout << vecel << ", ";
+    // }
+    // std::cout << std::endl;
   }
 }
 

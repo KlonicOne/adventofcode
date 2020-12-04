@@ -26,7 +26,7 @@ using namespace std;
  * @return int alway 0
  */
 int main(int, char **) {
-  std::ifstream ifile_one("input.txt");
+  std::ifstream ifile_one("input_test.txt");
   std::vector<std::string> inputTable;
 
   // Class to prepare the data
@@ -41,7 +41,7 @@ int main(int, char **) {
   std::cout << "Start solving Day04" << std::endl;
 
   // Fill formatted code
-  Day04.format_code(inputTable);
+  Day04.format_input(inputTable);
   // Solve problems
   Day04.solver_part1();
   Day04.solver_part2();
