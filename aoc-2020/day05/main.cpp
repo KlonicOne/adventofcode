@@ -42,7 +42,6 @@ int main(int, char **) {
 
   // Fill formatted code
   Day05.format_input(inputTable);
-  //Day05.print_element_pp_list();
   // Solve problems
   Day05.solver_part1();
   Day05.solver_part2();
