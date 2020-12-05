@@ -25,7 +25,6 @@ using namespace std;
 typedef struct seat_element_t {
   std::string row_string;
   std::string col_string;
-  int seat_num;
   int row;
   int col;
 } seat_element_t;
@@ -34,6 +33,7 @@ class day05 {
 private:
   /* data */
   std::vector<seat_element_t> format_seat_list;
+  std::vector<int> seat_ids;
   int used_seats_in_format_list;
 
 public:
@@ -45,6 +45,10 @@ public:
   void format_input(std::vector<std::string> inTable);
 
   // part 1
+  void eval_seat_parameter(void);
+  void calc_seat_ids(void);
+  int max_seat_id(void);
+
   // part 2
 };
 

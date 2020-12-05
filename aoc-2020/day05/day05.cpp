@@ -39,6 +39,12 @@ day05::~day05() {}
 void day05::solver_part1(void) {
   // Info out
   std::cout << "Policy check part 1" << std::endl;
+  // Eval values for each seat
+  eval_seat_parameter();
+  // Calc seat ID
+  calc_seat_ids();
+  // Check largest seat ID
+  std::cout << "Max seat Id: " << max_seat_id() << std::endl;
 }
 
 /**
@@ -103,4 +109,71 @@ void day05::format_input(std::vector<std::string> inTable) {
   this->used_seats_in_format_list = format_seat_list.size();
   // deboug out
   std::cout << "Seats: " << this->used_seats_in_format_list << std::endl;
+}
+
+/**
+ * @brief Evaluate all seat parameter
+ *
+ */
+void day05::eval_seat_parameter(void) {
+
+  std::string B = "B", Br = "1";
+  std::string F = "F", Fr = "0";
+  std::string R = "R", Rr = "1";
+  std::string L = "L", Lr = "0";
+  size_t pos;
+
+  for (seat_element_t &seatel : format_seat_list) {
+    // prepare row
+    while ((pos = seatel.row_string.find(B)) != std::string::npos) {
+      seatel.row_string.replace(pos, 1, Br);
+    }
+    while ((pos = seatel.row_string.find(F)) != std::string::npos) {
+      seatel.row_string.replace(pos, 1, Fr);
+    }
+
+    // prepare col
+    while ((pos = seatel.col_string.find(L)) != std::string::npos) {
+      seatel.col_string.replace(pos, 1, Lr);
+    }
+    while ((pos = seatel.col_string.find(R)) != std::string::npos) {
+      seatel.col_string.replace(pos, 1, Rr);
+    }
+
+    // Now store value in row
+    seatel.row = stoi(seatel.row_string, nullptr, 2);
+    seatel.col = stoi(seatel.col_string, nullptr, 2);
+    // debug out
+    // std::cout << seatel.row_string << std::endl;
+    // std::cout << seatel.row << std::endl;
+    // std::cout << seatel.col_string << std::endl;
+    // std::cout << seatel.col << std::endl;
+  }
+}
+
+/**
+ * @brief Calculate based on parameter the seat ids in own vector
+ *
+ */
+void day05::calc_seat_ids(void) {
+  for (seat_element_t &seatel : format_seat_list) {
+    int seat_id = seatel.row * 8 + seatel.col;
+    seat_ids.push_back(seat_id);
+    // debug
+    std::cout << seat_id << std::endl;
+  }
+}
+
+/**
+ * @brief Check for largest Id found in vector
+ *
+ * @return int Max id in vec
+ */
+int day05::max_seat_id(void) {
+  int max_seat_id = 0;
+
+  // Get maximum value in seat ids
+  max_seat_id = *max_element(seat_ids.begin(), seat_ids.end());
+
+  return (max_seat_id);
 }
