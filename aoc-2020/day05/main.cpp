@@ -1,5 +1,51 @@
+/**
+ * @file main.cpp
+ * @author klonicone
+ * @version 0.1
+ * @date 2020-11-30
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+#include <cstring>
+#include <fstream>
 #include <iostream>
+#include <istream>
+#include <sstream>
+#include <tuple>
+#include <vector>
 
-int main(int, char**) {
-    std::cout << "Hello, world!\n";
+#include "load_data.h"
+#include "day05.h"
+
+using namespace std;
+
+/**
+ * @brief main function calling process
+ * 
+ * @return int alway 0
+ */
+int main(int, char **) {
+  std::ifstream ifile_one("input.txt");
+  std::vector<std::string> inputTable;
+
+  // Class to prepare the data
+  load_data Load_Data;
+  // Class to solve day problem
+  day05 Day05;
+
+  // get data
+  inputTable = Load_Data.getInputVectorString(ifile_one);
+
+  // Go processing
+  std::cout << "Start solving Day05" << std::endl;
+
+  // Fill formatted code
+  Day05.format_input(inputTable);
+  //Day05.print_element_pp_list();
+  // Solve problems
+  Day05.solver_part1();
+  Day05.solver_part2();
+
+  return (0);
 }
