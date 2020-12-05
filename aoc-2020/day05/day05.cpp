@@ -184,10 +184,19 @@ int day05::max_seat_id(void) {
   return (max_seat_id);
 }
 
+/**
+ * @brief sort vector for part 2 to get positive diff
+ * 
+ */
 void day05::sort_seat_vector(void) {
   std::sort(this->seat_ids.begin(), this->seat_ids.end());
 }
 
+/**
+ * @brief Check for the difference and calc seat
+ * 
+ * @return int My seat :-)
+ */
 int day05::get_my_seat(void) {
   int found_seat = 0;
   // check for diff is 2, take last value and return it
