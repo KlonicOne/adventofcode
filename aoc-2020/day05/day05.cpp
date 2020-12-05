@@ -24,9 +24,7 @@ using namespace std;
  * @brief constructor
  *
  */
-day05::day05(/* args */) {
-  this->format_seat_list.resize(this->format_seat_list_size);
-}
+day05::day05(/* args */) { this->used_seats_in_format_list = 0; }
 
 /**
  * @brief Destroy the day05::day05
@@ -69,7 +67,8 @@ void day05::format_input(std::vector<std::string> inTable) {
     std::vector<std::string> string_vec_element;
     std::string::size_type start{0};
     std::string::size_type pos;
-    std::string delimiter = " :";
+    std::string delimiter = ""; // No splitting this time
+    seat_element_t current_seat_element;
 
     // Get single line as string_line
     string_line = (*i);
@@ -87,9 +86,21 @@ void day05::format_input(std::vector<std::string> inTable) {
     } while (pos != std::string::npos);
 
     // debug out
-    for (std::string vecel : string_vec_element) {
-      std::cout << vecel << ", ";
-    }
-    std::cout << std::endl;
+    std::cout << string_vec_element[0] << std::endl;
+
+    // Get last three character for column 0 1 2 3 4 5 6 7 8 9
+    // Get first seven for row
+    // Convert into seat number and  store all values
+    current_seat_element.col_string = string_vec_element[0].substr(
+        (string_vec_element[0].size() - 3), (string_vec_element[0].size() - 1));
+    current_seat_element.row_string =
+        string_vec_element[0].substr(0, (string_vec_element[0].size() - 3));
+    format_seat_list.push_back(current_seat_element);
+    // debug out
+    std::cout << "col: " << current_seat_element.col_string << std::endl;
+    std::cout << "rol: " << current_seat_element.row_string << std::endl;
   }
+  this->used_seats_in_format_list = format_seat_list.size();
+  // deboug out
+  std::cout << "Seats: " << this->used_seats_in_format_list << std::endl;
 }

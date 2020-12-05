@@ -21,11 +21,20 @@
 
 using namespace std;
 
+// Single seat element
+typedef struct seat_element_t {
+  std::string row_string;
+  std::string col_string;
+  int seat_num;
+  int row;
+  int col;
+} seat_element_t;
+
 class day05 {
 private:
   /* data */
-  std::vector<int> format_seat_list;
-  const int format_seat_list_size = 500;
+  std::vector<seat_element_t> format_seat_list;
+  int used_seats_in_format_list;
 
 public:
   day05(/* args */);
