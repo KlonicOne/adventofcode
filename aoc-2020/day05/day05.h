@@ -50,6 +50,8 @@ public:
   int max_seat_id(void);
 
   // part 2
+  void sort_seat_vector(void);
+  int get_my_seat(void);
 };
 
 #endif // _DAY05_H_

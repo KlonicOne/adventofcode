@@ -40,11 +40,11 @@ void day05::solver_part1(void) {
   // Info out
   std::cout << "Policy check part 1" << std::endl;
   // Eval values for each seat
-  eval_seat_parameter();
+  this->eval_seat_parameter();
   // Calc seat ID
-  calc_seat_ids();
+  this->calc_seat_ids();
   // Check largest seat ID
-  std::cout << "Max seat Id: " << max_seat_id() << std::endl;
+  std::cout << "Max seat Id: " << this->max_seat_id() << std::endl;
 }
 
 /**
@@ -54,6 +54,12 @@ void day05::solver_part1(void) {
 void day05::solver_part2(void) {
   // Info out
   std::cout << "Policy check part 2" << std::endl;
+
+  // Sort vector
+  this->sort_seat_vector();
+
+  // Check for diff 2 and get my seat
+  std::cout << "My seat: " << this->get_my_seat() << std::endl;
 }
 
 /**
@@ -176,4 +182,21 @@ int day05::max_seat_id(void) {
   max_seat_id = *max_element(seat_ids.begin(), seat_ids.end());
 
   return (max_seat_id);
+}
+
+void day05::sort_seat_vector(void) {
+  std::sort(this->seat_ids.begin(), this->seat_ids.end());
+}
+
+int day05::get_my_seat(void) {
+  int found_seat = 0;
+  // check for diff is 2, take last value and return it
+  for (int i = 1; i < this->seat_ids.size(); i++) {
+    int diff = this->seat_ids[i] - this->seat_ids[i - 1];
+    if (diff == 2) {
+      // seat found
+      found_seat = this->seat_ids[i] - 1;
+    }
+  }
+  return (found_seat);
 }
