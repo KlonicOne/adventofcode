@@ -28,6 +28,8 @@ typedef struct person_t {
 
 typedef struct group_t {
   std::vector<person_t> pers_in_group;
+  std::vector<int> vec_all_questions = std::vector<int>(26); // fix size
+  int num_yes_questions;
 } group_t;
 
 class day06 {
@@ -46,6 +48,7 @@ public:
   // part 1
   void eval_groups(void);
   int calc_sum_yes_questions(void);
+  void print_group_results(void);
 };
 
 #endif // _DAY06_H_

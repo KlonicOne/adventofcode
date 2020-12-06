@@ -39,9 +39,10 @@ day06::~day06() {}
 void day06::solver_part1(void) {
   int answer = 0;
   // Info out
-  std::cout << "Part 01" << std::endl;
+  std::cout << "Part 1" << std::endl;
   // Eval values for each group
   this->eval_groups();
+  //this->print_group_results();
   // Calc sum of all yes questions
   answer = this->calc_sum_yes_questions();
   // Check largest seat ID
@@ -80,14 +81,14 @@ void day06::format_input(std::vector<std::string> inTable) {
     string_line = (*i);
 
     // debug
-    std::cout << (*i) << std::endl;
+    // std::cout << (*i) << std::endl;
 
     // If only newline in line, go over to next group in group
     if (string_line.length() == 0) {
       // push group to all groups
-      this->all_groups.push_back(current_group); 
+      this->all_groups.push_back(current_group);
       // Delete current groupt content
-      current_group.pers_in_group.clear(); 
+      current_group.pers_in_group.clear();
       // std::cout << "Next groups " << group_index << std::endl;
       continue; // This line is not to be considered, eval next line
     }
@@ -110,11 +111,69 @@ void day06::format_input(std::vector<std::string> inTable) {
     // and delete content fo person for next person
     current_person.yes_questions.clear();
   }
-  
+
   // debug
-  std::cout << "Number of groups: " << this->all_groups.size() + 1 << std::endl;
+  std::cout << "Number of groups: " << this->all_groups.size() << std::endl;
 }
 
-void day06::eval_groups(void) {}
+/**
+ * @brief evaluate all groups and person and store the yes questions each group
+ *
+ */
+void day06::eval_groups(void) {
+  // Loop through groups
+  for (int i = 0; i < this->all_groups.size(); ++i) {
+    // Loop through persons
+    for (int j = 0; j < this->all_groups[i].pers_in_group.size(); ++j) {
+      const int a_offset = 97;
+      // Loop through person yes questions
+      for (int k = 0;
+           k < this->all_groups[i].pers_in_group[j].yes_questions.size(); ++k) {
+        // Extract next question with yes
+        std::string question =
+            this->all_groups[i].pers_in_group[j].yes_questions[k];
+        // calc index for vector
+        int index = int(question[0]) - a_offset;
+        // count hit character as index
+        this->all_groups[i].vec_all_questions[index]++;
 
-int day06::calc_sum_yes_questions(void) { return (0); }
+        // std::cout << "Group: " << i << ", Person: " << j
+        //           << ", Char index: " << index << ", char: " << question[0]
+        //           << std::endl;
+      }
+    }
+  }
+}
+
+/**
+ * @brief Print out all group resutls of yes questions
+ *
+ */
+void day06::print_group_results(void) {
+  // Loop through groups
+  for (int i = 0; i < this->all_groups.size(); ++i) {
+    // Print results of group each hit question
+    std::cout << "Group: " << i + 1 << std::endl;
+    for (int k = 0; k < 26; k++) {
+      cout << this->all_groups[i].vec_all_questions[k] << ", ";
+    }
+    std::cout << std::endl;
+  }
+}
+
+int day06::calc_sum_yes_questions(void) {
+  int result_sum = 0;
+  // Loop through groups
+  for (int i = 0; i < this->all_groups.size(); ++i) {
+    int group_sum = 0;
+    // Print results of group each hit question
+    for (int k = 0; k < 26; k++) {
+      int current_pos = this->all_groups[i].vec_all_questions[k];
+      if (current_pos > 0) { // each question not zero
+        group_sum++;
+      }
+    }
+    result_sum += group_sum;
+  }
+  return (result_sum);
+}
