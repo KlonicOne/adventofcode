@@ -36,7 +36,7 @@ bag_node::~bag_node() {}
  * @brief constructor
  *
  */
-day07::day07(/* args */) { this->root_bag = NULL; }
+day07::day07(/* args */) {}
 
 /**
  * @brief Destroy the day07::day07
@@ -92,7 +92,7 @@ void day07::format_input(std::vector<std::string> inTable) {
     string_line = replace_all_strings(string_line, ".", "");
 
     // debug
-    std::cout << string_line << std::endl;
+    // std::cout << string_line << std::endl;
 
     // Should not get non string in lines
     if (string_line.length() == 0) {
@@ -113,7 +113,7 @@ void day07::format_input(std::vector<std::string> inTable) {
       start = pos + 1;
 
       // debug out
-      std::cout << "Element: " << element << std::endl;
+      // std::cout << "Element: " << element << std::endl;
     } while (pos != std::string::npos);
 
     // Now create graph
@@ -130,7 +130,7 @@ void day07::format_input(std::vector<std::string> inTable) {
       // Check if childs are existing, if not nothing need to be done
       if (not_end_node) {
         new_bag_name = string_vec_element[i].substr(
-            string_vec_element[i].find_first_of(" ", 0),
+            string_vec_element[i].find_first_of(" ", 0) + 1,
             string_vec_element[i].size());
         allowed_bags_s = string_vec_element[i].substr(
             0, string_vec_element[i].find_first_of(" ", 0));
@@ -175,8 +175,6 @@ void day07::insert_bag_node(std::string root_bag_name, std::string new_bag_name,
     // Add element for search in vector of bags
     this->bag_graph.push_back(new_bag_root);
 
-    // Root creation with new element
-    this->bag_graph.push_back(new_bag_root);
     // Assign name
     new_bag_root->bag_name = root_bag_name;
     // Set number of allowed childs
@@ -185,11 +183,6 @@ void day07::insert_bag_node(std::string root_bag_name, std::string new_bag_name,
     new_bag_root->child_bag_nodes.push_back(found_bag_childs);
     // Root on found child
     found_bag_childs->parent_bag_nodes.push_back(new_bag_root);
-
-    // This is root bag, found on file
-    if (!root_bag_name.compare("vibrant purple bag")) {
-      this->root_bag = new_bag_root; // Get reference on new COM root element
-    }
   }
   // Root in tree but new child
   else if ((found_bag_root != NULL) && (found_bag_childs == NULL)) {
@@ -226,11 +219,6 @@ void day07::insert_bag_node(std::string root_bag_name, std::string new_bag_name,
     new_bag_child->bag_name = new_bag_name; // Assign name
     new_bag_child->parent_bag_nodes.push_back(
         new_bag_root); // Root on found child
-
-    // Special treatment of COM  we store as root reference
-    if (!root_bag_name.compare("vibrant purple bag")) {
-      this->root_bag = new_bag_root; // Get reference on new COM root element
-    }
   }
 }
 
@@ -280,4 +268,24 @@ std::string day07::replace_all_strings(std::string subject,
 std::string day07::trim_lead_whspace(const std::string &s) {
   std::string::size_type start = s.find_first_not_of(" ");
   return (start == std::string::npos) ? "" : s.substr(start);
+}
+
+void day07::print_bag_graph(void) {
+  std::vector<bag_node *>::iterator itRoot; // iterator
+
+  for (itRoot = this->bag_graph.begin(); itRoot != this->bag_graph.end();
+       itRoot++) {
+    std::cout << "Root: " << (*itRoot)->bag_name;
+    std::cout << ", parent size: " << (*itRoot)->parent_bag_nodes.size();
+    std::cout << ", child size: " << (*itRoot)->child_bag_nodes.size()
+              << ", childs: ";
+
+    for (std::vector<bag_node *>::iterator itChild =
+             (*itRoot)->child_bag_nodes.begin();
+         itChild != (*itRoot)->child_bag_nodes.end(); itChild++) {
+      std::cout << (*itChild)->bag_name << ", ";
+    }
+
+    std::cout << std::endl;
+  }
 }

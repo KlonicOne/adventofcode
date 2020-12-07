@@ -27,8 +27,6 @@ public:
   virtual ~bag_node();
 
   std::string bag_name;               // Name of node
-  int num_child_connections;          // Number of connections childs
-  int num_parent_connections;         // Number of connections parent
   std::vector<int> amount_each_child; // Amount of bags each child
   // References
   std::vector<bag_node *> parent_bag_nodes; // parent vector
@@ -38,7 +36,6 @@ public:
 class day07 {
 private:
   /* data */
-  bag_node *root_bag;                // Used as anchor
   std::vector<bag_node *> bag_graph; // Vector with all bags to search fast
 
 public:
@@ -57,6 +54,7 @@ public:
                                   const std::string &search,
                                   const std::string &replace);
   std::string trim_lead_whspace(const std::string &s);
+  void print_bag_graph(void);
 };
 
 #endif // _DAY06_H_

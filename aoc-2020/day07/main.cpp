@@ -43,6 +43,7 @@ int main(int, char **) {
 
   // Fill formatted code
   Day07.format_input(inputTable);
+  Day07.print_bag_graph();
   // Solve problems
   Day07.solver_part1();
   Day07.solver_part2();
