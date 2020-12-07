@@ -26,18 +26,20 @@ public:
   bag_node();
   virtual ~bag_node();
 
-  std::string bag_name;
-  int num_child_connections;
+  std::string bag_name;               // Name of node
+  int num_child_connections;          // Number of connections childs
+  int num_parent_connections;         // Number of connections parent
+  std::vector<int> amount_each_child; // Amount of bags each child
   // References
-  std::vector<bag_node *> parent_bag_nodes;
-  std::vector<bag_node *> child_bag_nodes;
+  std::vector<bag_node *> parent_bag_nodes; // parent vector
+  std::vector<bag_node *> child_bag_nodes;  // child vector
 };
 
 class day07 {
 private:
   /* data */
   bag_node *root_bag;                // Used as anchor
-  std::vector<bag_node *> bag_graph; // Vector with all orbits
+  std::vector<bag_node *> bag_graph; // Vector with all bags to search fast
 
 public:
   day07(/* args */);
@@ -49,7 +51,8 @@ public:
   // Common
   bag_node *search_bag_node(std::string bag_name);
   void format_input(std::vector<std::string> inTable);
-  void insert_bag_node(std::string root_bag_name, std::string new_bag_name);
+  void insert_bag_node(std::string root_bag_name, std::string new_bag_name,
+                       int allowed_new_bags);
   std::string replace_all_strings(std::string subject,
                                   const std::string &search,
                                   const std::string &replace);
