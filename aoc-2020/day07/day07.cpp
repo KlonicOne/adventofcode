@@ -114,20 +114,21 @@ void day07::inverse_child_search(bag_node *node_to_search, int amount) {
   // Check if parents exist
   if (size_child == 0) {
     // End of bags found
-    std::cout << "root: " << node_to_search->bag_name << std::endl;
+    // std::cout << "root: " << node_to_search->bag_name << std::endl;
   } else {
     int sum = accumulate(node_to_search->amount_each_child.begin(),
                          node_to_search->amount_each_child.end(), 0);
 
     this->bags_in_my_bag += (amount * sum);
 
-    std::cout << "current: " << node_to_search->bag_name << ", sum: " << sum
-              << ", amount: " << amount
-              << ", mybagsum: " << this->bags_in_my_bag << std::endl;
+    // std::cout << "current: " << node_to_search->bag_name << ", sum: " << sum
+    //           << ", amount: " << amount
+    //           << ", mybagsum: " << this->bags_in_my_bag << std::endl;
 
     for (int i = 0; i < size_child; ++i) {
-      this->inverse_child_search(node_to_search->child_bag_nodes[i],
-                                 node_to_search->amount_each_child[i]);
+      this->inverse_child_search(
+          node_to_search->child_bag_nodes[i],
+          (node_to_search->amount_each_child[i] * amount));
     }
   }
 }

@@ -27,7 +27,7 @@ using namespace std;
  */
 int main(int, char **) {
   // !!! my input need 2 newline on end of file for correct group detection
-  std::ifstream ifile_one("input_test.txt");
+  std::ifstream ifile_one("input.txt");
   std::vector<std::string> inputTable;
 
   // Class to prepare the data
@@ -43,7 +43,7 @@ int main(int, char **) {
 
   // Fill formatted code
   Day07.format_input(inputTable);
-  Day07.print_bag_graph();
+  // Day07.print_bag_graph();
   // Solve problems
   Day07.solver_part1();
   Day07.solver_part2();
