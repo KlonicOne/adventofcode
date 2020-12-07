@@ -21,23 +21,23 @@
 
 using namespace std;
 
-// Single seat element
-typedef struct person_t {
-  std::string yes_question_str;
-  std::vector<std::string> yes_questions;
-} person_t;
+class bag_node {
+public:
+  bag_node();
+  virtual ~bag_node();
 
-typedef struct group_t {
-  std::string yes_question_str;
-  std::vector<person_t> pers_in_group;
-  std::vector<int> vec_all_questions = std::vector<int>(26); // fix size
-  int num_yes_questions;
-} group_t;
+  std::string bag_name;
+  int num_child_connections;
+  // References
+  std::vector<bag_node *> parent_bag_nodes;
+  std::vector<bag_node *> child_bag_nodes;
+};
 
 class day07 {
 private:
   /* data */
-  std::vector<group_t> all_groups;
+  bag_node *root_bag;                // Used as anchor
+  std::vector<bag_node *> bag_graph; // Vector with all orbits
 
 public:
   day07(/* args */);
@@ -45,18 +45,15 @@ public:
 
   void solver_part1(void);
   void solver_part2(void);
+
+  // Common
+  bag_node *search_bag_node(std::string bag_name);
   void format_input(std::vector<std::string> inTable);
-
-  // part 1
-  void eval_groups_p1(void);
-  int calc_sum_yes_questions_p1(void);
-  void print_group_results_p1(void);
-
-  // part 2
-  int eval_groups_p2(void);
-
-  // common
-  void print_format_input_list(void);
+  void insert_bag_node(std::string root_bag_name, std::string new_bag_name);
+  std::string replace_all_strings(std::string subject,
+                                  const std::string &search,
+                                  const std::string &replace);
+  std::string trim_lead_whspace(const std::string &s);
 };
 
 #endif // _DAY06_H_

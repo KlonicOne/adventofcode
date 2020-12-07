@@ -21,10 +21,22 @@
 using namespace std;
 
 /**
+ * @brief Construct a new bag node::bag node object
+ *
+ */
+bag_node::bag_node() { this->bag_name = ""; }
+
+/**
+ * @brief Destroy the bag node::bag node object
+ *
+ */
+bag_node::~bag_node() {}
+
+/**
  * @brief constructor
  *
  */
-day07::day07(/* args */) {}
+day07::day07(/* args */) { this->root_bag = NULL; }
 
 /**
  * @brief Destroy the day07::day07
@@ -40,13 +52,6 @@ void day07::solver_part1(void) {
   int answer = 0;
   // Info out
   std::cout << "Part 1" << std::endl;
-  // Eval values for each group
-  this->eval_groups_p1();
-  // this->print_group_results();
-  // Calc sum of all yes questions
-  answer = this->calc_sum_yes_questions_p1();
-  // Check largest seat ID
-  std::cout << "Sum of all yes questions: " << answer << std::endl;
 }
 
 /**
@@ -56,12 +61,6 @@ void day07::solver_part1(void) {
 void day07::solver_part2(void) {
   // Info out
   std::cout << "Part 2" << std::endl;
-  //this->print_format_input_list();
-
-  // Eval part 2
-  int result = this->eval_groups_p2();
-
-  std::cout << "Result: " << result << std::endl;
 }
 
 /**
@@ -71,190 +70,171 @@ void day07::solver_part2(void) {
  */
 void day07::format_input(std::vector<std::string> inTable) {
   // Separate to better debug and use the input
-  group_t current_group;   // New group
-  person_t current_person; // New person
-
   std::string string_line = "";
-  std::string element = "";
-
-  // Init strings
-  current_group.yes_question_str = "";
-  current_person.yes_question_str = "";
 
   for (std::vector<std::string>::const_iterator i = inTable.begin();
        i != inTable.end(); ++i) {
-    // variables to loop through string
+    std::vector<std::string> string_vec_element;
+    std::string element = "";
     std::string::size_type start{0};
     std::string::size_type len{0};
+    std::string::size_type pos;
+    std::string delimiter = ","; // No splitting this time
 
     // Get single line as string_line
     string_line = (*i);
 
+    // Replace plural on bags
+    string_line = replace_all_strings(string_line, "bags", "bag");
+    // Replace containt with , to have only one delimiter
+    string_line = replace_all_strings(string_line, " contain", ",");
+    // Replace point at the end of line
+    string_line = replace_all_strings(string_line, ".", "");
+
     // debug
-    // std::cout << (*i) << std::endl;
+    std::cout << string_line << std::endl;
 
-    // If only newline in line, go over to next group in group
+    // Should not get non string in lines
     if (string_line.length() == 0) {
-      // First sort string for group
-      std::sort(current_group.yes_question_str.begin(),
-                current_group.yes_question_str.end());
-      // push group to all groups
-      this->all_groups.push_back(current_group);
-      // Delete current groupt content
-      current_group.pers_in_group.clear();
-      current_group.yes_question_str = "";
-      // std::cout << "Next groups " << group_index << std::endl;
-      continue; // This line is not to be considered, eval next line
+      std::cout << "Empty line found in intput!!!" << std::endl;
     }
-
-    // Sort string line
-    std::sort(string_line.begin(), string_line.end());
-    // Store string for person
-    current_person.yes_question_str = string_line;
-    // Store string for groupt
-    current_group.yes_question_str =
-        current_group.yes_question_str + string_line;
 
     // Split string_line and store in vector of strings
-    start = 0; // start at pos 0
-    len = 1;   // single character length
     do {
-      element = string_line.substr(start, len);
+      // get pos from start to first delimiter
+      pos = string_line.find_first_of(delimiter, start);
+      // get substring until delimiter
+      element = string_line.substr(start, pos - start);
+      // Delete leading space
+      element = trim_lead_whspace(element);
       // add element to end of vector
-      current_person.yes_questions.push_back(element);
-      // Prepare next loop
-      start++; // Next char in string
-      // debug
-      // std::cout << "Current char " << element << std::endl;
-    } while (start != string_line.size());
+      string_vec_element.push_back(element);
+      // next position to start searching for delimiter
+      start = pos + 1;
 
-    // Pushback result for current person in current group
-    current_group.pers_in_group.push_back(current_person);
-    // and delete content fo person for next person
-    current_person.yes_questions.clear();
-  }
-
-  // debug
-  std::cout << "Number of groups: " << this->all_groups.size() << std::endl;
-}
-
-/**
- * @brief evaluate all groups and person and store the yes questions each group
- *
- */
-void day07::eval_groups_p1(void) {
-  // Loop through groups
-  for (int i = 0; i < this->all_groups.size(); ++i) {
-    // Loop through persons
-    for (int j = 0; j < this->all_groups[i].pers_in_group.size(); ++j) {
-      const int a_offset = 97;
-      // Loop through person yes questions
-      for (int k = 0;
-           k < this->all_groups[i].pers_in_group[j].yes_questions.size(); ++k) {
-        // Extract next question with yes
-        std::string question =
-            this->all_groups[i].pers_in_group[j].yes_questions[k];
-        // calc index for vector
-        int index = int(question[0]) - a_offset;
-        // count hit character as index
-        this->all_groups[i].vec_all_questions[index]++;
-
-        // std::cout << "Group: " << i << ", Person: " << j
-        //           << ", Char index: " << index << ", char: " << question[0]
-        //           << std::endl;
-      }
-    }
+      // debug out
+      std::cout << "Element: " << element << std::endl;
+    } while (pos != std::string::npos);
   }
 }
 
 /**
- * @brief evaluate part2 the mega string
+ * @brief insert bag in graph
  *
+ * @param root_bag_name
+ * @param new_bag_name
  */
-int day07::eval_groups_p2(void) {
-  int result = 0;
-  int sum_yes_everyone = 0;
-  char ch = 'a'; // this to loop
-  int group_size = 0; // Persons in group
+void day07::insert_bag_node(std::string root_bag_name,
+                            std::string new_bag_name) {
+  bag_node *found_bag_root =
+      this->search_bag_node(root_bag_name); // Get reference on root from tree
+  bag_node *found_bag_childs =
+      this->search_bag_node(new_bag_name); // Get reference on child from tree
 
-  // loop on groups
-  for (int i = 0; i < this->all_groups.size(); ++i) {
-    // Get group size
-    group_size = this->all_groups[i].pers_in_group.size();
-    // Reset char
-    ch = 'a';
-    // Reset group sum
-    sum_yes_everyone = 0;
-    // Loop throug alphabet a-z, count occurences and check if it fits to number
-    // of groups
-    for (int j = 0; j < 26; ++j) {
-      int count = std::count(this->all_groups[i].yes_question_str.begin(),
-                             this->all_groups[i].yes_question_str.end(), ch);
-      // Check if the counted character comes as often as groups
-      if (count == group_size) {
-        sum_yes_everyone++;
-      }
-      // debug
-      // std::cout << "group: " << i << ", Persons: " << group_size << ", char: " << ch << ", match: " << count << std::endl;
-      // next character to check
-      ch++;
-    }
-    // std::cout << std::endl;
-
-    result = result + sum_yes_everyone;
+  // Both elements are existing, so must be new connection only
+  if ((found_bag_root != NULL) && (found_bag_childs != NULL)) {
+    found_bag_root->child_bag_nodes.push_back(
+        found_bag_childs); // Child on root
+    found_bag_childs->parent_bag_nodes.push_back(
+        found_bag_root); // Root on child
   }
+  // Root not in tree but child
+  else if ((found_bag_root == NULL) && (found_bag_childs != NULL)) {
+    bag_node *new_bag_root = new bag_node(); // New root element
 
-  return (result);
+    // Root creation
+    this->bag_graph.push_back(new_bag_root); // New element in vector for graph
+    new_bag_root->bag_name = root_bag_name;  // Assign name
+    new_bag_root->child_bag_nodes.push_back(
+        found_bag_childs); // Child connection
+    found_bag_childs->parent_bag_nodes.push_back(
+        new_bag_root); // Root on found child
+
+    // This is root bag, found on file
+    if (!root_bag_name.compare("vibrant purple bag")) {
+      this->root_bag = new_bag_root; // Get reference on new COM root element
+    }
+  }
+  // Root in tree but new child
+  else if ((found_bag_root != NULL) && (found_bag_childs == NULL)) {
+    bag_node *new_bag_child = new bag_node(); // New child element
+
+    // Child creation
+    this->bag_graph.push_back(new_bag_child); // New element in vector for graph
+    new_bag_child->bag_name = new_bag_name;   // Assign name
+    new_bag_child->parent_bag_nodes.push_back(
+        found_bag_root); // Parent connection
+    found_bag_root->child_bag_nodes.push_back(
+        new_bag_child); // Root on found child
+  }
+  // Nothing there all new
+  else {
+    bag_node *new_bag_root = new bag_node();  // New root element
+    bag_node *new_bag_child = new bag_node(); // New child element
+
+    // Root creation
+    this->bag_graph.push_back(new_bag_root); // New element in vector for graph
+    new_bag_root->bag_name = root_bag_name;  // Assign name
+    new_bag_root->child_bag_nodes.push_back(new_bag_child); // Child connection
+
+    // Special treatment of COM  we store as root reference
+    if (!root_bag_name.compare("vibrant purple bag")) {
+      this->root_bag = new_bag_root; // Get reference on new COM root element
+    }
+
+    // Child creation
+    this->bag_graph.push_back(new_bag_child); // New element in vector for graph
+    new_bag_child->bag_name = new_bag_name;   // Assign name
+    new_bag_child->parent_bag_nodes.push_back(
+        new_bag_root); // Root on found child
+  }
 }
 
 /**
- * @brief Print the formatted list
+ * @brief Search for a bag in graph
  *
+ * @param search_bag_name
+ * @return bag_node*
  */
-void day07::print_format_input_list(void) {
-  // Loop through groups
-  for (int i = 0; i < this->all_groups.size(); ++i) {
-    // Loop through persons
-    for (int j = 0; j < this->all_groups[i].pers_in_group.size(); ++j) {
-      // Extract next question with yes
-      std::string question =
-          this->all_groups[i].pers_in_group[j].yes_question_str;
-      // calc index for vector
-      std::cout << "Group: " << i + 1 << ", Person: " << j + 1
-                << ", String: " << question << std::endl;
+bag_node *day07::search_bag_node(std::string search_bag_name) {
+  bag_node *found_bag = NULL;
+  for (std::vector<bag_node *>::iterator it = this->bag_graph.begin();
+       it != this->bag_graph.end(); it++) {
+    if (search_bag_name.compare((*it)->bag_name) == 0) {
+      found_bag = *it;
     }
   }
+
+  return (found_bag);
 }
 
 /**
- * @brief Print out all group resutls of yes questions
- *
+ * @brief Replace all occurences of search in subject
+ * 
+ * @param subject 
+ * @param search 
+ * @param replace 
+ * @return std::string string with replaced search
  */
-void day07::print_group_results_p1(void) {
-  // Loop through groups
-  for (int i = 0; i < this->all_groups.size(); ++i) {
-    // Print results of group each hit question
-    std::cout << "Group: " << i + 1 << std::endl;
-    for (int k = 0; k < 26; k++) {
-      cout << this->all_groups[i].vec_all_questions[k] << ", ";
-    }
-    std::cout << std::endl;
+std::string day07::replace_all_strings(std::string subject,
+                                       const std::string &search,
+                                       const std::string &replace) {
+  std::string::size_type pos = 0;
+  while ((pos = subject.find(search, pos)) != std::string::npos) {
+    subject.replace(pos, search.length(), replace);
+    pos += replace.length();
   }
+  return subject;
 }
 
-int day07::calc_sum_yes_questions_p1(void) {
-  int result_sum = 0;
-  // Loop through groups
-  for (int i = 0; i < this->all_groups.size(); ++i) {
-    int group_sum = 0;
-    // Print results of group each hit question
-    for (int k = 0; k < 26; k++) {
-      int current_pos = this->all_groups[i].vec_all_questions[k];
-      if (current_pos > 0) { // each question not zero
-        group_sum++;
-      }
-    }
-    result_sum += group_sum;
-  }
-  return (result_sum);
+/**
+ * @brief Trim sapces on start of string
+ * 
+ * @param s 
+ * @return std::string 
+ */
+std::string day07::trim_lead_whspace(const std::string& s)
+{
+    std::string::size_type start = s.find_first_not_of(" ");
+    return (start == std::string::npos) ? "" : s.substr(start);
 }
