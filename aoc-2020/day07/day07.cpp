@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <istream>
+#include <numeric>
 #include <regex>
 #include <sstream>
 #include <tuple>
@@ -36,7 +37,10 @@ bag_node::~bag_node() {}
  * @brief constructor
  *
  */
-day07::day07(/* args */) { this->my_bag = "shiny gold bag"; }
+day07::day07(/* args */) {
+  this->my_bag = "shiny gold bag";
+  this->bags_in_my_bag = 0;
+}
 
 /**
  * @brief Destroy the day07::day07
@@ -90,7 +94,45 @@ void day07::inverse_parent_search(bag_node *node_to_search) {
 void day07::solver_part2(void) {
   // Info out
   std::cout << "Part 2" << std::endl;
+  this->eval_bags_whit_mine_p2();
+
+  std::cout << "Result: " << this->bags_in_my_bag << std::endl;
 }
+
+void day07::eval_bags_whit_mine_p2(void) {
+  // Search my element as start position
+  bag_node *start_bag = this->search_bag_node(this->my_bag);
+
+  // Inverse search through all parents until it ends, if so push to bag list
+  std::cout << "Search node: " << this->my_bag << std::endl;
+  this->bags_in_my_bag = 0;
+  this->inverse_child_search(start_bag, 1);
+}
+
+void day07::inverse_child_search(bag_node *node_to_search, int amount) {
+  int size_child = node_to_search->child_bag_nodes.size();
+  // Check if parents exist
+  if (size_child == 0) {
+    // End of bags found
+    std::cout << "root: " << node_to_search->bag_name << std::endl;
+  } else {
+    int sum = accumulate(node_to_search->amount_each_child.begin(),
+                         node_to_search->amount_each_child.end(), 0);
+
+    this->bags_in_my_bag += (amount * sum);
+
+    std::cout << "current: " << node_to_search->bag_name << ", sum: " << sum
+              << ", amount: " << amount
+              << ", mybagsum: " << this->bags_in_my_bag << std::endl;
+
+    for (int i = 0; i < size_child; ++i) {
+      this->inverse_child_search(node_to_search->child_bag_nodes[i],
+                                 node_to_search->amount_each_child[i]);
+    }
+  }
+}
+// int sum = accumulate(node_to_search->amount_each_child.begin(),
+//                      node_to_search->amount_each_child.end(), 0);
 
 /**
  * @brief Split the intput string and store in class code list
@@ -309,10 +351,14 @@ void day07::print_bag_graph(void) {
     std::cout << ", child size: " << (*itRoot)->child_bag_nodes.size()
               << ", childs: ";
 
+    int i = 0;
     for (std::vector<bag_node *>::iterator itChild =
              (*itRoot)->child_bag_nodes.begin();
          itChild != (*itRoot)->child_bag_nodes.end(); itChild++) {
-      std::cout << (*itChild)->bag_name << ", ";
+      std::cout << (*itChild)->bag_name << "("
+                << (*itRoot)->amount_each_child[i] << ")"
+                << ", ";
+      i++;
     }
 
     std::cout << std::endl;

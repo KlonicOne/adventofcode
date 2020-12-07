@@ -38,7 +38,8 @@ private:
   /* data */
   std::vector<bag_node *> bag_graph; // Vector with all bags to search fast
   std::vector<std::string> result_bag_list; // All bags which can contain my one
-  std::string my_bag; // name of bag I'm looking for
+  std::string my_bag;                       // name of bag I'm looking for
+  int bags_in_my_bag;                       // all bags in mine
 
 public:
   day07(/* args */);
@@ -47,9 +48,13 @@ public:
   // Part1
   void solver_part1(void);
   void eval_bags_whit_mine(void);
+  void inverse_parent_search(bag_node *node_to_search);
+  void remove_duplicate_bags(std::vector<std::string> &v);
 
   // Part2
   void solver_part2(void);
+  void eval_bags_whit_mine_p2(void);
+  void inverse_child_search(bag_node *node_to_search, int amount);
 
   // Common
   bag_node *search_bag_node(std::string bag_name);
@@ -61,8 +66,6 @@ public:
                                   const std::string &replace);
   std::string trim_lead_whspace(const std::string &s);
   void print_bag_graph(void);
-  void inverse_parent_search(bag_node* node_to_search);
-  void remove_duplicate_bags(std::vector<std::string> &v);
 };
 
 #endif // _DAY06_H_
