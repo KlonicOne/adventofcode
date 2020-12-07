@@ -47,13 +47,13 @@ public:
 
   // Part1
   void solver_part1(void);
-  void eval_bags_whit_mine(void);
+  void eval_bags_start_mine_p1(void);
   void inverse_parent_search(bag_node *node_to_search);
   void remove_duplicate_bags(std::vector<std::string> &v);
 
   // Part2
   void solver_part2(void);
-  void eval_bags_whit_mine_p2(void);
+  void eval_bags_start_mine_p2(void);
   void inverse_child_search(bag_node *node_to_search, int amount);
 
   // Common
