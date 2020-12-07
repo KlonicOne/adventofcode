@@ -36,7 +36,7 @@ bag_node::~bag_node() {}
  * @brief constructor
  *
  */
-day07::day07(/* args */) {}
+day07::day07(/* args */) { this->my_bag = "shiny gold bag"; }
 
 /**
  * @brief Destroy the day07::day07
@@ -52,6 +52,35 @@ void day07::solver_part1(void) {
   int answer = 0;
   // Info out
   std::cout << "Part 1" << std::endl;
+
+  this->eval_bags_whit_mine();
+  this->remove_duplicate_bags(this->result_bag_list);
+
+  std::cout << "Result: " << this->result_bag_list.size() - 1 << std::endl;
+}
+
+void day07::eval_bags_whit_mine(void) {
+  // Search my element as start position
+  bag_node *start_bag = this->search_bag_node(this->my_bag);
+
+  // Inverse search through all parents until it ends, if so push to bag list
+  this->inverse_parent_search(start_bag);
+}
+
+void day07::inverse_parent_search(bag_node *node_to_search) {
+  int size_parent = node_to_search->parent_bag_nodes.size();
+  // Check if parents exist
+  if (size_parent == 0) {
+    // Root element found so add to list
+    this->result_bag_list.push_back(node_to_search->bag_name);
+    // std::cout << "root: " << node_to_search->bag_name << std::endl;
+  } else {
+    for (auto &i : node_to_search->parent_bag_nodes) {
+      // std::cout << "inter: " << node_to_search->bag_name << std::endl;
+      this->result_bag_list.push_back(node_to_search->bag_name);
+      this->inverse_parent_search(i);
+    }
+  }
 }
 
 /**
@@ -288,4 +317,13 @@ void day07::print_bag_graph(void) {
 
     std::cout << std::endl;
   }
+}
+
+void day07::remove_duplicate_bags(std::vector<std::string> &v) {
+  auto end = v.end();
+  for (auto it = v.begin(); it != end; ++it) {
+    end = std::remove(it + 1, end, *it);
+  }
+
+  v.erase(end, v.end());
 }

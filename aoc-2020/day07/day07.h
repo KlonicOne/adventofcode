@@ -37,12 +37,18 @@ class day07 {
 private:
   /* data */
   std::vector<bag_node *> bag_graph; // Vector with all bags to search fast
+  std::vector<std::string> result_bag_list; // All bags which can contain my one
+  std::string my_bag; // name of bag I'm looking for
 
 public:
   day07(/* args */);
   ~day07();
 
+  // Part1
   void solver_part1(void);
+  void eval_bags_whit_mine(void);
+
+  // Part2
   void solver_part2(void);
 
   // Common
@@ -55,6 +61,8 @@ public:
                                   const std::string &replace);
   std::string trim_lead_whspace(const std::string &s);
   void print_bag_graph(void);
+  void inverse_parent_search(bag_node* node_to_search);
+  void remove_duplicate_bags(std::vector<std::string> &v);
 };
 
 #endif // _DAY06_H_
