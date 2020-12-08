@@ -23,23 +23,25 @@ using namespace std;
 
 /**
  * @brief Construct a new acc computer::acc computer object
- * 
+ *
  */
 acc_computer::acc_computer() {
   this->acc = 0;
   this->pc = 0;
+  this->last_pos_replaced = 0;
+  this->exit_code = 0;
 }
 
 /**
  * @brief Destroy the acc computer::acc computer object
- * 
+ *
  */
 acc_computer::~acc_computer() {}
 
 /**
  * @brief Create program code
- * 
- * @param inTable 
+ *
+ * @param inTable
  */
 void acc_computer::generate_program(std::vector<std::string> inTable) {
   // Separate to better debug and use the input
@@ -117,11 +119,11 @@ int acc_computer::get_int_code(std::string s_code) {
 
 /**
  * @brief Cyclic exection
- * 
+ *
  * @return true continue
  * @return false stop execution
  */
-bool acc_computer::execute_acc_comp(void) {
+bool acc_computer::execute_acc_comp_p1(void) {
   bool continue_program = true;
   int current_isr = this->program_code.at(this->pc).instruction;
   std::vector<int> current_args = this->program_code.at(this->pc).arguments;
@@ -150,6 +152,51 @@ bool acc_computer::execute_acc_comp(void) {
   }
   }
 
+  // Check for end condition
+  continue_program = eval_stop_condition();
+
+  return (continue_program);
+}
+
+/**
+ * @brief Cyclic exection
+ *
+ * @return true continue
+ * @return false stop execution
+ */
+bool acc_computer::execute_acc_comp_p2(void) {
+  bool continue_program = true;
+  int current_isr = this->program_code.at(this->pc).instruction;
+  std::vector<int> current_args = this->program_code.at(this->pc).arguments;
+
+  // List of all hit adresses
+  this->hit_instructions.push_back(this->pc);
+
+  // Replace next jump nop
+  current_isr = this->replace_next_nopjump(this->pc, current_isr);
+
+  switch (current_isr) {
+  case acc_cmd: {
+    // Call func and set next pc
+    this->pc = this->acc_op(this->pc, current_args.at(0));
+  } break;
+
+  case jmp_cmd: {
+    // Call func and set next pc
+    this->pc = this->jmp_op(this->pc, current_args.at(0));
+  } break;
+
+  case nop_cmd: {
+    // Call func and set next pc
+    this->pc = this->nop_op(this->pc);
+  } break;
+
+  default: {
+    std::cout << "Illegal operation!!!" << std::endl;
+  }
+  }
+
+  // Check for end condition
   continue_program = eval_stop_condition();
 
   return (continue_program);
@@ -157,9 +204,9 @@ bool acc_computer::execute_acc_comp(void) {
 
 /**
  * @brief Check if condition to contiue is met
- * 
- * @return true 
- * @return false 
+ *
+ * @return true
+ * @return false
  */
 bool acc_computer::eval_stop_condition(void) {
   bool condition = true;
@@ -169,14 +216,49 @@ bool acc_computer::eval_stop_condition(void) {
   // Check if element hit
   if (it != this->hit_instructions.end()) {
     condition = false;
+    this->exit_code = 1;       // exit with endless loop
+    this->last_pos_replaced++; // Replace on ext pos the isr
+  } else if (this->pc >= this->program_code.size()) {
+    condition = false;
+    this->exit_code = 2;       // exit with last command in program
+    this->last_pos_replaced++; // Replace on ext pos the isr
   }
   return (condition);
 }
 
 /**
+ * @brief Reset running retgister for exection
+ *
+ */
+void acc_computer::reset_program_exec(void) {
+  // Reset all relevant register
+  this->pc = 0;
+  this->acc = 0;
+  this->exit_code = 0;
+  this->hit_instructions.clear();
+}
+
+/**
+ * @brief Reset all register and internal data except program
+ *
+ */
+void acc_computer::reset_computer(void) {
+  // Reset all relevant register
+  this->reset_program_exec();
+  this->last_pos_replaced = 0;
+}
+
+/**
+ * @brief Return exit reason
+ *
+ * @return int
+ */
+int acc_computer::get_exit_code(void) { return (this->exit_code); }
+
+/**
  * @brief Acc operation
- * 
- * @return int 
+ *
+ * @return int
  */
 int acc_computer::get_acc_value(void) { return (this->acc); }
 
@@ -187,20 +269,43 @@ int acc_computer::acc_op(int pc, int value) {
 
 /**
  * @brief jump operation
- * 
- * @param pc 
- * @param value 
- * @return int 
+ *
+ * @param pc
+ * @param value
+ * @return int
  */
 int acc_computer::jmp_op(int pc, int value) { return (pc + value); }
 
 /**
  * @brief nop operation
- * 
- * @param pc 
- * @return int 
+ *
+ * @param pc
+ * @return int
  */
 int acc_computer::nop_op(int pc) { return (pc + 1); }
+
+/**
+ * @brief Replace next occurence of jump or nop
+ *
+ * @param current_pc
+ */
+int acc_computer::replace_next_nopjump(int current_pc, int current_isr) {
+  int replaced_isr = current_isr;
+  // Check if current isr to be replaced
+  if (current_pc == this->last_pos_replaced) {
+    switch (current_isr) {
+    case jmp_cmd: {
+      replaced_isr = nop_cmd;
+    } break;
+    case nop_cmd: {
+      replaced_isr = jmp_cmd;
+    }
+    default:
+      break;
+    }
+  }
+  return (replaced_isr);
+}
 
 /**
  * @brief Trim sapces on start of string

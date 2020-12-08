@@ -34,7 +34,8 @@ void day08::solver_part1(void) {
   // Info out
   std::cout << "Part 1" << std::endl;
 
-  while(computer.execute_acc_comp()) {} // Run while end of program
+  while (computer.execute_acc_comp_p1()) {
+  } // Run while end of program
 
   answer = computer.get_acc_value();
 
@@ -50,6 +51,17 @@ void day08::solver_part2(void) {
   int answer = 0;
   // Info out
   std::cout << "Part 2" << std::endl;
+
+  computer.reset_computer();
+
+  while (computer.get_exit_code() != 2) { // Check for exit with last line
+    // Reset program execution
+    computer.reset_program_exec();
+    while (computer.execute_acc_comp_p2()) {
+    } // Run while end of program
+  }
+
+  answer = computer.get_acc_value();
 
   // My bag in list so result - 1 should be good
   std::cout << "Result: " << answer << std::endl;
