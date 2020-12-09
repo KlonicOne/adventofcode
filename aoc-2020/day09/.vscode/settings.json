@@ -47,7 +47,16 @@
     "numeric": "cpp",
     "optional": "cpp",
     "random": "cpp",
-    "ranges": "cpp"
+    "ranges": "cpp",
+    "bitset": "cpp",
+    "chrono": "cpp",
+    "condition_variable": "cpp",
+    "cstdarg": "cpp",
+    "ctime": "cpp",
+    "map": "cpp",
+    "ratio": "cpp",
+    "regex": "cpp",
+    "shared_mutex": "cpp"
   },
   "ccls.codeLens.enabled": false
 }

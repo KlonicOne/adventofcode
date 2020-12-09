@@ -24,7 +24,13 @@ using namespace std;
 class day09 {
 private:
   /* data */
-  std::vector<int> vec_input;
+  std::vector<long long> vec_input;
+  std::vector<long long> minmax_buffer;
+  int current_pos;
+  int size_preamble;
+  long long invalid_num;
+  long long minmax_sum;
+
 
 public:
   day09(/* args */);
@@ -32,9 +38,13 @@ public:
 
   // Part1
   void solver_part1(void);
+  bool eval_valid_num(void);
+  long long get_invalid_num(void);
 
   // Part2
   void solver_part2(void);
+  long long get_sum_minmax_buffer(void);
+  void eval_minmax_buffer(void); // requires first part 1 run
 
   // Common
   void format_input(std::vector<std::string> inTable);
