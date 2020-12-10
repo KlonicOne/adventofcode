@@ -41,6 +41,7 @@ public:
 
   // Part2
   void solver_part2(void);
+  int eval_number_combis(void);
 
 
   // Common

@@ -18,11 +18,13 @@
 #include <regex>
 #include <sstream>
 #include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -72,15 +74,8 @@ void day10::solver_part2(void) {
   // Info out
   std::cout << "Part 2" << std::endl;
 
-  // do {
-  //   for (int i = 0; i < this->m_jolt_adapters_raw.size(); ++i) {
-  //     std::cout << this->m_jolt_adapters_raw[i];
-  //   }
-  //   std::cout << '\n';
-  // } while (std::next_permutation(this->m_jolt_adapters_raw.begin(),
-  //                                this->m_jolt_adapters_raw.end()));
-
-  answer = 0;
+  // Check combinations for 1, 2 and 3
+  answer = eval_number_combis();;
 
   // Result fits already
   std::cout << "Result: " << answer << std::endl;
@@ -97,6 +92,14 @@ void day10::solver_part2(void) {
  */
 void day10::setInput(std::vector<int> in_vector) {
   this->m_jolt_adapters = in_vector;
+
+  // Add start and end
+  this->m_jolt_adapters.push_back(0);
+  this->m_jolt_adapters.push_back(
+      *max_element(this->m_jolt_adapters.begin(), this->m_jolt_adapters.end()) +
+      3);
+
+  // Unsorted vec not changed
   this->m_jolt_adapters_raw = in_vector; // keep unsorted
 
   if (DEBUG_OUT) {
@@ -132,7 +135,7 @@ void day10::sort_adapter_jolt(void) {
  * @return int number of diffs for given jolts
  */
 int day10::eval_num_jolt_diff(int jolt_diff) {
-  int num_adapters = 1; // My adapter fits for all difs so here 1
+  int num_adapters = 0; // My adapter fits for all difs so here 1
 
   // Loop through elements, but start on higher for diff
   for (int i = 1; i < this->m_jolt_adapters.size(); ++i) {
@@ -143,4 +146,23 @@ int day10::eval_num_jolt_diff(int jolt_diff) {
   }
 
   return (num_adapters);
+}
+
+/**
+ * @brief Evaluate the possible combinations
+ *
+ * @return int
+ */
+int day10::eval_number_combis(void) {
+  int found_combinations = 0;
+
+  unordered_map<uintmax_t, uintmax_t> map_combinations{{0, 1}};
+
+  for (auto &it : this->m_jolt_adapters) {
+    map_combinations[it] += map_combinations[it - 1] +
+                            map_combinations[it - 2] + map_combinations[it - 3];
+  }
+  found_combinations = map_combinations[this->m_jolt_adapters.back()];
+
+  return (found_combinations);
 }
