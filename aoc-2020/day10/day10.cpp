@@ -14,6 +14,7 @@
 #include <cstring>
 #include <iostream>
 #include <istream>
+#include <map>
 #include <numeric>
 #include <unordered_map>
 #include <vector>
@@ -154,16 +155,30 @@ long long day10::eval_number_combis(void) {
   long long found_combinations = 0;
 
   // Creaet map and initialize with first element on start adapter
-  unordered_map<long long, long long> map_of_adapters{{0, 1}};
+  map<long long, long long> map_of_adapters{{0, 1}};
 
   // Loop through sorted jolt adapters vector
   for (auto &it : this->m_jolt_adapters) {
+    // Check for differences to curren element, using the address to next
+    // element in map
     map_of_adapters[it] += map_of_adapters[it - 1] + map_of_adapters[it - 2] +
                            map_of_adapters[it - 3];
+    if (DEBUG_OUT) {
+      std::cout << "Element with next (1-3) " << it << ", " << it - 1 << ", "
+                << it - 2 << ", " << it - 3 << ", " << std::endl;
+    }
   }
 
   // Number of combinations shows on pos end of sorted adapters
   found_combinations = map_of_adapters[this->m_jolt_adapters.back()];
+
+  // Show container
+  if (DEBUG_OUT) {
+    for (auto &it : map_of_adapters) {
+      // Show map element
+      std::cout << it.first << "," << it.second << std::endl;
+    }
+  }
 
   return (found_combinations);
 }
