@@ -8,6 +8,7 @@
  *
  */
 #include "day10.h"
+#include "show_container.h"
 
 #include <algorithm>
 #include <cstring>
@@ -19,7 +20,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT false
+#define DEBUG_OUT true
 
 /**
  * @brief constructor

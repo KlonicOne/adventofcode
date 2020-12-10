@@ -27,7 +27,7 @@ using namespace std;
  */
 int main(int, char **) {
   // !!! my input need 2 newline on end of file for correct group detection
-  std::ifstream ifile_one("input.txt");
+  std::ifstream ifile_one("input_test.txt");
   std::vector<std::string> inputTable;
   std::vector<int> inputVec;
 
