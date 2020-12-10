@@ -75,7 +75,8 @@ void day10::solver_part2(void) {
   std::cout << "Part 2" << std::endl;
 
   // Check combinations for 1, 2 and 3
-  answer = eval_number_combis();;
+  answer = eval_number_combis();
+  ;
 
   // Result fits already
   std::cout << "Result: " << answer << std::endl;
@@ -156,13 +157,15 @@ int day10::eval_num_jolt_diff(int jolt_diff) {
 long long day10::eval_number_combis(void) {
   long long found_combinations = 0;
 
-  unordered_map<uintmax_t, uintmax_t> map_combinations{{0, 1}};
+  // Creaet map and initialize with first element on start adapter
+  unordered_map<long long, long long> map_of_adapters{{0, 1}};
 
   for (auto &it : this->m_jolt_adapters) {
-    map_combinations[it] += map_combinations[it - 1] +
-                            map_combinations[it - 2] + map_combinations[it - 3];
+    map_of_adapters[it] += map_of_adapters[it - 1] + map_of_adapters[it - 2] +
+                           map_of_adapters[it - 3];
   }
-  found_combinations = map_combinations[this->m_jolt_adapters.back()];
+
+  found_combinations = map_of_adapters[this->m_jolt_adapters.back()];
 
   return (found_combinations);
 }
