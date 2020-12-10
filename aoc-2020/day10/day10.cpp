@@ -151,10 +151,10 @@ int day10::eval_num_jolt_diff(int jolt_diff) {
 /**
  * @brief Evaluate the possible combinations
  *
- * @return int
+ * @return long long
  */
-int day10::eval_number_combis(void) {
-  int found_combinations = 0;
+long long day10::eval_number_combis(void) {
+  long long found_combinations = 0;
 
   unordered_map<uintmax_t, uintmax_t> map_combinations{{0, 1}};
 
