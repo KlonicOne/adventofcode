@@ -21,7 +21,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -159,13 +159,16 @@ long long day10::eval_number_combis(void) {
 
   // Loop through sorted jolt adapters vector
   for (auto &it : this->m_jolt_adapters) {
-    // Check for differences to curren element, using the address to next
-    // element in map
+    // Check for differences to curren element, for step widh 1 up to 3
     map_of_adapters[it] += map_of_adapters[it - 1] + map_of_adapters[it - 2] +
                            map_of_adapters[it - 3];
     if (DEBUG_OUT) {
-      std::cout << "Element with next (1-3) " << it << ", " << it - 1 << ", "
-                << it - 2 << ", " << it - 3 << ", " << std::endl;
+      std::cout << "Index: " << it << ", " << it - 1 << ", "
+                << it - 2 << ", " << it - 3 << " Values: " 
+                << map_of_adapters[it] << ", "
+                << map_of_adapters[it-1] << ", "
+                << map_of_adapters[it-2] << ", "
+                << map_of_adapters[it-3] << std::endl;
     }
   }
 
