@@ -11,15 +11,10 @@
 
 #include <algorithm>
 #include <cstring>
-#include <fstream>
 #include <iostream>
 #include <istream>
 #include <numeric>
-#include <regex>
-#include <sstream>
-#include <tuple>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -160,11 +155,13 @@ long long day10::eval_number_combis(void) {
   // Creaet map and initialize with first element on start adapter
   unordered_map<long long, long long> map_of_adapters{{0, 1}};
 
+  // Loop through sorted jolt adapters vector
   for (auto &it : this->m_jolt_adapters) {
     map_of_adapters[it] += map_of_adapters[it - 1] + map_of_adapters[it - 2] +
                            map_of_adapters[it - 3];
   }
 
+  // Number of combinations shows on pos end of sorted adapters
   found_combinations = map_of_adapters[this->m_jolt_adapters.back()];
 
   return (found_combinations);
