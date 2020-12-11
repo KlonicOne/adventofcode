@@ -21,11 +21,7 @@
 using namespace std;
 
 #define DEBUG_OUT true
-#define NUM_SUPER_LOOP 100
-
-#define FLOOR "."
-#define OCCU "#"
-#define FREE "L"
+#define NUM_SUPER_LOOP 10
 
 /**
  * @brief constructor
@@ -117,13 +113,13 @@ void day11::solver_part2(void) {
   // Info out
   std::cout << "Part 2" << std::endl;
 
+  // Reset map to completely free
+  this->set_all_seats_free();
+
   if (DEBUG_OUT) {
     std::cout << "Start map" << std::endl;
     this->plot_seat_map(this->m_seat_map);
   }
-
-  // Reset map to completely free
-  this->set_all_seats_free();
 
   // Start with map read in
   next_seat_map = this->m_seat_map;
@@ -175,6 +171,7 @@ void day11::solver_part2(void) {
   answer = this->count_occupied_seats();
 
   std::cout << "Result part2: " << answer << std::endl;
+  std::cout << "Loops " << NUM_SUPER_LOOP - loop_iterations << std::endl;
 }
 
 /************************************************************/
@@ -297,6 +294,27 @@ bool day11::check_to_free(int in_x, int in_y) {
  */
 bool day11::check_line_to_occupy(int in_x, int in_y) {
   bool to_occupy = false;
+  int sum_occ_seats = 0;
+  std::vector<std::vector<char>> loc_map = this->get_seats_line(in_x, in_y);
+
+  // Check rule for all except given seat
+  for (unsigned y = 0; y < loc_map.size(); y++) {
+    // Check if occupied seat can be seen
+    auto it_free = std::find(loc_map.at(y).begin(), loc_map.at(y).end(), 'L');
+    auto it_occ = std::find(loc_map.at(y).begin(), loc_map.at(y).end(), '#');
+
+    // both iterator at the end we can occupy seat
+    if (it_free == loc_map.at(y).end() && it_occ == loc_map.at(y).end()) {
+      to_occupy = true;
+    } else if (it_free < it_occ) {
+      // In this direction first seat is free
+      to_occupy = true;
+    } else {
+      // Oh no in this direction first seat is occupied, stop immediately
+      to_occupy = false;
+      break;
+    }
+  }
 
   return (to_occupy);
 }
@@ -314,6 +332,25 @@ bool day11::check_line_to_occupy(int in_x, int in_y) {
  */
 bool day11::check_line_to_free(int in_x, int in_y) {
   bool to_free = false;
+  int sum_occ_seats = 0;
+  std::vector<std::vector<char>> loc_map = this->get_seats_line(in_x, in_y);
+
+  // Check rule for all except given seat
+  for (unsigned y = 0; y < loc_map.size(); y++) {
+    // Check if occupied seat can be seen
+    auto it_occ = std::find(loc_map.at(y).begin(), loc_map.at(y).end(), '#');
+    auto it_free = std::find(loc_map.at(y).begin(), loc_map.at(y).end(), 'L');
+
+    // First seen is occupied
+    if (it_occ < it_free) {
+      sum_occ_seats++; // sum up seats
+    }
+  }
+
+  // Check if more than four then empty
+  if (sum_occ_seats >= 5) {
+    to_free = true;
+  }
 
   return (to_free);
 }
@@ -356,6 +393,98 @@ std::vector<std::vector<char>> day11::get_seats_around(int in_x, int in_y) {
   //   plot_seat_map(temp_map);
   // }
   return (temp_map);
+}
+
+/**
+ * @brief Return a vector with 8 vectors for each direction one, they will have
+ * different size
+ *
+ * @param in_x start pos
+ * @param in_y start pos
+ * @return std::vector<std::vector<char>> Vector with 8 vectors in each line one
+ */
+std::vector<std::vector<char>> day11::get_seats_line(int in_x, int in_y) {
+  std::vector<std::vector<char>> line_vectors; // vectors in each line
+  std::vector<char> single_line;               // single line vector
+  int stop_y = this->m_seat_map.size();        // stop in y
+  int stop_x = this->m_seat_map.at(0).size();  // stop in x
+  int delta_x{0}, delta_y{0};                  // delta for line search
+  int cur_x{in_x}, cur_y{in_y};                // current position
+
+  // Loop through all 8 directions and store the vector up to first occupied
+  // seat
+  for (int dir = 0; dir < 8; ++dir) { // y loop
+    // Prepare for next line
+    single_line.clear();
+    cur_x = in_x; // back to start
+    cur_y = in_y;
+
+    // First set the delta for each direction
+    switch (dir) {
+    case (0): {
+      // up
+      delta_x = 0;
+      delta_y = 1;
+    } break;
+    case (1): {
+      // up left
+      delta_x = -1;
+      delta_y = 1;
+    } break;
+    case (2): {
+      // left
+      delta_x = -1;
+      delta_y = 0;
+    } break;
+    case (3): {
+      // down left
+      delta_x = -1;
+      delta_y = -1;
+    } break;
+    case (4): {
+      // down
+      delta_x = 0;
+      delta_y = -1;
+    } break;
+    case (5): {
+      // down right
+      delta_x = 1;
+      delta_y = -1;
+    } break;
+    case (6): {
+      // right
+      delta_x = 1;
+      delta_y = 0;
+    } break;
+    case (7): {
+      // up right
+      delta_x = 1;
+      delta_y = 1;
+    } break;
+    default: {
+      // do nothing
+    }
+    }
+
+    // next pos on start because start pos is element itself
+    cur_x = cur_x + delta_x;
+    cur_y = cur_y + delta_y;
+
+    // Create a single line until end of seat map
+    while (((cur_y >= 0) && (cur_x >= 0)) &&
+           ((cur_y < stop_y) && (cur_x < stop_x))) {
+      // Push back to line
+      single_line.push_back(this->m_seat_map[cur_y][cur_x]);
+
+      // next pos
+      cur_x = cur_x + delta_x;
+      cur_y = cur_y + delta_y;
+    }
+    // Take over the line
+    line_vectors.push_back(single_line);
+  }
+
+  return (line_vectors);
 }
 
 /**

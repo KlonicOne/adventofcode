@@ -41,6 +41,7 @@ public:
   void solver_part2(void);
   bool check_line_to_occupy(int in_x, int in_y);
   bool check_line_to_free(int in_x, int in_y);
+  std::vector<std::vector<char>> get_seats_line(int in_x, int in_y);
 
   // Common
   void create_seat_map(std::vector<std::string> input_table);
