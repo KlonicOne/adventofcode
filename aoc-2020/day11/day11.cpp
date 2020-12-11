@@ -30,7 +30,7 @@ using namespace std;
  * @brief constructor
  *
  */
-day11::day11(/* args */) {}
+day11::day11(/* args */) { this->m_occupied_seats = 0; }
 
 /**
  * @brief Destroy the day11::day11
@@ -59,9 +59,9 @@ void day11::solver_part1(void) {
   // Now go through map and apply rules
   int loop_iterations = 5;
   while (loop_iterations) {
+    // Stop for while
     loop_iterations--;
-    this->m_seat_map = next_seat_map;
-
+    // Go over map and store in next map
     for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
       for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
         // Check which rule is applied
@@ -80,6 +80,9 @@ void day11::solver_part1(void) {
       }
     }
 
+    // The calculated map
+    this->m_seat_map = next_seat_map;
+
     if (loop_iterations == 4) {
       // After first round all occupied
       this->set_all_seats_occupied();
@@ -91,6 +94,8 @@ void day11::solver_part1(void) {
       this->plot_seat_map(next_seat_map);
     }
   }
+
+  answer = this->count_occupied_seats();
 
   // My bag in list so result - 1 should be good
   std::cout << "Result: " << answer << std::endl;
@@ -257,6 +262,25 @@ std::vector<std::vector<char>> day11::get_seats_around(int in_x, int in_y) {
   //   plot_seat_map(temp_map);
   // }
   return (temp_map);
+}
+
+/**
+ * @brief Count the number of seats in the map occipied
+ *
+ * @return int occupied seats
+ */
+int day11::count_occupied_seats(void) {
+  int tmp_seats = 0;
+
+  for (unsigned y = 0; y < this->m_seat_map.size(); ++y) {
+    for (unsigned x = 0; x < this->m_seat_map.at(0).size(); ++x) {
+      if (this->m_seat_map[y].at(x) == '#') {
+        tmp_seats++;
+      }
+    }
+  }
+
+  return (tmp_seats);
 }
 
 /**

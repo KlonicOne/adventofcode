@@ -25,6 +25,7 @@ class day11 {
 private:
   /* data */
   std::vector<std::vector<char>> m_seat_map;
+  int m_occupied_seats;
 
 public:
   day11(/* args */);
@@ -44,6 +45,7 @@ public:
   std::vector<std::vector<char>> get_seats_around(int in_x, int in_y);
   void set_all_seats_occupied(void);
   void set_all_seats_free(void);
+  int count_occupied_seats(void);
 };
 
 #endif // _DAY06_H_
