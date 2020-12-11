@@ -20,7 +20,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT false
+#define DEBUG_OUT true
 #define NUM_SUPER_LOOP 100
 
 #define FLOOR "."
@@ -104,7 +104,7 @@ void day11::solver_part1(void) {
   answer = this->count_occupied_seats();
 
   // My bag in list so result - 1 should be good
-  std::cout << "Result: " << answer << std::endl;
+  std::cout << "Result part1: " << answer << std::endl;
 }
 
 /**
@@ -112,14 +112,69 @@ void day11::solver_part1(void) {
  *
  */
 void day11::solver_part2(void) {
-  long long answer = 0;
+  int answer = 0;
+  std::vector<std::vector<char>> next_seat_map;
   // Info out
   std::cout << "Part 2" << std::endl;
 
-  answer = 0;
+  if (DEBUG_OUT) {
+    std::cout << "Start map" << std::endl;
+    this->plot_seat_map(this->m_seat_map);
+  }
 
-  // Result fits already
-  std::cout << "Result: " << answer << std::endl;
+  // Reset map to completely free
+  this->set_all_seats_free();
+
+  // Start with map read in
+  next_seat_map = this->m_seat_map;
+
+  // Now go through map and apply rules
+  int loop_iterations = NUM_SUPER_LOOP;
+  while (loop_iterations) {
+    // Go over map and store in next map
+    for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
+      for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
+        // Check which rule is applied
+        if (this->m_seat_map[y].at(x) == 'L') {
+          // is empty
+          if (this->check_line_to_occupy(x, y)) {
+            next_seat_map[y].at(x) = '#'; // Yes change ot occupied
+          }
+        } else if (this->m_seat_map[y].at(x) == '#') {
+          if (this->check_line_to_free(x, y)) {
+            next_seat_map[y].at(x) = 'L'; // Yes change to free
+          }
+        } else {
+          // floor do nothing
+        }
+      }
+    }
+
+    if (DEBUG_OUT) {
+      std::cout << "Round: " << NUM_SUPER_LOOP - loop_iterations << std::endl;
+    }
+
+    // Check end criterion
+    if (compare_maps(next_seat_map, this->m_seat_map) &&
+        loop_iterations < NUM_SUPER_LOOP) {
+      loop_iterations = 0; // Stop looping
+    } else {
+      // Next loop
+      loop_iterations--;
+    }
+
+    // The calculated map has to taken over for next loop
+    this->m_seat_map = next_seat_map;
+
+    // round loop_iteration
+    if (DEBUG_OUT) {
+      this->plot_seat_map(next_seat_map);
+    }
+  }
+
+  answer = this->count_occupied_seats();
+
+  std::cout << "Result part2: " << answer << std::endl;
 }
 
 /************************************************************/
@@ -226,6 +281,39 @@ bool day11::check_to_free(int in_x, int in_y) {
     //   std::cout << "To free" << std::endl;
     // }
   }
+
+  return (to_free);
+}
+
+/**
+ * @brief Check each line direction for first occupied seat
+ *
+ * consider the first seat in each of those eight directions
+ *
+ * @param in_x current pos
+ * @param in_y pos
+ * @return true Seat can be occupied
+ * @return false rule not met
+ */
+bool day11::check_line_to_occupy(int in_x, int in_y) {
+  bool to_occupy = false;
+
+  return (to_occupy);
+}
+
+/**
+ * @brief Check each line direction for number of occupied seats to free
+ *
+ * it now takes five or more visible occupied seats for an occupied seat to
+ * become empty
+ *
+ * @param in_x
+ * @param in_y
+ * @return true
+ * @return false
+ */
+bool day11::check_line_to_free(int in_x, int in_y) {
+  bool to_free = false;
 
   return (to_free);
 }

@@ -33,16 +33,18 @@ public:
 
   // Part1
   void solver_part1(void);
+  bool check_to_occupy(int in_x, int in_y);
+  bool check_to_free(int in_x, int in_y);
+  std::vector<std::vector<char>> get_seats_around(int in_x, int in_y);
 
   // Part2
   void solver_part2(void);
+  bool check_line_to_occupy(int in_x, int in_y);
+  bool check_line_to_free(int in_x, int in_y);
 
   // Common
   void create_seat_map(std::vector<std::string> input_table);
   void plot_seat_map(std::vector<std::vector<char>> map_to_plot);
-  bool check_to_occupy(int in_x, int in_y);
-  bool check_to_free(int in_x, int in_y);
-  std::vector<std::vector<char>> get_seats_around(int in_x, int in_y);
   void set_all_seats_occupied(void);
   void set_all_seats_free(void);
   int count_occupied_seats(void);
