@@ -20,8 +20,8 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
-#define NUM_SUPER_LOOP 10
+#define DEBUG_OUT false
+#define NUM_SUPER_LOOP 100
 
 /**
  * @brief constructor
@@ -152,15 +152,17 @@ void day11::solver_part2(void) {
 
     // Check end criterion
     if (compare_maps(next_seat_map, this->m_seat_map) &&
-        loop_iterations < NUM_SUPER_LOOP) {
+        (loop_iterations < NUM_SUPER_LOOP)) {
+      std::cout << "Loops used: " << NUM_SUPER_LOOP - loop_iterations
+                << std::endl;
       loop_iterations = 0; // Stop looping
     } else {
       // Next loop
       loop_iterations--;
-    }
 
-    // The calculated map has to taken over for next loop
-    this->m_seat_map = next_seat_map;
+      // The calculated map has to taken over for next loop
+      this->m_seat_map = next_seat_map;
+    }
 
     // round loop_iteration
     if (DEBUG_OUT) {
@@ -168,10 +170,10 @@ void day11::solver_part2(void) {
     }
   }
 
+  // Check seats with previous seats
   answer = this->count_occupied_seats();
 
   std::cout << "Result part2: " << answer << std::endl;
-  std::cout << "Loops " << NUM_SUPER_LOOP - loop_iterations << std::endl;
 }
 
 /************************************************************/
