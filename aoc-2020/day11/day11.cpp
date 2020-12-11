@@ -410,67 +410,17 @@ std::vector<std::vector<char>> day11::get_seats_line(int in_x, int in_y) {
   std::vector<char> single_line;               // single line vector
   int stop_y = this->m_seat_map.size();        // stop in y
   int stop_x = this->m_seat_map.at(0).size();  // stop in x
-  int delta_x{0}, delta_y{0};                  // delta for line search
   int cur_x{in_x}, cur_y{in_y};                // current position
+  std::vector<std::tuple<int, int>> dir = {{0, 1},  {-1, 1}, {-1, 0}, {-1, -1},
+                                           {0, -1}, {1, -1}, {1, 0},  {1, 1}};
 
   // Loop through all 8 directions and store the vector up to first occupied
   // seat
-  for (int dir = 0; dir < 8; ++dir) { // y loop
+  for (int i = 0; i < 8; ++i) { // y loop
     // Prepare for next line
     single_line.clear();
-    cur_x = in_x; // back to start
-    cur_y = in_y;
-
-    // First set the delta for each direction
-    switch (dir) {
-    case (0): {
-      // up
-      delta_x = 0;
-      delta_y = 1;
-    } break;
-    case (1): {
-      // up left
-      delta_x = -1;
-      delta_y = 1;
-    } break;
-    case (2): {
-      // left
-      delta_x = -1;
-      delta_y = 0;
-    } break;
-    case (3): {
-      // down left
-      delta_x = -1;
-      delta_y = -1;
-    } break;
-    case (4): {
-      // down
-      delta_x = 0;
-      delta_y = -1;
-    } break;
-    case (5): {
-      // down right
-      delta_x = 1;
-      delta_y = -1;
-    } break;
-    case (6): {
-      // right
-      delta_x = 1;
-      delta_y = 0;
-    } break;
-    case (7): {
-      // up right
-      delta_x = 1;
-      delta_y = 1;
-    } break;
-    default: {
-      // do nothing
-    }
-    }
-
-    // next pos on start because start pos is element itself
-    cur_x = cur_x + delta_x;
-    cur_y = cur_y + delta_y;
+    cur_x = in_x + std::get<0>(dir.at(i)); // next start
+    cur_y = in_y + std::get<1>(dir.at(i));
 
     // Create a single line until end of seat map
     while (((cur_y >= 0) && (cur_x >= 0)) &&
@@ -479,8 +429,8 @@ std::vector<std::vector<char>> day11::get_seats_line(int in_x, int in_y) {
       single_line.push_back(this->m_seat_map[cur_y][cur_x]);
 
       // next pos
-      cur_x = cur_x + delta_x;
-      cur_y = cur_y + delta_y;
+      cur_x += std::get<0>(dir.at(i));
+      cur_y += std::get<1>(dir.at(i));
     }
     // Take over the line
     line_vectors.push_back(single_line);
