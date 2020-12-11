@@ -44,14 +44,53 @@ day11::~day11() {}
  */
 void day11::solver_part1(void) {
   int answer = 0;
+  std::vector<std::vector<char>> next_seat_map;
   // Info out
   std::cout << "Part 1" << std::endl;
 
   if (DEBUG_OUT) {
+    std::cout << "Start map" << std::endl;
     this->plot_seat_map(this->m_seat_map);
   }
 
-  answer = 0;
+  // Start with map read in
+  next_seat_map = this->m_seat_map;
+
+  // Now go through map and apply rules
+  int loop_iterations = 5;
+  while (loop_iterations) {
+    loop_iterations--;
+    this->m_seat_map = next_seat_map;
+
+    for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
+      for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
+        // Check which rule is applied
+        if (this->m_seat_map[y].at(x) == 'L') {
+          // is empty
+          if (this->check_to_occupy(x, y)) {
+            next_seat_map[y].at(x) = '#'; // Yes change ot occupied
+          }
+        } else if (this->m_seat_map[y].at(x) == '#') {
+          if (this->check_to_free(x, y)) {
+            next_seat_map[y].at(x) = 'L'; // Yes change to free
+          }
+        } else {
+          // floor do nothing
+        }
+      }
+    }
+
+    if (loop_iterations == 4) {
+      // After first round all occupied
+      this->set_all_seats_occupied();
+    }
+
+    // round loop_iteration
+    std::cout << "Round: " << 5 - loop_iterations << std::endl;
+    if (DEBUG_OUT) {
+      this->plot_seat_map(next_seat_map);
+    }
+  }
 
   // My bag in list so result - 1 should be good
   std::cout << "Result: " << answer << std::endl;
@@ -123,10 +162,19 @@ bool day11::check_to_occupy(int in_x, int in_y) {
       if (1 != x || 1 != y) {
         if (loc_map[y].at(x) == '#') {
           sum_occ_seats++;
-          to_occupy = false;
+          if (DEBUG_OUT) {
+          }
         }
       }
     }
+  }
+
+  // Check if more than four then empty
+  if (sum_occ_seats == 0) {
+    to_occupy = true;
+    //   if (DEBUG_OUT) {
+    //     std::cout << "To occupy" << std::endl;
+    //   }
   }
 
   return (to_occupy);
@@ -163,6 +211,9 @@ bool day11::check_to_free(int in_x, int in_y) {
   // Check if more than four then empty
   if (sum_occ_seats >= 4) {
     to_free = true;
+    // if (DEBUG_OUT) {
+    //   std::cout << "To free" << std::endl;
+    // }
   }
 
   return (to_free);
@@ -202,10 +253,38 @@ std::vector<std::vector<char>> day11::get_seats_around(int in_x, int in_y) {
     }
   }
 
-  if (DEBUG_OUT) {
-    plot_seat_map(temp_map);
-  }
+  // if (DEBUG_OUT) {
+  //   plot_seat_map(temp_map);
+  // }
   return (temp_map);
+}
+
+/**
+ * @brief Set all seats occupied
+ *
+ */
+void day11::set_all_seats_occupied(void) {
+  for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
+    for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
+      if (this->m_seat_map[y].at(x) != '.') {
+        this->m_seat_map[y].at(x) = '#';
+      }
+    }
+  }
+}
+
+/**
+ * @brief Set all seats empty
+ *
+ */
+void day11::set_all_seats_free(void) {
+  for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
+    for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
+      if (this->m_seat_map[y].at(x) != '.') {
+        this->m_seat_map[y].at(x) = 'L';
+      }
+    }
+  }
 }
 
 /**

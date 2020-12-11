@@ -42,6 +42,8 @@ public:
   bool check_to_occupy(int in_x, int in_y);
   bool check_to_free(int in_x, int in_y);
   std::vector<std::vector<char>> get_seats_around(int in_x, int in_y);
+  void set_all_seats_occupied(void);
+  void set_all_seats_free(void);
 };
 
 #endif // _DAY06_H_
