@@ -20,7 +20,8 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
+#define NUM_SUPER_LOOP 100
 
 #define FLOOR "."
 #define OCCU "#"
@@ -57,10 +58,8 @@ void day11::solver_part1(void) {
   next_seat_map = this->m_seat_map;
 
   // Now go through map and apply rules
-  int loop_iterations = 5;
+  int loop_iterations = NUM_SUPER_LOOP;
   while (loop_iterations) {
-    // Stop for while
-    loop_iterations--;
     // Go over map and store in next map
     for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
       for (unsigned x = 0; x < this->m_seat_map.at(0).size(); x++) {
@@ -80,16 +79,23 @@ void day11::solver_part1(void) {
       }
     }
 
-    // The calculated map
-    this->m_seat_map = next_seat_map;
-
-    if (loop_iterations == 4) {
-      // After first round all occupied
-      this->set_all_seats_occupied();
+    if (DEBUG_OUT) {
+      std::cout << "Round: " << NUM_SUPER_LOOP - loop_iterations << std::endl;
     }
 
+    // Check end criterion
+    if (compare_maps(next_seat_map, this->m_seat_map) &&
+        loop_iterations < NUM_SUPER_LOOP) {
+      loop_iterations = 0; // Stop looping
+    } else {
+      // Next loop
+      loop_iterations--;
+    }
+
+    // The calculated map has to taken over for next loop
+    this->m_seat_map = next_seat_map;
+
     // round loop_iteration
-    std::cout << "Round: " << 5 - loop_iterations << std::endl;
     if (DEBUG_OUT) {
       this->plot_seat_map(next_seat_map);
     }
@@ -309,6 +315,21 @@ void day11::set_all_seats_free(void) {
       }
     }
   }
+}
+
+bool day11::compare_maps(std::vector<std::vector<char>> A,
+                         std::vector<std::vector<char>> B) {
+  bool are_same = false;
+
+  for (unsigned y = 0; y < this->m_seat_map.size(); y++) {
+    are_same = std::equal(A.begin(), A.end(), B.begin());
+    if (are_same == false) {
+      // Maps can not be same
+      break;
+    }
+  }
+
+  return (are_same);
 }
 
 /**

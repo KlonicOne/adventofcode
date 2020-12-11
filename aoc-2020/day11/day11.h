@@ -46,6 +46,8 @@ public:
   void set_all_seats_occupied(void);
   void set_all_seats_free(void);
   int count_occupied_seats(void);
+  bool compare_maps(std::vector<std::vector<char>> A,
+                    std::vector<std::vector<char>> B);
 };
 
 #endif // _DAY06_H_
