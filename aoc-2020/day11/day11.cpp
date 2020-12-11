@@ -51,9 +51,6 @@ void day11::solver_part1(void) {
     this->plot_seat_map(this->m_seat_map);
   }
 
-  // Test for pos
-  this->get_seats_around(0,2);
-
   answer = 0;
 
   // My bag in list so result - 1 should be good
@@ -115,7 +112,22 @@ void day11::create_seat_map(std::vector<std::string> input_table) {
  * @return false Rule failed
  */
 bool day11::check_to_occupy(int in_x, int in_y) {
-  bool to_occupy;
+  bool to_occupy = false;
+  int sum_occ_seats = 0;
+  std::vector<std::vector<char>> loc_map = this->get_seats_around(in_x, in_y);
+
+  // Check rule for all except given seat
+  for (unsigned y = 0; y < loc_map.size(); y++) {
+    for (unsigned x = 0; x < loc_map.at(0).size(); x++) {
+      // exclude center, own seat
+      if (1 != x || 1 != y) {
+        if (loc_map[y].at(x) == '#') {
+          sum_occ_seats++;
+          to_occupy = false;
+        }
+      }
+    }
+  }
 
   return (to_occupy);
 }
@@ -132,7 +144,26 @@ bool day11::check_to_occupy(int in_x, int in_y) {
  * @return false No need to free
  */
 bool day11::check_to_free(int in_x, int in_y) {
-  bool to_free;
+  bool to_free = false;
+  int sum_occ_seats = 0;
+  std::vector<std::vector<char>> loc_map = this->get_seats_around(in_x, in_y);
+
+  // Check rule for all except given seat
+  for (unsigned y = 0; y < loc_map.size(); y++) {
+    for (unsigned x = 0; x < loc_map.at(0).size(); x++) {
+      // exclude center, own seat
+      if (1 != x || 1 != y) {
+        if (loc_map[y].at(x) == '#') {
+          sum_occ_seats++;
+        }
+      }
+    }
+  }
+
+  // Check if more than four then empty
+  if (sum_occ_seats >= 4) {
+    to_free = true;
+  }
 
   return (to_free);
 }
@@ -171,9 +202,9 @@ std::vector<std::vector<char>> day11::get_seats_around(int in_x, int in_y) {
     }
   }
 
-    if (DEBUG_OUT) {
-      plot_seat_map(temp_map);
-    }
+  if (DEBUG_OUT) {
+    plot_seat_map(temp_map);
+  }
   return (temp_map);
 }
 
