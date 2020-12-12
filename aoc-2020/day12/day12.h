@@ -35,6 +35,7 @@ typedef struct t_input_element {
 class day12 {
 private:
   /* data */
+  t_Position m_start_pos;
 
 public:
   day12(/* args */);
@@ -45,12 +46,13 @@ public:
 
   // Part1
   void solver_part1(void);
+  int calc_manhatten_distance(int x, int y);
 
   // Part2
   void solver_part2(void);
 
   // Common
-  void create_ship_route(std::vector<std::string> input);
+  void create_ship_route(std::vector<t_input_element> input);
   void create_format_input(std::vector<std::string> input);
 };
 
