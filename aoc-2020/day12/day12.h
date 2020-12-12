@@ -21,6 +21,17 @@
 
 using namespace std;
 
+typedef struct t_Position {
+  int x;        // East(+) and West(-)
+  int y;        // North(-) and South(+)
+  char heading; // Char for heading, N,E,S,W
+} t_Position;
+
+typedef struct t_input_element {
+  char cmd;
+  int value;
+} t_input_element;
+
 class day12 {
 private:
   /* data */
@@ -29,6 +40,9 @@ public:
   day12(/* args */);
   ~day12();
 
+  std::vector<t_input_element> m_format_input;
+  std::vector<t_Position> m_ship_route;
+
   // Part1
   void solver_part1(void);
 
@@ -36,7 +50,8 @@ public:
   void solver_part2(void);
 
   // Common
-
+  void create_ship_route(std::vector<std::string> input);
+  void create_format_input(std::vector<std::string> input);
 };
 
 #endif // _DAY06_H_

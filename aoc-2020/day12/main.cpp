@@ -41,6 +41,9 @@ int main(int, char **) {
   // Go processing
   std::cout << "Start solving day12" << std::endl;
 
+  // Create route
+  Day.create_format_input(inputTable);
+
   // Solve problems
   Day.solver_part1();
   Day.solver_part2();
