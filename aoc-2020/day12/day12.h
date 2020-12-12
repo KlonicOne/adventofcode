@@ -36,6 +36,7 @@ class day12 {
 private:
   /* data */
   t_Position m_start_pos;
+  t_Position m_waypoint;
 
 public:
   day12(/* args */);
@@ -43,16 +44,18 @@ public:
 
   std::vector<t_input_element> m_format_input;
   std::vector<t_Position> m_ship_route;
+  std::vector<t_Position> m_waypoint_route;
 
   // Part1
   void solver_part1(void);
-  int calc_manhatten_distance(int x, int y);
+  void create_ship_route(std::vector<t_input_element> input);
 
   // Part2
   void solver_part2(void);
+  void create_ship_route_p2(std::vector<t_input_element> input);
 
   // Common
-  void create_ship_route(std::vector<t_input_element> input);
+  int calc_manhatten_distance(int x, int y);
   void create_format_input(std::vector<std::string> input);
 };
 

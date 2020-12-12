@@ -29,6 +29,8 @@ using namespace std;
 day12::day12(/* args */) {
   this->m_start_pos = {0, 0, 'E'};
   this->m_ship_route.push_back(this->m_start_pos);
+  this->m_waypoint = {10, -1, 'E'};
+  this->m_waypoint_route.push_back(this->m_start_pos);
 }
 
 /**
@@ -62,6 +64,18 @@ void day12::solver_part1(void) {
 void day12::solver_part2(void) {
   int answer = 0;
 
+  // Reuse route, so clear before start
+  this->m_ship_route.clear();
+  // Set start point again and waypoint
+  this->m_ship_route.push_back(this->m_start_pos);
+  this->m_waypoint_route.push_back(this->m_waypoint);
+
+  // Create ship route
+  this->create_ship_route_p2(this->m_format_input);
+
+  // calculate manhatten distance
+  answer = this->calc_manhatten_distance(this->m_ship_route.back().x,
+                                         this->m_ship_route.back().y);
   // My bag in list so result - 1 should be good
   std::cout << "Result Part2: " << answer << std::endl;
 }
@@ -296,5 +310,96 @@ void day12::create_ship_route(std::vector<t_input_element> input) {
 
     // Take over element in route
     this->m_ship_route.push_back(temp_pos);
+  }
+}
+
+/**
+ * @brief Create the route part 2 for ship and waypoint
+ *
+ * @param input
+ */
+void day12::create_ship_route_p2(std::vector<t_input_element> input) {
+  t_Position temp_pos_ship = this->m_ship_route.at(0);    // Init with start
+  t_Position temp_pos_way = this->m_waypoint_route.at(0); // Init with start
+
+  for (auto iter : input) {
+    // Get next position
+    temp_pos_ship = this->m_ship_route.back(); // get last element in route
+    temp_pos_way = this->m_waypoint_route.back();
+    int temp_value = 0;
+
+    if (DEBUG_OUT){
+      std::cout << "ship: x: " << temp_pos_ship.x << ", y: " << temp_pos_ship.y << std::endl;
+      std::cout << "way: x: " << temp_pos_way.x << ", y: " << temp_pos_way.y << std::endl;
+    }
+
+    // Check the next step based on command
+    switch (iter.cmd) {
+    case 'F':
+      temp_pos_ship.x += iter.value * temp_pos_way.x;
+      temp_pos_ship.y += iter.value * temp_pos_way.y;
+      break;
+
+    case 'N':
+      temp_pos_way.y -= iter.value;
+      break;
+    case 'E':
+      temp_pos_way.x += iter.value;
+      break;
+    case 'S':
+      temp_pos_way.y += iter.value;
+      break;
+    case 'W':
+      temp_pos_way.x -= iter.value;
+      break;
+
+    // Now the moves
+    case 'R':
+      switch (iter.value) {
+      case 90: {
+        temp_value = temp_pos_way.x;
+        temp_pos_way.x = -1 * temp_pos_way.y;
+        temp_pos_way.y = temp_value;
+      } break;
+      case 180: {
+        temp_pos_way.x = -1 * temp_pos_way.x;
+        temp_pos_way.y = -1 * temp_pos_way.y;
+      } break;
+      case 270: {
+        int temp_value = temp_pos_way.x;
+        temp_pos_way.x = temp_pos_way.y;
+        temp_pos_way.y = -temp_value;
+      } break;
+      default:
+        break;
+      }
+      break;
+
+    case 'L':
+      switch (iter.value) {
+      case 90: {
+        int temp_value = temp_pos_way.x;
+        temp_pos_way.x = temp_pos_way.y;
+        temp_pos_way.y = -temp_value;
+      } break;
+      case 180: {
+        temp_pos_way.x = -1 * temp_pos_way.x;
+        temp_pos_way.y = -1 * temp_pos_way.y;
+      } break;
+      case 270: {
+        int temp_value = temp_pos_way.x;
+        temp_pos_way.x = -1 * temp_pos_way.y;
+        temp_pos_way.y = temp_value;
+      } break;
+      default:
+        break;
+      }
+      break;
+    default:
+      break;
+    }
+
+    this->m_waypoint_route.push_back(temp_pos_way);
+    this->m_ship_route.push_back(temp_pos_ship);
   }
 }
