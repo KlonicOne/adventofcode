@@ -202,7 +202,7 @@ void day13::eval_cond_p2(void) {
     result_found = true;
 
     // possible result must fit with biggest possible value
-    long long result_to_check = i * (max_bus_value + max_subsequent_delay);
+    long long result_to_check = i * max_bus_value;
 
     // now check the conditions for each bus
     for (int j = (this->m_bus_ids.size() - 1); j >= 0; j--) {
@@ -226,7 +226,7 @@ void day13::eval_cond_p2(void) {
     // Check if last loop did match
     if (result_found) {
       // We had a match
-      this->m_result_p2 = i;
+      this->m_result_p2 = result_to_check;
       break; // Also stop this loop
     }
   }
