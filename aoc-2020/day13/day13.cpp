@@ -190,7 +190,8 @@ void day13::eval_cond_p2(void) {
   bool result_found = true;
   long long temp_limit = std::numeric_limits<long long>::max();
 
-  for (long long i = 0; i <= temp_limit; ++i) {
+  // Loop start on 100000000000000 given in task
+  for (long long i = 100000000000000; i <= temp_limit; ++i) {
     // set to result found, only if one not fitting the to false
     result_found = true;
 
