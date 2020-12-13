@@ -65,7 +65,7 @@ void day13::solver_part2(void) {
   int answer = 0;
 
   // Check the conditions
-  this->eval_cond_p2();
+  this->eval_cond_p2_2();
 
   // result
   answer = this->get_result_p2();
@@ -188,6 +188,30 @@ int day13::get_result_p1(void) { return (this->m_result_p1); }
  * Check for the modulo fits to the delay time to each bus
  *
  */
+void day13::eval_cond_p2_2(void) {
+  int ref_time = this->m_bus_subs_time[0];
+  long long time_fixed = 0;
+
+  for (int j = 0; j < this->m_bus_ids.size(); j++) {
+    int i = 0;
+    while (((time_fixed + ref_time * i + this->m_bus_ids[1]) %
+            this->m_bus_ids[0]) != 0) {
+      i += 1;
+    }
+    time_fixed = time_fixed + ref_time * i;
+    if (this->m_bus_ids[1] != 0) {
+      ref_time = ref_time * this->m_bus_ids[0];
+    }
+  }
+
+  this->m_result_p2 = time_fixed;
+}
+
+/**
+ * @brief Evaluate the result for p2
+ * Check for the modulo fits to the delay time to each bus
+ *
+ */
 void day13::eval_cond_p2(void) {
   bool result_found = true;
   long long temp_limit = std::numeric_limits<long long>::max();
@@ -224,7 +248,8 @@ void day13::eval_cond_p2(void) {
       if ((result_to_check % (10000000000 * max_bus_value)) == 0) {
         std::cout << "Checking: " << result_to_check << ", time: "
                   << chrono::system_clock::to_time_t(
-                         chrono::system_clock::now()) - timenow
+                         chrono::system_clock::now()) -
+                         timenow
                   << std::endl;
       }
 

@@ -43,6 +43,7 @@ public:
   // Part2
   void solver_part2(void);
   void eval_cond_p2(void);
+  void eval_cond_p2_2(void);
   long long get_result_p2(void);
 
   // Common
