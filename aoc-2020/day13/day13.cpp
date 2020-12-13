@@ -189,19 +189,31 @@ int day13::get_result_p1(void) { return (this->m_result_p1); }
 void day13::eval_cond_p2(void) {
   bool result_found = true;
   long long temp_limit = std::numeric_limits<long long>::max();
+  // used for only possible results
+  std::vector<int>::iterator addr_biggest =
+      std::max_element(this->m_bus_ids.begin(), this->m_bus_ids.end());
+  int pos_biggest = std::distance(this->m_bus_ids.begin(), addr_biggest);
+  int max_bus_value = this->m_bus_ids[pos_biggest];
+  int max_subsequent_delay = this->m_bus_subs_time[pos_biggest];
 
   // Loop start on 100000000000000 given in task
-  for (long long i = 100000000000000; i <= temp_limit; ++i) {
+  for (long long i = 0; i <= temp_limit; ++i) {
     // set to result found, only if one not fitting the to false
     result_found = true;
 
+    // possible result must fit with biggest possible value
+    long long result_to_check = i * (max_bus_value + max_subsequent_delay);
+
     // now check the conditions for each bus
-    for (int j = 0; j < this->m_bus_ids.size(); ++j) {
-      long long temp_result = (i + this->m_bus_subs_time[j]) % this->m_bus_ids[j];
+    for (int j = (this->m_bus_ids.size() - 1); j >= 0; j--) {
+      long long temp_result = (result_to_check - (max_subsequent_delay -
+                                                  this->m_bus_subs_time[j])) %
+                              this->m_bus_ids[j];
 
       if (DEBUG_OUT) {
-        std::cout << "num: " << i << ", bus: " << this->m_bus_ids[j]
-                  << ", res: " << temp_result << std::endl;
+        std::cout << "num: " << result_to_check
+                  << ", bus: " << this->m_bus_ids[j] << ", res: " << temp_result
+                  << std::endl;
       }
 
       // Check if the condition for this bus is met
