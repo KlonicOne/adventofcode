@@ -62,7 +62,7 @@ void day13::solver_part1(void) {
  *
  */
 void day13::solver_part2(void) {
-  int answer = 0;
+  long long unsigned answer = 0;
 
   // Check the conditions
   this->eval_cond_p2_2();
@@ -189,22 +189,22 @@ int day13::get_result_p1(void) { return (this->m_result_p1); }
  *
  */
 void day13::eval_cond_p2_2(void) {
-  int ref_time = this->m_bus_subs_time[0];
-  long long time_fixed = 0;
+  long long unsigned val = this->m_bus_ids[0];
+  long long unsigned time_off = this->m_bus_subs_time[0];
 
-  for (int j = 0; j < this->m_bus_ids.size(); j++) {
-    int i = 0;
-    while (((time_fixed + ref_time * i + this->m_bus_ids[1]) %
-            this->m_bus_ids[0]) != 0) {
-      i += 1;
+  for (int j = 1; j < this->m_bus_ids.size(); j++) {
+    long long unsigned i = 0;
+    long long unsigned bus_id = this->m_bus_ids[j];
+    long long unsigned subs_time = this->m_bus_subs_time[j];
+
+    while ((val * i + time_off + subs_time) % bus_id != 0) {
+      i++;
     }
-    time_fixed = time_fixed + ref_time * i;
-    if (this->m_bus_ids[1] != 0) {
-      ref_time = ref_time * this->m_bus_ids[0];
-    }
+    time_off = time_off + i * val;
+    val = bus_id * val;
+
+    this->m_result_p2 = time_off;
   }
-
-  this->m_result_p2 = time_fixed;
 }
 
 /**
@@ -214,7 +214,7 @@ void day13::eval_cond_p2_2(void) {
  */
 void day13::eval_cond_p2(void) {
   bool result_found = true;
-  long long temp_limit = std::numeric_limits<long long>::max();
+  long long unsigned temp_limit = std::numeric_limits<long long>::max();
   // used for only possible results
   std::vector<int>::iterator addr_biggest =
       std::max_element(this->m_bus_ids.begin(), this->m_bus_ids.end());
@@ -224,17 +224,17 @@ void day13::eval_cond_p2(void) {
   auto timenow = chrono::system_clock::to_time_t(chrono::system_clock::now());
 
   // Loop start on 100000000000000 given in task
-  for (long long i = (100000000000000 / max_bus_value); i <= temp_limit; ++i) {
+  for (long long unsigned i = (100000000000000 / max_bus_value); i <= temp_limit; ++i) {
     // set to result found, only if one not fitting the to false
     result_found = true;
 
     // possible result must fit with biggest possible value
-    long long result_to_check = i * max_bus_value;
+    long long unsigned result_to_check = i * max_bus_value;
 
     // now check the conditions for each bus
     // for (int j = (this->m_bus_ids.size() - 1); j >= 0; j--) {
     for (int j = 0; j < this->m_bus_ids.size(); j++) {
-      long long temp_result = (result_to_check - (max_subsequent_delay -
+      long long unsigned temp_result = (result_to_check - (max_subsequent_delay -
                                                   this->m_bus_subs_time[j])) %
                               this->m_bus_ids[j];
 
@@ -274,4 +274,4 @@ void day13::eval_cond_p2(void) {
  *
  * @return long long
  */
-long long day13::get_result_p2(void) { return (this->m_result_p2); }
+long long unsigned day13::get_result_p2(void) { return (this->m_result_p2); }

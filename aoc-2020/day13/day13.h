@@ -27,7 +27,7 @@ private:
   int m_arrive_time;
   int m_best_bus_id_p1;
   int m_result_p1;
-  long long m_result_p2;
+  long long unsigned m_result_p2;
   std::vector<int> m_bus_ids;
   std::vector<int> m_bus_subs_time;
 
@@ -44,7 +44,7 @@ public:
   void solver_part2(void);
   void eval_cond_p2(void);
   void eval_cond_p2_2(void);
-  long long get_result_p2(void);
+  long long unsigned get_result_p2(void);
 
   // Common
   void format_input(std::vector<std::string> inTable);
