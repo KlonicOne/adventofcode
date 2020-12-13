@@ -20,7 +20,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -29,6 +29,7 @@ using namespace std;
 day13::day13(/* args */) {
   this->m_arrive_time = 0;
   this->m_best_bus_id_p1 = 0;
+  this->m_result_p2 = 0;
 }
 
 /**
@@ -60,6 +61,12 @@ void day13::solver_part1(void) {
  */
 void day13::solver_part2(void) {
   int answer = 0;
+
+  // Check the conditions
+  this->eval_cond_p2();
+
+  // result
+  answer = this->get_result_p2();
 
   // Out result
   std::cout << "Result Part2: " << answer << std::endl;
@@ -173,3 +180,48 @@ void day13::eval_best_bus_id_p1(void) {
  * @return result
  */
 int day13::get_result_p1(void) { return (this->m_result_p1); }
+
+/**
+ * @brief Evaluate the result for p2
+ * Check for the modulo fits to the delay time to each bus
+ *
+ */
+void day13::eval_cond_p2(void) {
+  bool result_found = true;
+  long long temp_limit = std::numeric_limits<long long>::max();
+
+  for (long long i = 0; i <= temp_limit; ++i) {
+    // set to result found, only if one not fitting the to false
+    result_found = true;
+
+    // now check the conditions for each bus
+    for (int j = 0; j < this->m_bus_ids.size(); ++j) {
+      long long temp_result = (i + this->m_bus_subs_time[j]) % this->m_bus_ids[j];
+
+      if (DEBUG_OUT) {
+        std::cout << "num: " << i << ", bus: " << this->m_bus_ids[j]
+                  << ", res: " << temp_result << std::endl;
+      }
+
+      // Check if the condition for this bus is met
+      if (temp_result != 0) {
+        result_found = false;
+        break; // Stop this for loop checking the rest
+      }
+    }
+
+    // Check if last loop did match
+    if (result_found) {
+      // We had a match
+      this->m_result_p2 = i;
+      break; // Also stop this loop
+    }
+  }
+}
+
+/**
+ * @brief Getter p2
+ *
+ * @return long long
+ */
+long long day13::get_result_p2(void) { return (this->m_result_p2); }
