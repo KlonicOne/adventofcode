@@ -11,11 +11,13 @@
 #include "show_container.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <istream>
 #include <map>
 #include <numeric>
+#include <time.h>
 #include <vector>
 
 using namespace std;
@@ -195,9 +197,10 @@ void day13::eval_cond_p2(void) {
   int pos_biggest = std::distance(this->m_bus_ids.begin(), addr_biggest);
   int max_bus_value = this->m_bus_ids[pos_biggest];
   int max_subsequent_delay = this->m_bus_subs_time[pos_biggest];
+  auto timenow = chrono::system_clock::to_time_t(chrono::system_clock::now());
 
   // Loop start on 100000000000000 given in task
-  for (long long i = 0; i <= temp_limit; ++i) {
+  for (long long i = (100000000000000 / max_bus_value); i <= temp_limit; ++i) {
     // set to result found, only if one not fitting the to false
     result_found = true;
 
@@ -205,7 +208,8 @@ void day13::eval_cond_p2(void) {
     long long result_to_check = i * max_bus_value;
 
     // now check the conditions for each bus
-    for (int j = (this->m_bus_ids.size() - 1); j >= 0; j--) {
+    // for (int j = (this->m_bus_ids.size() - 1); j >= 0; j--) {
+    for (int j = 0; j < this->m_bus_ids.size(); j++) {
       long long temp_result = (result_to_check - (max_subsequent_delay -
                                                   this->m_bus_subs_time[j])) %
                               this->m_bus_ids[j];
@@ -213,6 +217,14 @@ void day13::eval_cond_p2(void) {
       if (DEBUG_OUT) {
         std::cout << "num: " << result_to_check
                   << ", bus: " << this->m_bus_ids[j] << ", res: " << temp_result
+                  << std::endl;
+      }
+
+      // Where are we?
+      if ((result_to_check % (10000000000 * max_bus_value)) == 0) {
+        std::cout << "Checking: " << result_to_check << ", time: "
+                  << chrono::system_clock::to_time_t(
+                         chrono::system_clock::now()) - timenow
                   << std::endl;
       }
 
