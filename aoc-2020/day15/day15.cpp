@@ -24,7 +24,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -129,11 +129,10 @@ void day15::eval_num_p1(void) {
 
   // Loop max times through the vector
   while (stop_cond != 0) {
+    bool match_recent = 0;                    // Was last found?
     int recent_num = this->m_num_list.back(); // for this num to search
-    std::vector<int>::iterator pos_recent =
-        this->m_num_list.end(); // pos for distance
-    std::vector<int>::reverse_iterator pos_most_recent =
-        this->m_num_list.rbegin();      // pos in vect to calc dist
+    std::vector<int>::reverse_iterator pos_recent =
+        this->m_num_list.rbegin();      // pos for distance
     int dist_recent_to_most_recent = 0; // distance
 
     // Find dist to most recent with reverse iterator
@@ -141,11 +140,30 @@ void day15::eval_num_p1(void) {
              (this->m_num_list.rbegin() + 1);
          riter < this->m_num_list.rend(); ++riter) {
 
-      if (DEBUG_OUT) {
-        std::cout << *riter << std::endl;
+      if (*riter == recent_num) {
+        match_recent = true;
+        // Now get the distance
+        dist_recent_to_most_recent = distance(pos_recent, riter);
+        break;
       }
     }
+
+    // If we found no match, then we say 0
+    if (!match_recent) {
+      this->m_num_list.push_back(0);
+    } else {
+      this->m_num_list.push_back(dist_recent_to_most_recent);
+    }
+
     // Next loop until stop cond met
     --stop_cond;
+  }
+
+  // Store result
+  this->m_result_p1 = this->m_num_list.back();
+
+  if (DEBUG_OUT) {
+    show_container(this->m_num_list);
+    std::cout << "2020th: " << this->m_num_list.back() << std::endl;
   }
 }
