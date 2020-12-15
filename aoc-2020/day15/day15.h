@@ -24,8 +24,9 @@ using namespace std;
 class day15 {
 private:
   /* data */
-  int m_result_p1;
-  std::vector<int> m_num_list;
+  long long m_result;
+  int m_stop_cond;
+  std::vector<long long> m_num_list;
 
 public:
   day15(/* args */);
@@ -33,14 +34,15 @@ public:
 
   // Part1
   void solver_part1(void);
-  void eval_num_p1(void);
-  int get_result_p1(void);
 
   // Part2
   void solver_part2(void);
-
+  
   // Common
   void format_input(std::vector<std::string> inTable);
+  void eval_num(void);
+  long long get_result(void);
+  void set_stop_condition(int cond);
 };
 
-#endif 
+#endif

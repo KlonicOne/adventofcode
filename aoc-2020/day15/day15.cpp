@@ -30,7 +30,10 @@ using namespace std;
  * @brief constructor
  *
  */
-day15::day15(/* args */) { this->m_result_p1 = 0; }
+day15::day15(/* args */) {
+  this->m_result = 0;
+  this->m_stop_cond = 0;
+}
 
 /**
  * @brief Destroy the day15::day15
@@ -43,13 +46,16 @@ day15::~day15() {}
  *
  */
 void day15::solver_part1(void) {
-  int answer = 0;
+  long long answer = 0;
+
+  // Stop cond
+  this->set_stop_condition(2020);
 
   // Check for best bus
-  this->eval_num_p1();
+  this->eval_num();
 
   // Cacl result for best bus
-  answer = this->get_result_p1();
+  answer = this->get_result();
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -60,7 +66,16 @@ void day15::solver_part1(void) {
  *
  */
 void day15::solver_part2(void) {
-  long long unsigned answer = 0;
+  long long answer = 0;
+
+  // Stop cond
+  this->set_stop_condition(30000000);
+
+  // Check for best bus
+  this->eval_num();
+
+  // Cacl result for best bus
+  answer = this->get_result();
 
   // Out result
   std::cout << "Result Part2: " << answer << std::endl;
@@ -112,31 +127,38 @@ void day15::format_input(std::vector<std::string> inTable) {
 }
 
 /**
+ * @brief Set the stop condition for the loop
+ *
+ * @param cond
+ */
+void day15::set_stop_condition(int cond) { this->m_stop_cond = cond; }
+
+/**
  * @brief Getter for result p1
  *
  * @return result
  */
-int day15::get_result_p1(void) { return (this->m_result_p1); }
+long long day15::get_result(void) { return (this->m_result); }
 
 /**
  * @brief Evaluate the result for part 1 and store in member var. Searching for
  * the result of the 2020th number in the vector
  *
  */
-void day15::eval_num_p1(void) {
+void day15::eval_num(void) {
   // Stop is position 2020 from beginning of vector
-  int stop_cond = 2020 - this->m_num_list.size();
+  int stop_cond = this->m_stop_cond - this->m_num_list.size();
 
   // Loop max times through the vector
   while (stop_cond != 0) {
-    bool match_recent = 0;                    // Was last found?
-    int recent_num = this->m_num_list.back(); // for this num to search
-    std::vector<int>::reverse_iterator pos_recent =
-        this->m_num_list.rbegin();      // pos for distance
-    int dist_recent_to_most_recent = 0; // distance
+    bool match_recent = 0;                          // Was last found?
+    long long recent_num = this->m_num_list.back(); // for this num to search
+    std::vector<long long>::reverse_iterator pos_recent =
+        this->m_num_list.rbegin();            // pos for distance
+    long long dist_recent_to_most_recent = 0; // distance
 
     // Find dist to most recent with reverse iterator
-    for (std::vector<int>::reverse_iterator riter =
+    for (std::vector<long long>::reverse_iterator riter =
              (this->m_num_list.rbegin() + 1);
          riter < this->m_num_list.rend(); ++riter) {
 
@@ -160,10 +182,9 @@ void day15::eval_num_p1(void) {
   }
 
   // Store result
-  this->m_result_p1 = this->m_num_list.back();
+  this->m_result = this->m_num_list.back();
 
   if (DEBUG_OUT) {
     show_container(this->m_num_list);
-    std::cout << "2020th: " << this->m_num_list.back() << std::endl;
   }
 }
