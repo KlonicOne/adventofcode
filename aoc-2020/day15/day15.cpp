@@ -155,15 +155,13 @@ void day15::eval_num(void) {
   while (stop_cond != 0) {
     bool match_recent = false; // Was last found?
 
-    // Find dist to most recent with reverse iterator
-    for (std::vector<long long>::reverse_iterator riter =
-             (running_list.rbegin() + 1);
-         riter < running_list.rend(); ++riter) {
-
-      if (*riter == running_list.back()) {
+    // Find dist to most recent
+    for (int i = running_list.size() - 2; i >= 0; --i) {
+      if (running_list[i] == running_list.back()) {
         match_recent = true;
         // Now get the distance
-        running_list.push_back(distance(running_list.rbegin(), riter));
+        running_list.push_back(
+            std::distance(running_list.begin() + i, running_list.end() - 1));
         break;
       }
     }
