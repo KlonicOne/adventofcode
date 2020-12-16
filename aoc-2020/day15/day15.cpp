@@ -151,24 +151,19 @@ void day15::eval_num(void) {
   // copy as modified
   auto running_list = this->m_num_list;
 
-
   // Loop max times through the vector
   while (stop_cond != 0) {
-    bool match_recent = 0;                          // Was last found?
-    long long recent_num = running_list.back(); // for this num to search
-    std::vector<long long>::reverse_iterator pos_recent =
-        running_list.rbegin();            // pos for distance
-    long long dist_recent_to_most_recent = 0; // distance
+    bool match_recent = false; // Was last found?
 
     // Find dist to most recent with reverse iterator
     for (std::vector<long long>::reverse_iterator riter =
              (running_list.rbegin() + 1);
          riter < running_list.rend(); ++riter) {
 
-      if (*riter == recent_num) {
+      if (*riter == running_list.back()) {
         match_recent = true;
         // Now get the distance
-        dist_recent_to_most_recent = distance(pos_recent, riter);
+        running_list.push_back(distance(running_list.rbegin(), riter));
         break;
       }
     }
@@ -176,8 +171,6 @@ void day15::eval_num(void) {
     // If we found no match, then we say 0
     if (!match_recent) {
       running_list.push_back(0);
-    } else {
-      running_list.push_back(dist_recent_to_most_recent);
     }
 
     // Next loop until stop cond met
