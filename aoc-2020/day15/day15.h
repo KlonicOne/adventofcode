@@ -40,7 +40,8 @@ public:
   
   // Common
   void format_input(std::vector<std::string> inTable);
-  void eval_num(void);
+  void eval_num_loop(void);
+  void eval_num_opt(void);
   long long get_result(void);
   void set_stop_condition(int cond);
 };

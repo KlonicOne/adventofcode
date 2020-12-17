@@ -22,4 +22,11 @@ void show_container(Container&& container, const char* abschluss = "\n", const c
     std::cout << abschluss;
 }
 
+template <class Assoziativ_Container>
+void show_assocontainer(Assoziativ_Container&& container, const char* abschluss = "\n", const char* trenn = " ") {
+    for (decltype(auto) element : container) {
+        std::cout << "(" << element.first << ":" << element.second << ")" << trenn;
+    }
+    std::cout << abschluss;
+}
 #endif

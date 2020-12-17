@@ -52,7 +52,7 @@ void day15::solver_part1(void) {
   this->set_stop_condition(2020);
 
   // Check for best bus
-  this->eval_num();
+  this->eval_num_loop();
 
   // Cacl result for best bus
   answer = this->get_result();
@@ -72,7 +72,7 @@ void day15::solver_part2(void) {
   this->set_stop_condition(30000000);
 
   // Check for best bus
-  this->eval_num();
+  this->eval_num_opt();
 
   // Cacl result for best bus
   answer = this->get_result();
@@ -140,12 +140,63 @@ void day15::set_stop_condition(int cond) { this->m_stop_cond = cond; }
  */
 long long day15::get_result(void) { return (this->m_result); }
 
+void day15::eval_num_opt(void) {
+  int stop_cond = this->m_stop_cond - this->m_num_list.size();
+  int i = 0;
+  int last_key = 0, next_key = 0;
+  int last_value = 0, next_value = 0;
+  map<int, int> num_map;
+
+  // Fill map with given start list
+  for (auto iter : this->m_num_list) {
+    num_map.insert(pair<int, int>(iter, i));
+    i++;
+  }
+
+  // Reuse of i for the current position in the num list
+  i = this->m_num_list.size();
+  // Preload initial key and value
+  last_key = m_num_list.back();
+  last_value = m_num_list.size() - 1;
+  // And delete the element in the map, else it is found immediatly
+  num_map.erase(last_key);
+  // Search through list storing last element to search
+  while (stop_cond != 0) {
+    if (num_map.count(last_key)) {
+      // key in list
+      next_key = last_value - num_map[last_key];
+      next_value = i;
+      // And write last in map
+      num_map[last_key] = last_value;
+    } else {
+      next_key = 0;
+      next_value = i;
+      // key not in list
+      num_map.insert(make_pair(last_key, last_value));
+    }
+    // Take over next as last
+    last_key = next_key;
+    last_value = next_value;
+
+    // next loop
+    i++;
+    stop_cond--;
+  }
+
+  // Store restul in last key
+  this->m_result = last_key;
+
+  if (DEBUG_OUT) {
+    show_assocontainer(num_map);
+  }
+}
+
 /**
  * @brief Evaluate the result for part 1 and store in member var. Searching for
  * the result of the 2020th number in the vector
  *
  */
-void day15::eval_num(void) {
+void day15::eval_num_loop(void) {
   // Stop is position 2020 from beginning of vector
   int stop_cond = this->m_stop_cond - this->m_num_list.size();
   // copy as modified
@@ -169,6 +220,11 @@ void day15::eval_num(void) {
     // If we found no match, then we say 0
     if (!match_recent) {
       running_list.push_back(0);
+    }
+
+    // Check where we are
+    if (stop_cond % 1000000 == 0) {
+      std::cout << stop_cond << std::endl;
     }
 
     // Next loop until stop cond met
