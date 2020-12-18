@@ -140,6 +140,10 @@ void day15::set_stop_condition(int cond) { this->m_stop_cond = cond; }
  */
 long long day15::get_result(void) { return (this->m_result); }
 
+/**
+ * @brief Evaulate result optimized to not take again 20h
+ * 
+ */
 void day15::eval_num_opt(void) {
   int stop_cond = this->m_stop_cond - this->m_num_list.size();
   int i = 0;
@@ -172,7 +176,7 @@ void day15::eval_num_opt(void) {
       next_key = 0;
       next_value = i;
       // key not in list
-      num_map.insert(make_pair(last_key, last_value));
+      num_map[last_key] = last_value;
     }
     // Take over next as last
     last_key = next_key;
