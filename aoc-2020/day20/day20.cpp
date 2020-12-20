@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -45,6 +45,17 @@ day20::~day20() {}
  */
 void day20::solver_part1(void) {
   int answer = 0;
+
+  // Test rot90 cw
+  // Plot before
+  this->plot_mat(this->m_cam_input.at(0).image);
+  for (int i = 0; i < 2; i++) {
+    // Rot four times
+    // rot
+    this->flip_image_h(this->m_cam_input.at(0).image);
+    // Plot before
+    this->plot_mat(this->m_cam_input.at(0).image);
+  }
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -111,7 +122,7 @@ void day20::format_input(std::vector<std::string> inTable) {
       for (auto c : string_line) {
         c_vec.push_back(c);
       }
-        temp_tile.image.push_back(c_vec);
+      temp_tile.image.push_back(c_vec);
     }
 
     if (DEBUG_OUT) {
@@ -134,4 +145,72 @@ std::string day20::remove_spaces(const std::string s) {
     pos = ret_s.find(' ');
   }
   return (ret_s);
+}
+
+/**
+ * @brief Rotate the image clockwise by 90°
+ *
+ * @param image
+ */
+void day20::rot_image_90cw(std::vector<std::vector<char>> &image) {
+  int n = image.size();
+
+  for (int i = 0; i < (n / 2); i++) {
+    for (int j = i; j < (n - i - 1); j++) {
+      int temp_val = image[i][j];
+      image[i][j] = image[n - 1 - j][i];
+      image[n - 1 - j][i] = image[n - 1 - i][n - 1 - j];
+      image[n - 1 - i][n - 1 - j] = image[j][n - 1 - i];
+      image[j][n - 1 - i] = temp_val;
+    }
+  }
+}
+
+/**
+ * @brief Flip image vertical
+ *
+ * @param image
+ */
+void day20::flip_image_v(std::vector<std::vector<char>> &image) {
+  int n = image.size(); // lines and rows
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < (n / 2); j++) {
+      int temp_val = image[i][j];
+      image[i][j] = image[i][n - j - 1];
+      image[i][n - j - 1] = temp_val;
+    }
+  }
+}
+
+/**
+ * @brief Flip image horizontal
+ *
+ * @param image
+ */
+void day20::flip_image_h(std::vector<std::vector<char>> &image) {
+  int n = image.size(); // lines and rows
+
+  for (int i = 0; i < (n / 2); i++) {
+    for (int j = 0; j < n; j++) {
+      int temp_val = image[i][j];
+      image[i][j] = image[n - i - 1][j];
+      image[n - i - 1][j] = temp_val;
+    }
+  }
+}
+
+/**
+ * @brief Plot given matrix
+ *
+ * @param image
+ */
+void day20::plot_mat(std::vector<std::vector<char>> &image) {
+  for (int i = 0; i < image.size(); i++) {
+    for (int j = 0; j < image.at(i).size(); j++) {
+      std::cout << image[i][j];
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
 }

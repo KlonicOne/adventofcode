@@ -43,6 +43,10 @@ public:
   // Common
   void format_input(std::vector<std::string> inTable);
   std::string remove_spaces(const std::string s);
+  void rot_image_90cw(std::vector<std::vector<char>> &image);
+  void flip_image_v(std::vector<std::vector<char>> &image);
+  void flip_image_h(std::vector<std::vector<char>> &image);
+  void plot_mat(std::vector<std::vector<char>> &image);
 };
 
 #endif
