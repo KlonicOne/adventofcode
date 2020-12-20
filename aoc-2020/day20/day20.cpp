@@ -45,6 +45,7 @@ day20::~day20() {}
  */
 void day20::solver_part1(void) {
   int answer = 0;
+  int offset = 0;
 
   // Idea part 1 Check all sides against all other sides, In tile itself set a
   // variable how many other sides are matching with the tile. For corner only
@@ -59,18 +60,23 @@ void day20::solver_part1(void) {
   for (auto anchor_iter : this->m_cam_input) {
     // Check every side of the current element against all other sides of all
     // other elements
-    for (auto to_check_iter : this->m_cam_input) {
+    for (int i = offset; i < this->m_cam_input.size(); i++) {
+      auto to_check_iter = this->m_cam_input.at(i); // Get anchor
       // Not with same element
       if (anchor_iter.tile_id != to_check_iter.tile_id) {
         // Not same elements we can compare
-        anchor_iter.num_side_match +=
-            this->eval_matching_sides(anchor_iter, to_check_iter);
+        int matches = this->eval_matching_sides(anchor_iter, to_check_iter);
+        anchor_iter.num_side_match += matches;
+        this->m_cam_input.at(i).num_side_match += matches;
+
         if (DEBUG_OUT) {
           std::cout << anchor_iter.tile_id << "-" << to_check_iter.tile_id
                     << ": " << anchor_iter.num_side_match << std::endl;
         }
       }
     }
+    // Next time do not loop from start, take next tile to check
+    offset++;
   }
 
   // Out result
@@ -277,7 +283,7 @@ day20::get_column_from_image(int column_num,
                              const std::vector<std::vector<char>> &image) {
   std::vector<char> temp_res;
   for (int i = 0; i < image.size(); ++i) {
-    temp_res.push_back(image.at(column_num).at(i));
+    temp_res.push_back(image.at(i).at(column_num));
   }
   return (temp_res);
 }
@@ -299,7 +305,7 @@ int day20::eval_matching_sides(const t_tile &A, const t_tile &B) {
   A_sides.push_back(this->get_line_from_image((A.image.size() - 1), A.image));
   A_sides.push_back(
       this->get_column_from_image((A.image.at(0).size() - 1), A.image));
-      
+
   B_sides.push_back(this->get_line_from_image(0, B.image));
   B_sides.push_back(this->get_column_from_image(0, B.image));
   B_sides.push_back(this->get_line_from_image((B.image.size() - 1), B.image));
@@ -310,6 +316,12 @@ int day20::eval_matching_sides(const t_tile &A, const t_tile &B) {
   // First check lines
   for (auto a_iter : A_sides) {
     for (auto b_iter : B_sides) {
+      // Compare not flipped
+      if (this->compare_lines(a_iter, b_iter)) {
+        res++;
+      }
+      // Compare flipped
+      std::reverse(a_iter.begin(), a_iter.end());
       if (this->compare_lines(a_iter, b_iter)) {
         res++;
       }
