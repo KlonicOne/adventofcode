@@ -46,8 +46,8 @@ day20::~day20() {}
 void day20::solver_part1(void) {
   int answer = 0;
 
-  // Test rot90 cw
-  this->plot_mat(this->m_cam_input.at(0).image);
+  // Some statistics
+  std::cout << "Num tiles: " << this->m_cam_input.size() << std::endl;
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -121,6 +121,9 @@ void day20::format_input(std::vector<std::string> inTable) {
       show_container(c_vec);
     }
   }
+
+  // The last tile need also to be pushed to input data
+  this->m_cam_input.push_back(temp_tile);
 }
 
 /**
