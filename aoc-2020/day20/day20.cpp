@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT false
+#define DEBUG_OUT true
 
 /**
  * @brief constructor
@@ -69,10 +69,11 @@ void day20::solver_part1(void) {
         int matches = this->eval_matching_sides(anchor_iter, to_check_iter);
         this->m_cam_input.at(j).num_side_match += matches;
         this->m_cam_input.at(i).num_side_match += matches;
-
-        if (DEBUG_OUT) {
-          std::cout << anchor_iter.tile_id << "-" << to_check_iter.tile_id
-                    << ": " << anchor_iter.num_side_match << std::endl;
+        if (matches) {
+          this->m_cam_input.at(j).adjacent_tile_ids.push_back(
+              to_check_iter.tile_id);
+          this->m_cam_input.at(i).adjacent_tile_ids.push_back(
+              anchor_iter.tile_id);
         }
       }
     }
@@ -81,10 +82,14 @@ void day20::solver_part1(void) {
   }
 
   if (DEBUG_OUT) {
-    // Get the corner elements, they are only matching on two sides
+    // Print current elements data
     for (auto iter : this->m_cam_input) {
       std::cout << "Id: " + iter.tile_id << ", Con: " << iter.num_side_match
-                << std::endl;
+                << ", Adj: ";
+      for (auto adj_iter : iter.adjacent_tile_ids) {
+        std::cout << adj_iter << ", ";
+      }
+      std::cout << std::endl;
     }
   }
 

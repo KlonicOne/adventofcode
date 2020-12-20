@@ -23,6 +23,7 @@ using namespace std;
 typedef struct t_tile {
   std::string tile_id;
   int num_side_match;
+  std::vector<std::string> adjacent_tile_ids;
   std::vector<std::vector<char>> image;
 } t_tile;
 
