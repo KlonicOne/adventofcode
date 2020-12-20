@@ -30,6 +30,7 @@ class day20 {
 private:
   /* data */
   std::vector<t_tile> m_cam_input;
+  std::vector<t_tile> m_corner_tiles;
 
 public:
   day20(/* args */);

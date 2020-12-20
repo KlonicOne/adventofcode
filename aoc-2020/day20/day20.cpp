@@ -44,7 +44,7 @@ day20::~day20() {}
  *
  */
 void day20::solver_part1(void) {
-  int answer = 0;
+  long long answer = 0;
   int offset = 0;
 
   // Idea part 1 Check all sides against all other sides, In tile itself set a
@@ -57,7 +57,8 @@ void day20::solver_part1(void) {
   std::cout << "Num tiles: " << this->m_cam_input.size() << std::endl;
 
   // every tile
-  for (auto anchor_iter : this->m_cam_input) {
+  for (int j = 0; j < this->m_cam_input.size(); j++) {
+    auto anchor_iter = this->m_cam_input.at(j);
     // Check every side of the current element against all other sides of all
     // other elements
     for (int i = offset; i < this->m_cam_input.size(); i++) {
@@ -66,7 +67,7 @@ void day20::solver_part1(void) {
       if (anchor_iter.tile_id != to_check_iter.tile_id) {
         // Not same elements we can compare
         int matches = this->eval_matching_sides(anchor_iter, to_check_iter);
-        anchor_iter.num_side_match += matches;
+        this->m_cam_input.at(j).num_side_match += matches;
         this->m_cam_input.at(i).num_side_match += matches;
 
         if (DEBUG_OUT) {
@@ -78,6 +79,28 @@ void day20::solver_part1(void) {
     // Next time do not loop from start, take next tile to check
     offset++;
   }
+
+  if (DEBUG_OUT) {
+    // Get the corner elements, they are only matching on two sides
+    for (auto iter : this->m_cam_input) {
+      std::cout << "Id: " + iter.tile_id << ", Con: " << iter.num_side_match
+                << std::endl;
+    }
+  }
+
+  // Get the corner elements, they are only matching on two sides
+  for (auto iter : this->m_cam_input) {
+    if (iter.num_side_match == 2) {
+      // Found corner
+      this->m_corner_tiles.push_back(iter);
+    }
+  }
+
+  // Calc product of corner elements
+  answer = std::stoll(this->m_corner_tiles.at(0).tile_id) *
+           std::stoll(this->m_corner_tiles.at(1).tile_id) *
+           std::stoll(this->m_corner_tiles.at(2).tile_id) *
+           std::stoll(this->m_corner_tiles.at(3).tile_id);
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
