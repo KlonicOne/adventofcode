@@ -1,0 +1,137 @@
+/**
+ * @file day20.cpp
+ * @author klonicone
+ * @version 0.1
+ * @date 2020-12-01
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+#include "day20.h"
+#include "show_container.h"
+
+#include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <iostream>
+#include <istream>
+#include <iterator>
+#include <map>
+#include <numeric>
+#include <stack>
+#include <string>
+#include <time.h>
+#include <vector>
+
+using namespace std;
+
+#define DEBUG_OUT true
+
+/**
+ * @brief constructor
+ *
+ */
+day20::day20(/* args */) {}
+
+/**
+ * @brief Destroy the day20::day20
+ *
+ */
+day20::~day20() {}
+
+/**
+ * @brief Solve part 1
+ *
+ */
+void day20::solver_part1(void) {
+  int answer = 0;
+
+  // Out result
+  std::cout << "Result Part1: " << answer << std::endl;
+}
+
+/**
+ * @brief Solve part 2
+ *
+ */
+void day20::solver_part2(void) {
+  int answer = 0;
+
+  // Out result
+  std::cout << "Result Part2: " << answer << std::endl;
+}
+
+/************************************************************/
+/************************************************************/
+/************************************************************/
+
+/**
+ * @brief Split the intput string and store in class code list
+ *
+ * @param inTable
+ */
+void day20::format_input(std::vector<std::string> inTable) {
+  bool start_new_image = true;
+  t_tile temp_tile;
+
+  // Loop through lines of file in input
+  for (std::vector<std::string>::const_iterator i = inTable.begin();
+       i != inTable.end(); ++i) {
+    // used temp to store line and each element
+    std::string string_line = "";
+    std::string element = "";
+    std::vector<char> c_vec;
+    // To split the string
+    std::string::size_type pos;
+
+    // Get single line as string_line
+    string_line = (*i);
+
+    // Check if the next image comes
+    if (string_line.length() == 0) {
+      // pushback last element to format input
+      this->m_cam_input.push_back(temp_tile);
+
+      // clear elements
+      temp_tile.image.clear();
+      temp_tile.tile_id = "";
+
+      // Next line is first line with tile ID
+      start_new_image = true;
+      continue;
+    }
+
+    if (start_new_image) {
+      // Check for tile and extract id
+      element = string_line.substr(5, 4);
+      temp_tile.tile_id = element;
+      start_new_image = false;
+    } else {
+      // split elemente by element into image of tile
+      for (auto c : string_line) {
+        c_vec.push_back(c);
+      }
+        temp_tile.image.push_back(c_vec);
+    }
+
+    if (DEBUG_OUT) {
+      show_container(c_vec);
+    }
+  }
+}
+
+/**
+ * @brief Remove all spaces in string
+ *
+ * @param s string reference
+ * @return std::string new string without spaces
+ */
+std::string day20::remove_spaces(const std::string s) {
+  std::string ret_s = s;
+  std::string::size_type pos = ret_s.find(' ');
+  while (pos != std::string::npos) {
+    ret_s.erase(ret_s.begin() + pos);
+    pos = ret_s.find(' ');
+  }
+  return (ret_s);
+}
