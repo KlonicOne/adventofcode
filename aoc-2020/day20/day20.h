@@ -47,6 +47,7 @@ public:
   void flip_image_v(std::vector<std::vector<char>> &image);
   void flip_image_h(std::vector<std::vector<char>> &image);
   void plot_mat(std::vector<std::vector<char>> &image);
+  bool compare_lines(std::vector<char> a, std::vector<char> b);
 };
 
 #endif

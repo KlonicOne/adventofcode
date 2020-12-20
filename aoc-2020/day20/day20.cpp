@@ -47,15 +47,7 @@ void day20::solver_part1(void) {
   int answer = 0;
 
   // Test rot90 cw
-  // Plot before
   this->plot_mat(this->m_cam_input.at(0).image);
-  for (int i = 0; i < 2; i++) {
-    // Rot four times
-    // rot
-    this->flip_image_h(this->m_cam_input.at(0).image);
-    // Plot before
-    this->plot_mat(this->m_cam_input.at(0).image);
-  }
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -213,4 +205,21 @@ void day20::plot_mat(std::vector<std::vector<char>> &image) {
     std::cout << std::endl;
   }
   std::cout << std::endl;
+}
+
+/**
+ * @brief Compare two given lines
+ *
+ * @param a
+ * @param b
+ * @return true both are same
+ * @return false unequal
+ */
+bool day20::compare_lines(std::vector<char> a, std::vector<char> b) {
+  bool lines_equal = false;
+
+  // Are equal?
+  lines_equal = std::equal(a.begin(), a.end(), b.begin());
+
+  return (lines_equal);
 }
