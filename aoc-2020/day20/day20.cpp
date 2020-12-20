@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT false
+#define DEBUG_OUT true
 
 /**
  * @brief constructor
@@ -49,6 +49,8 @@ void day20::solver_part1(void) {
   // Idea part 1 Check all sides against all other sides, In tile itself set a
   // variable how many other sides are matching with the tile. For corner only
   // two pages can match. For frame images thress and inner all four
+  // Problem is that the each line can be flipped so the compare must be in same
+  // order and flipped ... here I stop now
 
   // Some statistics
   std::cout << "Num tiles: " << this->m_cam_input.size() << std::endl;
@@ -60,7 +62,13 @@ void day20::solver_part1(void) {
     for (auto to_check_iter : this->m_cam_input) {
       // Not with same element
       if (anchor_iter.tile_id != to_check_iter.tile_id) {
-        // Not same elements
+        // Not same elements we can compare
+        anchor_iter.num_side_match +=
+            this->eval_matching_sides(anchor_iter, to_check_iter);
+        if (DEBUG_OUT) {
+          std::cout << anchor_iter.tile_id << "-" << to_check_iter.tile_id
+                    << ": " << anchor_iter.num_side_match << std::endl;
+        }
       }
     }
   }
@@ -291,6 +299,7 @@ int day20::eval_matching_sides(const t_tile &A, const t_tile &B) {
   A_sides.push_back(this->get_line_from_image((A.image.size() - 1), A.image));
   A_sides.push_back(
       this->get_column_from_image((A.image.at(0).size() - 1), A.image));
+      
   B_sides.push_back(this->get_line_from_image(0, B.image));
   B_sides.push_back(this->get_column_from_image(0, B.image));
   B_sides.push_back(this->get_line_from_image((B.image.size() - 1), B.image));
