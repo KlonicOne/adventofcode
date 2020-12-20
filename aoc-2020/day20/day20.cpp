@@ -46,8 +46,24 @@ day20::~day20() {}
 void day20::solver_part1(void) {
   int answer = 0;
 
+  // Idea part 1 Check all sides against all other sides, In tile itself set a
+  // variable how many other sides are matching with the tile. For corner only
+  // two pages can match. For frame images thress and inner all four
+
   // Some statistics
   std::cout << "Num tiles: " << this->m_cam_input.size() << std::endl;
+
+  // every tile
+  for (auto anchor_iter : this->m_cam_input) {
+    // Check every side of the current element against all other sides of all
+    // other elements
+    for (auto to_check_iter : this->m_cam_input) {
+      // Not with same element
+      if (anchor_iter.tile_id != to_check_iter.tile_id) {
+        // Not same elements
+      }
+    }
+  }
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -108,6 +124,7 @@ void day20::format_input(std::vector<std::string> inTable) {
       // Check for tile and extract id
       element = string_line.substr(5, 4);
       temp_tile.tile_id = element;
+      temp_tile.num_side_match = 0;
       start_new_image = false;
     } else {
       // split elemente by element into image of tile
@@ -225,4 +242,70 @@ bool day20::compare_lines(std::vector<char> a, std::vector<char> b) {
   lines_equal = std::equal(a.begin(), a.end(), b.begin());
 
   return (lines_equal);
+}
+
+/**
+ * @brief Get line based on line num from image
+ *
+ * @param line_num Line num wanted
+ * @param image Image
+ * @return std::vector<char> Line as vector
+ */
+std::vector<char>
+day20::get_line_from_image(int line_num,
+                           const std::vector<std::vector<char>> &image) {
+  return (image.at(line_num));
+}
+
+/**
+ * @brief Get the column based on col num
+ *
+ * @param column_num Column num wanted
+ * @param image Image
+ * @return std::vector<char> Column as vector
+ */
+std::vector<char>
+day20::get_column_from_image(int column_num,
+                             const std::vector<std::vector<char>> &image) {
+  std::vector<char> temp_res;
+  for (int i = 0; i < image.size(); ++i) {
+    temp_res.push_back(image.at(column_num).at(i));
+  }
+  return (temp_res);
+}
+
+/**
+ * @brief Match all four sides of both elements and return how many are same
+ *
+ * @param A
+ * @param B
+ * @return int Num how many sides on image are matching
+ */
+int day20::eval_matching_sides(const t_tile &A, const t_tile &B) {
+  int res = 0;
+  std::vector<std::vector<char>> A_sides;
+  std::vector<std::vector<char>> B_sides;
+  // Pre-load all sides A and B
+  A_sides.push_back(this->get_line_from_image(0, A.image));
+  A_sides.push_back(this->get_column_from_image(0, A.image));
+  A_sides.push_back(this->get_line_from_image((A.image.size() - 1), A.image));
+  A_sides.push_back(
+      this->get_column_from_image((A.image.at(0).size() - 1), A.image));
+  B_sides.push_back(this->get_line_from_image(0, B.image));
+  B_sides.push_back(this->get_column_from_image(0, B.image));
+  B_sides.push_back(this->get_line_from_image((B.image.size() - 1), B.image));
+  B_sides.push_back(
+      this->get_column_from_image((B.image.at(0).size() - 1), B.image));
+
+  // Four sides against four sides
+  // First check lines
+  for (auto a_iter : A_sides) {
+    for (auto b_iter : B_sides) {
+      if (this->compare_lines(a_iter, b_iter)) {
+        res++;
+      }
+    }
+  }
+
+  return (res);
 }

@@ -22,6 +22,7 @@ using namespace std;
 
 typedef struct t_tile {
   std::string tile_id;
+  int num_side_match;
   std::vector<std::vector<char>> image;
 } t_tile;
 
@@ -48,6 +49,13 @@ public:
   void flip_image_h(std::vector<std::vector<char>> &image);
   void plot_mat(std::vector<std::vector<char>> &image);
   bool compare_lines(std::vector<char> a, std::vector<char> b);
+  std::vector<char>
+  get_line_from_image(int line_num,
+                      const std::vector<std::vector<char>> &image);
+  std::vector<char>
+  get_column_from_image(int column_num,
+                        const std::vector<std::vector<char>> &image);
+  int eval_matching_sides(const t_tile &A, const t_tile &B);
 };
 
 #endif
