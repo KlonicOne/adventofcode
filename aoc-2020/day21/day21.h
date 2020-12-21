@@ -30,6 +30,7 @@ private:
   map<std::string, std::vector<int>> m_allergen_meals;
   map<std::string, std::vector<int>> m_ingredient_meals;
 
+  std::vector<std::string> m_all_ingredients;
   std::vector<std::string> m_ingredients_with_allergen;
   std::vector<std::string> m_ingredients_without_allergen;
 

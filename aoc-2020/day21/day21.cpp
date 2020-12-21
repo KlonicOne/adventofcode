@@ -89,6 +89,26 @@ void day21::solver_part1(void) {
                                              temp_ingredients.end());
   }
 
+  // Sort and eliminate double values
+  std::sort(this->m_ingredients_with_allergen.begin(),
+            this->m_ingredients_with_allergen.end());
+  this->m_ingredients_with_allergen.erase(
+      std::unique(this->m_ingredients_with_allergen.begin(),
+                  this->m_ingredients_with_allergen.end()),
+      this->m_ingredients_with_allergen.end());
+
+  // Sort vector with all allergene listed
+  std::sort(this->m_all_ingredients.begin(), this->m_all_ingredients.end());
+  // Get all elements which are not in the ingred with allergen list
+  std::set_symmetric_difference(
+      this->m_ingredients_with_allergen.begin(),
+      this->m_ingredients_with_allergen.end(), this->m_all_ingredients.begin(),
+      this->m_all_ingredients.end(),
+      std::back_inserter(this->m_ingredients_without_allergen));
+
+  // We need to know in how many meals the ingredients without allergen are
+
+
   if (DEBUG_OUT) {
     // show map contents
     for (auto iter : this->m_allergen_meals) {
@@ -105,7 +125,9 @@ void day21::solver_part1(void) {
       }
       std::cout << std::endl;
     }
+    show_container(this->m_all_ingredients);
     show_container(this->m_ingredients_with_allergen);
+    show_container(this->m_ingredients_without_allergen);
   }
 
   // Out result
@@ -296,6 +318,7 @@ void day21::create_ingredient_meals_map(void) {
         std::vector<int> temp_meals;
         temp_meals.push_back(iter.first); // Add meal to list
         this->m_ingredient_meals.insert({iter_val, temp_meals});
+        this->m_all_ingredients.push_back(iter_val);
       }
     }
   }
