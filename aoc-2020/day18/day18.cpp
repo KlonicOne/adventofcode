@@ -45,9 +45,9 @@ day18::~day18() {}
  */
 void day18::solver_part1(void) {
   int answer = 0;
-  tree_el* ari_tree;
+  tree_el *ari_tree;
 
-  for(int i = 0; i < this->m_format_input.size(); i++) {
+  for (int i = 0; i < this->m_format_input.size(); i++) {
     ari_tree = calc_line(this->m_format_input[i]);
     inorder(ari_tree);
   }
@@ -144,34 +144,18 @@ std::string day18::remove_spaces(const std::string s) {
  * @param in_line The input as vector of strings
  * @return tree_el* first element of arithmetic tree
  */
-tree_el* day18::calc_line(std::vector<std::string> in_line) {
+tree_el *day18::calc_line(std::vector<std::string> in_line) {
   std::stack<tree_el *> tree_stack;
   tree_el *t, *t1, *t2;
 
   // Traverse through every character of
   // input expression
   for (int i = 0; i < in_line.size(); i++) {
-    // If operand, simply push into stack
-    if (!is_operator(in_line[i])) {
       t = new_tree_element(in_line[i]);
       tree_stack.push(t);
-    } else // operator
-    {
-      t = new_tree_element(in_line[i]);
-
-      // Pop two top nodes
-      t1 = tree_stack.top(); // Store top
-      tree_stack.pop();      // Remove top
-      t2 = tree_stack.top();
-      tree_stack.pop();
-
-      //  make them children
-      t->right = t1;
-      t->left = t2;
-
-      // Add this subexpression to stack
-      tree_stack.push(t);
-    }
+      if(tree_stack.size() > 2) {
+        if(tree_stack.top())
+      }
   }
 
   //  only element will be root of expression
@@ -189,11 +173,11 @@ tree_el* day18::calc_line(std::vector<std::string> in_line) {
  * @return true It is operator
  * @return false It is not operator
  */
-bool day18::is_operator(std::string s) {
+bool day18::is_operator(tree_el *t) {
   bool check_result = false;
-  const char *c = s.c_str();
+  const char *c = t->value.c_str();
 
-  if (*c == '+' || *c == '-' || *c == '*' || *c == '/' || *c == '^') {
+  if (*c == '+' || *c == '-' || *c == '*' || *c == '/') {
     check_result = true;
   }
 

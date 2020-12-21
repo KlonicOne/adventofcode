@@ -1,5 +1,5 @@
 /**
- * @file day18.h
+ * @file day21.h
  * @author klonicone
  * @version 0.1
  * @date 2020-12-01
@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef _DAY18_H_
-#define _DAY18_H_
+#ifndef _DAY21_H_
+#define _DAY21_H_
 
 #include <algorithm>
 #include <cstring>
@@ -21,28 +21,23 @@
 
 using namespace std;
 
-// An expression tree node
-typedef struct tree_el {
-  std::string value;
-  tree_el *left;
-  tree_el *right;
-} tree_el;
-
-class day18 {
+class day21 {
 private:
   /* data */
-  std::vector<std::vector<std::string>> m_format_input;
+  map<int, std::vector<std::string>> m_meal_allergens;
+  map<int, std::vector<std::string>> m_meal_ingredients;
+
+  map<std::string, std::vector<int>> m_allergen_meals;
+  map<std::string, std::vector<int>> m_ingredient_meals;
 
 public:
-  day18(/* args */);
-  ~day18();
+  day21(/* args */);
+  ~day21();
 
   // Part1
   void solver_part1(void);
-  tree_el* calc_line(std::vector<std::string> in_line);
-  bool is_operator(tree_el *t);
-  void inorder(tree_el *t);
-  tree_el* new_tree_element(std::string v);
+  void create_allergen_meals_map(void);
+  void create_ingredient_meals_map(void);
 
   // Part2
   void solver_part2(void);
@@ -50,6 +45,7 @@ public:
   // Common
   void format_input(std::vector<std::string> inTable);
   std::string remove_spaces(const std::string s);
+  std::string remove_brackets(const std::string s);
 };
 
 #endif

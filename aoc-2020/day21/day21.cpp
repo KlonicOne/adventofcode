@@ -1,0 +1,263 @@
+/**
+ * @file day21.cpp
+ * @author klonicone
+ * @version 0.1
+ * @date 2020-12-01
+ *
+ * @copyright Copyright (c) 2020
+ *
+ */
+#include "day21.h"
+#include "show_container.h"
+
+#include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <iostream>
+#include <istream>
+#include <iterator>
+#include <map>
+#include <numeric>
+#include <stack>
+#include <string>
+#include <time.h>
+#include <vector>
+
+using namespace std;
+
+#define DEBUG_OUT true
+
+/**
+ * @brief constructor
+ *
+ */
+day21::day21(/* args */) {}
+
+/**
+ * @brief Destroy the day21::day21
+ *
+ */
+day21::~day21() {}
+
+/**
+ * @brief Solve part 1
+ *
+ */
+void day21::solver_part1(void) {
+  long long answer = 0;
+
+  // Create list with allergen and ingredients as key an vector with meals
+  // containing it
+  this->create_allergen_meals_map();
+  this->create_ingredient_meals_map();
+
+  if (DEBUG_OUT) {
+    // show map contents
+    for (auto iter : this->m_allergen_meals) {
+      std::cout << "Allergen: " << iter.first << "; Meals: ";
+      for (auto iter_val : iter.second) {
+        std::cout << iter_val << ", ";
+      }
+      std::cout << std::endl;
+    }
+    for (auto iter : this->m_ingredient_meals) {
+      std::cout << "Ingredient: " << iter.first << "; Meals: ";
+      for (auto iter_val : iter.second) {
+        std::cout << iter_val << ", ";
+      }
+      std::cout << std::endl;
+    }
+  }
+
+  // Out result
+  std::cout << "Result Part1: " << answer << std::endl;
+}
+
+/**
+ * @brief Solve part 2
+ *
+ */
+void day21::solver_part2(void) {
+  int answer = 0;
+
+  // Out result
+  std::cout << "Result Part2: " << answer << std::endl;
+}
+
+/************************************************************/
+/************************************************************/
+/************************************************************/
+
+/**
+ * @brief Split the intput string and store in class code list
+ *
+ * @param inTable
+ */
+void day21::format_input(std::vector<std::string> inTable) {
+  int meal_num = 0;
+  // Loop through lines of file in input
+  for (std::vector<std::string>::const_iterator i = inTable.begin();
+       i != inTable.end(); ++i) {
+    // used temp to store line and each element
+    std::string string_line = "";
+    std::string element = "";
+    std::vector<std::string> current_ingredients;
+    std::vector<std::string> current_allergen;
+    // To split the string
+    std::string::size_type start{0};
+    std::string::size_type len{0};
+    std::string::size_type pos;
+    std::string delimiter = " ,";
+
+    // Get single line as string_line
+    string_line = (*i);
+
+    // Split string_line ingredients and store in vector of strings
+    do {
+      // get pos from start to first delimiter
+      pos = string_line.find_first_of(delimiter, start);
+      // get substring until delimiter
+      element = string_line.substr(start, pos - start);
+      // Remove spaces
+      element = this->remove_spaces(element);
+      // Check to not add empty elements
+
+      if (element.size() != 0) {
+        // add element to end of vector
+        current_ingredients.push_back(element);
+      }
+      // next position to start searching for delimiter
+      start = pos + 1;
+
+      // if ( then the allergen are starting
+      if (string_line.substr(start, 1) == "(") {
+        break; // Stop the do loop
+      }
+    } while (pos != std::string::npos);
+
+    // Split string_line allergen and store in vector of strings
+    // start value still continues from previous do while
+    do {
+      // get pos from start to first delimiter
+      pos = string_line.find_first_of(delimiter, start);
+      // get substring until delimiter
+      element = string_line.substr(start, pos - start);
+      // Remove spaces and brackets
+      element = this->remove_spaces(element);
+      element = this->remove_brackets(element);
+
+      // Check to not add empty elements
+      if (element.size() != 0 && element.compare("contains")) {
+        // add element to end of vector
+        current_allergen.push_back(element);
+      }
+      // next position to start searching for delimiter
+      start = pos + 1;
+    } while (pos != std::string::npos);
+
+    // Now for meal we have ingredients and allergen extracted, put in map
+    this->m_meal_ingredients.insert({meal_num, current_ingredients});
+    this->m_meal_allergens.insert({meal_num, current_allergen});
+    // next meal
+    meal_num++;
+  }
+
+  if (DEBUG_OUT) {
+    // show map contents
+    for (auto iter : this->m_meal_ingredients) {
+      std::cout << "Meal: " << iter.first << "; Ingreds: ";
+      for (auto iter_val : iter.second) {
+        std::cout << iter_val << ", ";
+      }
+      std::cout << std::endl;
+    }
+    for (auto iter : this->m_meal_allergens) {
+      std::cout << "Meal: " << iter.first << "; Allerg: ";
+      for (auto iter_val : iter.second) {
+        std::cout << iter_val << ", ";
+      }
+      std::cout << std::endl;
+    }
+  }
+}
+
+/**
+ * @brief Remove all spaces in string
+ *
+ * @param s string reference
+ * @return std::string new string without spaces
+ */
+std::string day21::remove_spaces(const std::string s) {
+  std::string ret_s = s;
+  std::string::size_type pos = ret_s.find(' ');
+  while (pos != std::string::npos) {
+    ret_s.erase(ret_s.begin() + pos);
+    pos = ret_s.find(' ');
+  }
+  return (ret_s);
+}
+
+/**
+ * @brief Remove open or close brackets from the sring
+ *
+ * @param s String in which the backets are searched
+ * @return std::string Removed brackets
+ */
+std::string day21::remove_brackets(const std::string s) {
+  std::string ret_s = s;
+  std::string::size_type pos = ret_s.find('(');
+  while (pos != std::string::npos) {
+    ret_s.erase(ret_s.begin() + pos);
+    pos = ret_s.find('(');
+  }
+  pos = ret_s.find(')');
+  while (pos != std::string::npos) {
+    ret_s.erase(ret_s.begin() + pos);
+    pos = ret_s.find(')');
+  }
+  return (ret_s);
+}
+
+/**
+ * @brief Create the map which meals contain the allergen
+ *
+ */
+void day21::create_allergen_meals_map(void) {
+  // Go through all meals and add allergen to map with list of meal
+  for (auto iter : this->m_meal_allergens) {
+    for (auto iter_val : iter.second) {
+      // Check if allergen already in map
+      if (this->m_allergen_meals.count(iter_val)) {
+        // Is in list so add meal to allergen
+        this->m_allergen_meals[iter_val].push_back(iter.first);
+      } else {
+        // New element
+        std::vector<int> temp_meals;
+        temp_meals.push_back(iter.first); // Add meal to list
+        this->m_allergen_meals.insert({iter_val, temp_meals});
+      }
+    }
+  }
+}
+
+/**
+ * @brief Create the map which meals contain the ingredients
+ *
+ */
+void day21::create_ingredient_meals_map(void) {
+  // Go through all meals and add ingredients to map with list of meal
+  for (auto iter : this->m_meal_ingredients) {
+    for (auto iter_val : iter.second) {
+      // Check if ingredient already in map
+      if (this->m_ingredient_meals.count(iter_val)) {
+        // Is in list so add meal to allergen
+        this->m_ingredient_meals[iter_val].push_back(iter.first);
+      } else {
+        // New element
+        std::vector<int> temp_meals;
+        temp_meals.push_back(iter.first); // Add meal to list
+        this->m_ingredient_meals.insert({iter_val, temp_meals});
+      }
+    }
+  }
+}
