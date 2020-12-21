@@ -107,7 +107,9 @@ void day21::solver_part1(void) {
       std::back_inserter(this->m_ingredients_without_allergen));
 
   // We need to know in how many meals the ingredients without allergen are
-
+  for (auto iter : this->m_ingredients_without_allergen) {
+    answer += this->m_ingredient_meals[iter].size();
+  }
 
   if (DEBUG_OUT) {
     // show map contents
