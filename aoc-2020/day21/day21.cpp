@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -51,60 +51,11 @@ void day21::solver_part1(void) {
   this->create_allergen_meals_map();
   this->create_ingredient_meals_map();
 
-  // Check for intersections in ingredients on meals which have same allerged
-  for (auto iter : this->m_allergen_meals) {
-    std::vector<std::string> temp_ingredients;
-    // Check if more than one meal in list
-    if (iter.second.size() > 1) {
-      // We have at least two meals with same allergen
-      std::vector<std::string> v1 = this->m_meal_ingredients[iter.second.at(0)];
-      std::vector<std::string> v2 = this->m_meal_ingredients[iter.second.at(1)];
-      // Sort before intersection is checked
-      std::sort(v1.begin(), v1.end());
-      std::sort(v2.begin(), v2.end());
-      // temp_ingredients contains the intersections
-      std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
-                            back_inserter(temp_ingredients));
-      // If more then two meals are in the list of the allergen, then we check
-      // further with the intersection result
-      if (iter.second.size() > 1) {
-        for (int i = 2; i < iter.second.size(); ++i) {
-          v1 = temp_ingredients;
-          v2 = this->m_meal_ingredients[iter.second.at(i)];
-          std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
-                                back_inserter(temp_ingredients));
-        }
-      }
-    } else {
-      // allergen is only in one meal list all ingredients
-      for (int i = 0; i < this->m_meal_ingredients[iter.second.at(0)].size();
-           ++i) {
-        temp_ingredients.push_back(m_meal_ingredients[iter.second.at(0)].at(i));
-      }
-    }
+  // Calc all possible ingredients with allergen
+  this->eval_ingredients_with_allergen();
 
-    // Push to ingredients with allergen
-    this->m_ingredients_with_allergen.insert(m_ingredients_with_allergen.end(),
-                                             temp_ingredients.begin(),
-                                             temp_ingredients.end());
-  }
-
-  // Sort and eliminate double values
-  std::sort(this->m_ingredients_with_allergen.begin(),
-            this->m_ingredients_with_allergen.end());
-  this->m_ingredients_with_allergen.erase(
-      std::unique(this->m_ingredients_with_allergen.begin(),
-                  this->m_ingredients_with_allergen.end()),
-      this->m_ingredients_with_allergen.end());
-
-  // Sort vector with all allergene listed
-  std::sort(this->m_all_ingredients.begin(), this->m_all_ingredients.end());
-  // Get all elements which are not in the ingred with allergen list
-  std::set_symmetric_difference(
-      this->m_ingredients_with_allergen.begin(),
-      this->m_ingredients_with_allergen.end(), this->m_all_ingredients.begin(),
-      this->m_all_ingredients.end(),
-      std::back_inserter(this->m_ingredients_without_allergen));
+  // Calc all ingredients without allergen
+  this->eval_ingredients_without_allergen();
 
   // We need to know in how many meals the ingredients without allergen are
   for (auto iter : this->m_ingredients_without_allergen) {
@@ -127,8 +78,11 @@ void day21::solver_part1(void) {
       }
       std::cout << std::endl;
     }
+    std::cout << "All ingredients: ";
     show_container(this->m_all_ingredients);
+    std::cout << "... with allergen: ";
     show_container(this->m_ingredients_with_allergen);
+    std::cout << "... without allergen: ";
     show_container(this->m_ingredients_without_allergen);
   }
 
@@ -224,24 +178,6 @@ void day21::format_input(std::vector<std::string> inTable) {
     // next meal
     meal_num++;
   }
-
-  if (DEBUG_OUT) {
-    // show map contents
-    for (auto iter : this->m_meal_ingredients) {
-      std::cout << "Meal: " << iter.first << "; Ingreds: ";
-      for (auto iter_val : iter.second) {
-        std::cout << iter_val << ", ";
-      }
-      std::cout << std::endl;
-    }
-    for (auto iter : this->m_meal_allergens) {
-      std::cout << "Meal: " << iter.first << "; Allerg: ";
-      for (auto iter_val : iter.second) {
-        std::cout << iter_val << ", ";
-      }
-      std::cout << std::endl;
-    }
-  }
 }
 
 /**
@@ -324,4 +260,87 @@ void day21::create_ingredient_meals_map(void) {
       }
     }
   }
+}
+
+/**
+ * @brief Check for all ingredients with possible allergen
+ *
+ */
+void day21::eval_ingredients_with_allergen(void) {
+  // Check for intersections in ingredients on meals which have same allerged
+  for (auto iter : this->m_allergen_meals) {
+    std::vector<std::string> temp_ingredients;
+
+    // Check if more than one meal in list to make a comparison
+    if (iter.second.size() > 1) {
+      // We have at least two meals with same allergen
+      std::vector<std::string> v1 = this->m_meal_ingredients[iter.second.at(0)];
+      std::vector<std::string> v2 = this->m_meal_ingredients[iter.second.at(1)];
+
+      // Sort before intersection is checked
+      std::sort(v1.begin(), v1.end());
+      std::sort(v2.begin(), v2.end());
+
+      // temp_ingredients contains the intersections
+      std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                            back_inserter(temp_ingredients));
+
+      // If more then two meals are in the list of the allergen, then we check
+      // further with the intersection result
+      if (iter.second.size() > 2) {
+        for (int i = 2; i < iter.second.size(); ++i) {
+          v1 = temp_ingredients;
+          v2 = this->m_meal_ingredients[iter.second.at(i)];
+          temp_ingredients.clear();
+
+          // Sort before intersection is checked
+          std::sort(v1.begin(), v1.end());
+          std::sort(v2.begin(), v2.end());
+
+          std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                                back_inserter(temp_ingredients));
+
+          // Stop in case no intersection, not allowed to continue
+          if (temp_ingredients.size() == 0) {
+            break;
+          }
+        }
+      }
+    } else {
+      // allergen is only in one meal list all ingredients
+      for (auto iter_sing : this->m_meal_ingredients[iter.second.at(0)]) {
+        temp_ingredients.push_back(iter_sing);
+      }
+    }
+
+    // Push to ingredients with allergen
+    this->m_ingredients_with_allergen.insert(m_ingredients_with_allergen.end(),
+                                             temp_ingredients.begin(),
+                                             temp_ingredients.end());
+  }
+
+  // Sort and eliminate double values
+  std::sort(this->m_ingredients_with_allergen.begin(),
+            this->m_ingredients_with_allergen.end());
+
+  // eliminate duplicates
+  this->m_ingredients_with_allergen.erase(
+      std::unique(this->m_ingredients_with_allergen.begin(),
+                  this->m_ingredients_with_allergen.end()),
+      this->m_ingredients_with_allergen.end());
+}
+
+/**
+ * @brief All ingredients without allergen
+ *
+ */
+void day21::eval_ingredients_without_allergen(void) {
+  // Sort vector with all allergene listed
+  std::sort(this->m_all_ingredients.begin(), this->m_all_ingredients.end());
+  // Get all elements which are not in the ingred with allergen list
+  std::set_symmetric_difference(
+      this->m_ingredients_with_allergen.begin(),
+      this->m_ingredients_with_allergen.end(), this->m_all_ingredients.begin(),
+      this->m_all_ingredients.end(),
+      std::back_inserter(this->m_ingredients_without_allergen));
 }

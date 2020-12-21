@@ -42,6 +42,8 @@ public:
   void solver_part1(void);
   void create_allergen_meals_map(void);
   void create_ingredient_meals_map(void);
+  void eval_ingredients_with_allergen(void);
+  void eval_ingredients_without_allergen(void);
 
   // Part2
   void solver_part2(void);

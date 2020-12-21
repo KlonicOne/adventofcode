@@ -8,7 +8,7 @@
       "name": "(gdb) Starten",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/day20",
+      "program": "${workspaceFolder}/build/day21",
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
       "MIMode": "gdb",
