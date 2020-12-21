@@ -51,6 +51,44 @@ void day21::solver_part1(void) {
   this->create_allergen_meals_map();
   this->create_ingredient_meals_map();
 
+  // Check for intersections in ingredients on meals which have same allerged
+  for (auto iter : this->m_allergen_meals) {
+    std::vector<std::string> temp_ingredients;
+    // Check if more than one meal in list
+    if (iter.second.size() > 1) {
+      // We have at least two meals with same allergen
+      std::vector<std::string> v1 = this->m_meal_ingredients[iter.second.at(0)];
+      std::vector<std::string> v2 = this->m_meal_ingredients[iter.second.at(1)];
+      // Sort before intersection is checked
+      std::sort(v1.begin(), v1.end());
+      std::sort(v2.begin(), v2.end());
+      // temp_ingredients contains the intersections
+      std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                            back_inserter(temp_ingredients));
+      // If more then two meals are in the list of the allergen, then we check
+      // further with the intersection result
+      if (iter.second.size() > 1) {
+        for (int i = 2; i < iter.second.size(); ++i) {
+          v1 = temp_ingredients;
+          v2 = this->m_meal_ingredients[iter.second.at(i)];
+          std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                                back_inserter(temp_ingredients));
+        }
+      }
+    } else {
+      // allergen is only in one meal list all ingredients
+      for (int i = 0; i < this->m_meal_ingredients[iter.second.at(0)].size();
+           ++i) {
+        temp_ingredients.push_back(m_meal_ingredients[iter.second.at(0)].at(i));
+      }
+    }
+
+    // Push to ingredients with allergen
+    this->m_ingredients_with_allergen.insert(m_ingredients_with_allergen.end(),
+                                             temp_ingredients.begin(),
+                                             temp_ingredients.end());
+  }
+
   if (DEBUG_OUT) {
     // show map contents
     for (auto iter : this->m_allergen_meals) {
@@ -67,6 +105,7 @@ void day21::solver_part1(void) {
       }
       std::cout << std::endl;
     }
+    show_container(this->m_ingredients_with_allergen);
   }
 
   // Out result
