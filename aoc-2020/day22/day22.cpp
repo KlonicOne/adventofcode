@@ -133,8 +133,11 @@ void day22::print_out_player(void) {
     int out_player = 1;
     for (auto iter_deck : this->m_decks) {
       std::cout << "Player: " << out_player << std::endl;
-      for (auto iter_card : iter_deck) {
-        std::cout << iter_card << std::endl;
+      // Check if cards are existing
+      if (iter_deck.size() != 0) {
+        for (auto iter_card : iter_deck) {
+          std::cout << iter_card << std::endl;
+        }
       }
       out_player++;
     }
@@ -200,26 +203,29 @@ void day22::play_game(void) {
       iter_player.erase(iter_player.begin());
     }
 
-    // Check for higher
-    if (current_cards.at(0) > current_cards.at(1)) {
-      // Player 1 has higher
-      winner_in_round = 0;
-    } else {
-      // Here player 2 wins
-      winner_in_round = 1;
-    }
+    // Only eval when still cards found for both
+    if (play_game) {
+      // Check for higher
+      if (current_cards.at(0) > current_cards.at(1)) {
+        // Player 1 has higher
+        winner_in_round = 0;
+      } else {
+        // Here player 2 wins
+        winner_in_round = 1;
+      }
 
-    // Own card must be added first, it was winner card, so higher
-    // First sort current cards descending, then add to deck of winner
-    sort(current_cards.begin(), current_cards.end(), greater<>());
-    // Add to deck
-    for (auto iter_cards : current_cards) {
-      this->m_decks[winner_in_round].push_back(iter_cards);
-    }
+      // Own card must be added first, it was winner card, so higher
+      // First sort current cards descending, then add to deck of winner
+      sort(current_cards.begin(), current_cards.end(), greater<>());
+      // Add to deck
+      for (auto iter_cards : current_cards) {
+        this->m_decks[winner_in_round].push_back(iter_cards);
+      }
 
-    // Prep decks next round
-    current_cards.clear();
-    round_played++;
+      // Prep decks next round
+      current_cards.clear();
+      round_played++;
+    }
 
     if (DEBUG_OUT) {
       std::cout << "Played round: " << round_played << std::endl;
@@ -235,6 +241,18 @@ void day22::play_game(void) {
  */
 int day22::calc_score(void) {
   int temp_res = 0;
+
+  // Check which deck as some cards and then calc score
+  for (auto &iter_player : this->m_decks) {
+    // Here we check the game end condition
+    int winner_size = iter_player.size();
+    if (winner_size != 0) {
+      // We found winner
+      for (int i = 0; i < winner_size; ++i) {
+        temp_res += iter_player.at(i) * (winner_size - i);
+      }
+    }
+  }
 
   return (temp_res);
 }
