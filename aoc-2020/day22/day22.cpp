@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <deque>
 #include <iostream>
 #include <istream>
 #include <iterator>
@@ -46,6 +47,12 @@ day22::~day22() {}
 void day22::solver_part1(void) {
   long long answer = 0;
 
+  // Play until we have winner
+  this->play_game();
+
+  // Get winner score
+  answer = this->calc_score();
+
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
 }
@@ -72,7 +79,7 @@ void day22::solver_part2(void) {
  */
 void day22::format_input(std::vector<std::string> inTable) {
   int card_num = 0;
-  map<int, int> temp_deck;
+  std::vector<int> temp_deck;
 
   // Loop through lines of file in input
   for (std::vector<std::string>::const_iterator i = inTable.begin();
@@ -93,7 +100,7 @@ void day22::format_input(std::vector<std::string> inTable) {
     if (found != std::string::npos) {
       if (temp_deck.size() != 0) {
         // Add previous to the member maps
-        this->m_deck.push_back(temp_deck);
+        this->m_decks.push_back(temp_deck);
         temp_deck.clear();
       }
       // New player found
@@ -103,14 +110,14 @@ void day22::format_input(std::vector<std::string> inTable) {
 
     // We are in deck numbers, add to the current temp map and at the end add to
     // the member map
-    temp_deck.insert({card_num, stoi(string_line)});
+    temp_deck.push_back(stoi(string_line));
     card_num++;
   }
 
   // Now add last player, found in last for iteration
   if (temp_deck.size() != 0) {
     // Add previous to the member maps
-    this->m_deck.push_back(temp_deck);
+    this->m_decks.push_back(temp_deck);
     temp_deck.clear();
   }
   this->print_out_player();
@@ -118,16 +125,16 @@ void day22::format_input(std::vector<std::string> inTable) {
 
 /**
  * @brief Plot player when debug on
- * 
+ *
  */
 void day22::print_out_player(void) {
   if (DEBUG_OUT) {
     // show read data
     int out_player = 1;
-    for (auto iter_deck : this->m_deck) {
+    for (auto iter_deck : this->m_decks) {
       std::cout << "Player: " << out_player << std::endl;
       for (auto iter_card : iter_deck) {
-        std::cout << iter_card.first << ": " << iter_card.second << std::endl;
+        std::cout << iter_card << std::endl;
       }
       out_player++;
     }
@@ -169,4 +176,65 @@ std::string day22::remove_brackets(const std::string s) {
     pos = ret_s.find(')');
   }
   return (ret_s);
+}
+
+/**
+ * @brief Play the game round by round and stop only when game finished
+ *
+ */
+void day22::play_game(void) {
+  bool play_game = true;
+  int winner_in_round = 0;
+  int round_played = 0;
+  std::vector<int> current_cards;
+
+  while (play_game) {
+    // Get cards and delete cards
+    for (auto &iter_player : this->m_decks) {
+      // Here we check the game end condition
+      if (iter_player.size() == 0) {
+        play_game = false;
+        break; // Stop for loop
+      }
+      current_cards.push_back(iter_player.at(0));
+      iter_player.erase(iter_player.begin());
+    }
+
+    // Check for higher
+    if (current_cards.at(0) > current_cards.at(1)) {
+      // Player 1 has higher
+      winner_in_round = 0;
+    } else {
+      // Here player 2 wins
+      winner_in_round = 1;
+    }
+
+    // Own card must be added first, it was winner card, so higher
+    // First sort current cards descending, then add to deck of winner
+    sort(current_cards.begin(), current_cards.end(), greater<>());
+    // Add to deck
+    for (auto iter_cards : current_cards) {
+      this->m_decks[winner_in_round].push_back(iter_cards);
+    }
+
+    // Prep decks next round
+    current_cards.clear();
+    round_played++;
+
+    if (DEBUG_OUT) {
+      std::cout << "Played round: " << round_played << std::endl;
+      this->print_out_player();
+    }
+  }
+}
+
+/**
+ * @brief Calculate the result of score for winner
+ *
+ * @return int Score of winner
+ */
+int day22::calc_score(void) {
+  int temp_res = 0;
+
+  return (temp_res);
 }

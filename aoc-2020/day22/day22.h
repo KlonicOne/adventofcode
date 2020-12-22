@@ -17,6 +17,7 @@
 #include <istream>
 #include <map>
 #include <numeric>
+#include <deque>
 #include <vector>
 
 using namespace std;
@@ -24,7 +25,7 @@ using namespace std;
 class day22 {
 private:
   /* data */
-  std::vector<map<int, int>> m_deck;
+  std::vector<std::vector<int>> m_decks;
 
 public:
   day22(/* args */);
@@ -32,6 +33,8 @@ public:
 
   // Part1
   void solver_part1(void);
+  void play_game(void);
+  int calc_score(void);
 
   // Part2
   void solver_part2(void);
