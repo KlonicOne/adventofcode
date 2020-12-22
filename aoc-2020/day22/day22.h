@@ -11,13 +11,7 @@
 #ifndef _DAY21_H_
 #define _DAY21_H_
 
-#include <algorithm>
-#include <cstring>
-#include <iostream>
-#include <istream>
-#include <map>
-#include <numeric>
-#include <deque>
+#include <string>
 #include <vector>
 
 using namespace std;

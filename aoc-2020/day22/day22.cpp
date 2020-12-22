@@ -11,17 +11,10 @@
 #include "show_container.h"
 
 #include <algorithm>
-#include <chrono>
-#include <cstring>
-#include <deque>
 #include <iostream>
 #include <istream>
 #include <iterator>
-#include <map>
-#include <numeric>
-#include <stack>
 #include <string>
-#include <time.h>
 #include <vector>
 
 using namespace std;
@@ -199,48 +192,45 @@ void day22::play_game(void) {
       iter_player.erase(iter_player.begin());
     }
 
-    // Only eval when still cards found for both
-    if (play_game) {
-      // Check for higher
-      if (current_cards.at(0) > current_cards.at(1)) {
-        // Player 1 has higher
-        winner_in_round = 0;
-      } else {
-        // Here player 2 wins
-        winner_in_round = 1;
-      }
+    // Check for higher
+    if (current_cards.at(0) > current_cards.at(1)) {
+      // Player 1 has higher
+      winner_in_round = 0;
+    } else {
+      // Here player 2 wins
+      winner_in_round = 1;
+    }
 
-      // Own card must be added first, it was winner card, so higher
-      // First sort current cards descending, then add to deck of winner
-      sort(current_cards.begin(), current_cards.end(), greater<>());
-      // Add to deck
-      for (auto iter_cards : current_cards) {
-        this->m_decks[winner_in_round].push_back(iter_cards);
-      }
+    // Own card must be added first, it was winner card, so higher
+    // First sort current cards descending, then add to deck of winner
+    sort(current_cards.begin(), current_cards.end(), greater<>());
+    // Add to deck
+    for (auto iter_cards : current_cards) {
+      this->m_decks[winner_in_round].push_back(iter_cards);
+    }
 
-      if (DEBUG_OUT) {
-        std::cout << "Winner: " << winner_in_round << ", Cards: ";
-        for (auto ca_it : current_cards) {
-          std::cout << ca_it << ", ";
-        }
-        std::cout << std::endl;
+    if (DEBUG_OUT) {
+      std::cout << "Winner: " << winner_in_round << ", Cards: ";
+      for (auto ca_it : current_cards) {
+        std::cout << ca_it << ", ";
       }
+      std::cout << std::endl;
+    }
 
-      // Prep current cards next round
-      current_cards.clear();
-      round_played++;
+    // Prep current cards next round
+    current_cards.clear();
+    round_played++;
 
-      // Check stop condition, if any has not cards stop here
-      for (auto &iter_player : this->m_decks) {
-        if (iter_player.size() == 0) {
-          play_game = false;
-        }
+    // Check stop condition, if any has not cards stop here
+    for (auto &iter_player : this->m_decks) {
+      if (iter_player.size() == 0) {
+        play_game = false;
       }
+    }
 
-      if (DEBUG_OUT) {
-        std::cout << "Played round: " << round_played << std::endl;
-        this->print_out_player();
-      }
+    if (DEBUG_OUT) {
+      std::cout << "Played round: " << round_played << std::endl;
+      this->print_out_player();
     }
   }
 }
