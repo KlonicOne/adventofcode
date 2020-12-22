@@ -45,7 +45,7 @@ day22::~day22() {}
  *
  */
 void day22::solver_part1(void) {
-  long long answer = 0;
+  int answer = 0;
 
   // Play until we have winner
   this->play_game();
@@ -136,8 +136,9 @@ void day22::print_out_player(void) {
       // Check if cards are existing
       if (iter_deck.size() != 0) {
         for (auto iter_card : iter_deck) {
-          std::cout << iter_card << std::endl;
+          std::cout << iter_card << ", ";
         }
+        std::cout << std::endl;
       }
       out_player++;
     }
@@ -194,11 +195,6 @@ void day22::play_game(void) {
   while (play_game) {
     // Get cards and delete cards
     for (auto &iter_player : this->m_decks) {
-      // Here we check the game end condition
-      if (iter_player.size() == 0) {
-        play_game = false;
-        break; // Stop for loop
-      }
       current_cards.push_back(iter_player.at(0));
       iter_player.erase(iter_player.begin());
     }
@@ -222,14 +218,29 @@ void day22::play_game(void) {
         this->m_decks[winner_in_round].push_back(iter_cards);
       }
 
-      // Prep decks next round
+      if (DEBUG_OUT) {
+        std::cout << "Winner: " << winner_in_round << ", Cards: ";
+        for (auto ca_it : current_cards) {
+          std::cout << ca_it << ", ";
+        }
+        std::cout << std::endl;
+      }
+
+      // Prep current cards next round
       current_cards.clear();
       round_played++;
-    }
 
-    if (DEBUG_OUT) {
-      std::cout << "Played round: " << round_played << std::endl;
-      this->print_out_player();
+      // Check stop condition, if any has not cards stop here
+      for (auto &iter_player : this->m_decks) {
+        if (iter_player.size() == 0) {
+          play_game = false;
+        }
+      }
+
+      if (DEBUG_OUT) {
+        std::cout << "Played round: " << round_played << std::endl;
+        this->print_out_player();
+      }
     }
   }
 }
@@ -241,18 +252,17 @@ void day22::play_game(void) {
  */
 int day22::calc_score(void) {
   int temp_res = 0;
+  int fac = 0;
 
-  // Check which deck as some cards and then calc score
-  for (auto &iter_player : this->m_decks) {
-    // Here we check the game end condition
-    int winner_size = iter_player.size();
-    if (winner_size != 0) {
-      // We found winner
-      for (int i = 0; i < winner_size; ++i) {
-        temp_res += iter_player.at(i) * (winner_size - i);
+  for (auto iter_deck : this->m_decks) {
+    // Check if cards are existing
+    fac = iter_deck.size();
+    if (fac != 0) {
+      for (auto iter_card : iter_deck) {
+        temp_res += iter_card * fac;
+        fac--;
       }
     }
   }
-
   return (temp_res);
 }
