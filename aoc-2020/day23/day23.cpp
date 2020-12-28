@@ -26,11 +26,12 @@ using namespace std;
  *
  */
 day23::day23(/* args */) {
-  this->m_current = 0;
-  this->m_destination = 0;
+  this->m_current_pos = 0;
+  this->m_dest_pos = 0;
   this->m_tail = 0;
   this->m_initial_buffer_size = 0;
   this->m_max_cup_value = 0;
+  this->m_dest_val = 0;
 }
 
 /**
@@ -47,6 +48,29 @@ void day23::solver_part1(void) {
   int answer = 0;
 
   this->init_cup_buffer();
+
+  // Play game
+  for (int i = 0; i < 10; ++i) {
+    std::cout << "Round: " << i << std::endl;
+
+    if (DEBUG_OUT) {
+      std::cout << "Current: " << this->m_current_pos << std::endl;
+      std::cout << "Ring buffer: ";
+      show_container(this->m_cup_buffer);
+    }
+
+    this->pick_three_cups();
+    this->eval_destination_cup();
+    this->place_cups_after_dest();
+    this->eval_new_current();
+
+    if (DEBUG_OUT) {
+      std::cout << "Pick up: ";
+      show_container(this->m_temp_cup_buffer);
+      std::cout << "Destination: " << this->m_dest_val << std::endl;
+      std::cout << endl;
+    }
+  }
 
   // Out result
   std::cout << "Result Part1: " << answer << std::endl;
@@ -95,12 +119,6 @@ void day23::format_input(std::vector<std::string> inTable) {
 }
 
 /**
- * @brief Plot player when debug on
- *
- */
-void day23::print_out_ringbuffer(void) {}
-
-/**
  * @brief Remove all spaces in string
  *
  * @param s string reference
@@ -145,20 +163,21 @@ std::string day23::remove_brackets(const std::string s) {
  */
 void day23::init_cup_buffer(void) {
   this->m_cup_buffer = this->m_start_buffer;
-  this->m_current = 0;
+  this->m_current_pos = 0;
   this->m_tail = this->m_cup_buffer.size() - 1;
   this->m_initial_buffer_size = this->m_cup_buffer.size();
   // Get max value in list for underflow destination value calc
   auto it = max_element(this->m_cup_buffer.begin(), this->m_cup_buffer.end());
   this->m_max_cup_value = *it;
 
-  if (DEBUG_OUT) {
-    std::cout << "Ring buffer: ";
-    show_container(this->m_cup_buffer);
-    std::cout << "Current: " << this->m_current << ", Tail: " << this->m_tail
-              << ", Size: " << this->m_initial_buffer_size
-              << ", Max val: " << this->m_max_cup_value << std::endl;
-  }
+  // if (DEBUG_OUT) {
+  //   std::cout << "Ring buffer: ";
+  //   show_container(this->m_cup_buffer);
+  //   std::cout << "Current: " << this->m_current_pos << ", Tail: " <<
+  //   this->m_tail
+  //             << ", Size: " << this->m_initial_buffer_size
+  //             << ", Max val: " << this->m_max_cup_value << std::endl;
+  // }
 }
 
 /**
@@ -173,7 +192,7 @@ void day23::pick_three_cups(void) {
   // Copy elements and remove from cup buffer
   for (int i = 0; i < this->m_temp_buffer_size; ++i) {
     // pos to copy and remove considering modulo as it is ring buffer
-    int pos = (this->m_current + i) % this->m_initial_buffer_size;
+    int pos = (this->m_current_pos + 1) % this->m_initial_buffer_size;
     // copy to temp
     this->m_temp_cup_buffer.push_back(this->m_cup_buffer.at(pos));
     // delete element from cup buffer
@@ -193,19 +212,20 @@ void day23::pick_three_cups(void) {
 void day23::eval_destination_cup(void) {
   bool value_in_temp_buffer = true;
   // Calc destination until found in cup buffer
-  int dest_value = this->m_cup_buffer.at(this->m_current);
+  int dest_value = this->m_cup_buffer.at(this->m_current_pos);
   // Check if value is in the temp buffer, then continue to subtract
   while (value_in_temp_buffer) {
     dest_value--;
     // Check underflow
     if (dest_value == 0) {
-      dest_value == this->m_max_cup_value;
+      dest_value = this->m_max_cup_value;
     }
     value_in_temp_buffer = this->is_value_in_temp_buffer(dest_value);
   }
   // Here we know the destination value not in temp buffer so get position of it
   // in vector
-  this->m_destination = this->get_pos_of_value_cup_buffer(dest_value);
+  this->m_dest_val = dest_value;
+  this->m_dest_pos = this->get_pos_of_value_cup_buffer(dest_value);
 }
 
 /**
@@ -221,16 +241,22 @@ void day23::place_cups_after_dest(void) {
     this->m_cup_buffer.push_back(0);
   }
 
+  show_container(this->m_cup_buffer);
+
   // Then move the elements after the dest one pos
-  for (int i = 0; i < this->m_temp_buffer_size; ++i) {
-    this->m_cup_buffer.at(this->m_current + i + this->m_temp_buffer_size) =
-        this->m_cup_buffer.at(this->m_current + i);
+  for (int i = this->m_initial_buffer_size - 1;
+       i > this->m_dest_pos + this->m_temp_buffer_size; --i) {
+    this->m_cup_buffer.at(i) =
+        this->m_cup_buffer.at(i - this->m_temp_buffer_size);
   }
+  show_container(this->m_cup_buffer);
 
   // Write the temp cup buffer right after destination
   for (int i = 0; i < this->m_temp_buffer_size; ++i) {
-    this->m_cup_buffer.at(this->m_current + i) = this->m_temp_cup_buffer.at(i);
+    this->m_cup_buffer.at(this->m_dest_pos + i + 1) =
+        this->m_temp_cup_buffer.at(i);
   }
+  show_container(this->m_cup_buffer);
 }
 
 /**
@@ -239,8 +265,10 @@ void day23::place_cups_after_dest(void) {
  *
  */
 void day23::eval_new_current(void) {
-  this->m_current++;
-  this->m_current = this->m_current % this->m_initial_buffer_size;
+  this->m_current_pos++;
+  this->m_current_pos = this->m_current_pos % this->m_initial_buffer_size;
+  this->m_tail++;
+  this->m_tail = this->m_tail % this->m_initial_buffer_size;
 }
 
 /**

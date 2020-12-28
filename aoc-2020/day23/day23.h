@@ -23,10 +23,11 @@ private:
   std::vector<int> m_cup_buffer;      // all cups, removed 3 head and tail
   std::vector<int> m_temp_cup_buffer; // temp buffer for 3 cups
   /* control data */
-  int m_current;                    // current cup
-  int m_destination;                // destination cup in buffer
-  int m_tail;                       // current tail cup
-  int m_initial_buffer_size;        // contains the initial size of cup buffer
+  int m_current_pos;         // current cup
+  int m_dest_pos;            // destination cup in buffer
+  int m_dest_val;            // destination value
+  int m_tail;                // current tail cup
+  int m_initial_buffer_size; // contains the initial size of cup buffer
   int m_max_cup_value;
   const int m_temp_buffer_size = 3; // 3 cups
 
@@ -51,7 +52,6 @@ public:
   void format_input(std::vector<std::string> inTable);
   std::string remove_spaces(const std::string s);
   std::string remove_brackets(const std::string s);
-  void print_out_ringbuffer(void);
 };
 
 #endif
