@@ -22,7 +22,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -41,10 +41,37 @@ day14::~day14() {}
  *
  */
 void day14::solver_part1(void) {
-  long answer = 0;
+  unsigned long long answer = 0;
+
+  // Loop through format input and apply the masks to store value
+  for (auto iter : this->m_format_input) {
+    // Take input value from mem input
+    for (auto iter_mem : iter.mem_entry) {
+      unsigned long address = iter_mem.first;
+      unsigned long value = iter_mem.second;
+      // Apply set mask
+      value = value | iter.set_mask;
+      // Apply reset mask
+      value = value & iter.reset_mask;
+      // Saturate to 36 bit
+      value = value & SAT_MASK;
+      // Store in mem
+      this->m_mem[address] = value;
+    }
+  }
+
+  answer = this->calc_sum_mem();
+
+  if (DEBUG_OUT) {
+    std::cout << "Memory content: " << std::endl;
+    for (auto iter : this->m_mem) {
+      std::cout << "[" << std::dec << iter.first << "]: " << iter.second
+                << std::endl;
+    }
+  }
 
   // Out result
-  std::cout << "Result Part1: " << answer << std::endl;
+  std::cout << "Result Part1: " << std::dec << answer << std::endl;
 }
 
 /**
@@ -115,14 +142,14 @@ void day14::format_input(std::vector<std::string> inTable) {
       found_enclosing = string_line.find("]");
 
       // Extract address mem[7] = 101
-      int adr =
+      unsigned long adr =
           stoi(string_line.substr(found + 4, found_enclosing - (found + 4)));
       found = string_line.find("=");
       // Extract value for address
-      int val =
+      unsigned long val =
           stoi(string_line.substr(found + 1, std::string::npos - (found + 1)));
       // Now add to mem
-      temp_input_element.mem_entry.insert({adr, val});
+      temp_input_element.mem_entry[adr] = val;
     }
   }
 
@@ -131,6 +158,7 @@ void day14::format_input(std::vector<std::string> inTable) {
 
   // Debug out the formatted input
   if (DEBUG_OUT) {
+    std::cout << "Format input: " << std::endl;
     for (auto iter_input : this->m_format_input) {
       std::cout << "set: " << std::hex << iter_input.set_mask;
       std::cout << ", reset: " << std::hex << iter_input.reset_mask
@@ -155,7 +183,7 @@ unsigned long day14::get_set_mask(std::string str) {
   if (str != "") {
     for (int i = 0; i < str.size(); ++i) {
       if (str.at(str.size() - 1 - i) == '1') {
-        ret_val = ret_val | (1 << i);
+        ret_val = ret_val | (1ULL << i);
       }
     }
   }
@@ -170,15 +198,31 @@ unsigned long day14::get_set_mask(std::string str) {
  * @return unsigned long reset mask
  */
 unsigned long day14::get_reset_mask(std::string str) {
-  unsigned long ret_val = 0xFFFFFFFFFFFFFFFF; // Set all lower 64 bit
+  unsigned long ret_val = SAT_MASK; // Set all lower 36 bit
 
   if (str != "") {
     for (int i = 0; i < str.size(); ++i) {
       if (str.at(str.size() - 1 - i) == '0') {
-        ret_val = ret_val & ~(1 << i);
+        ret_val = ret_val & ~(1ULL << i);
       }
     }
   }
 
+  return (ret_val);
+}
+
+/**
+ * @brief Calculate the sum over the memory and return it
+ *
+ * @return unsigned long
+ */
+unsigned long long day14::calc_sum_mem(void) {
+  unsigned long long ret_val = 0;
+
+  for (auto iter : this->m_mem) {
+    ret_val += iter.second;
+  }
+
+  this->m_sum_mem = ret_val;
   return (ret_val);
 }

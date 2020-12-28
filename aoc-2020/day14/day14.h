@@ -21,18 +21,21 @@
 
 using namespace std;
 
+// Sat mask
+#define SAT_MASK (0x0000000FFFFFFFFF)
+
 typedef struct t_input_element {
   unsigned long set_mask;
   unsigned long reset_mask;
-  map<int, int> mem_entry;
+  map<unsigned long, unsigned long> mem_entry;
 } t_input_element;
 
 class day14 {
 private:
   /* data */
-  long m_sum_mem;
+  unsigned long long m_sum_mem;
   std::vector<t_input_element> m_format_input;
-  map<int, int> m_mem;
+  map<unsigned long, unsigned long> m_mem;
 
 public:
   day14(/* args */);
@@ -42,6 +45,7 @@ public:
   void solver_part1(void);
   unsigned long get_set_mask(std::string str);
   unsigned long get_reset_mask(std::string str);
+  unsigned long long calc_sum_mem(void);
 
   // Part2
   void solver_part2(void);
