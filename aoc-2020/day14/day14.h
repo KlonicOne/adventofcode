@@ -21,10 +21,18 @@
 
 using namespace std;
 
+typedef struct t_input_element {
+  unsigned long set_mask;
+  unsigned long reset_mask;
+  map<int, int> mem_entry;
+} t_input_element;
+
 class day14 {
 private:
   /* data */
   long m_sum_mem;
+  std::vector<t_input_element> m_format_input;
+  map<int, int> m_mem;
 
 public:
   day14(/* args */);
@@ -32,6 +40,8 @@ public:
 
   // Part1
   void solver_part1(void);
+  unsigned long get_set_mask(std::string str);
+  unsigned long get_reset_mask(std::string str);
 
   // Part2
   void solver_part2(void);
