@@ -72,6 +72,7 @@ void day16::solver_part1(void) {
     for (auto iter : this->m_values_out_of_range) {
       std::cout << iter << ", ";
     }
+    std::cout << std::endl;
   }
 
   // Out result
@@ -148,7 +149,7 @@ void day16::format_input(std::vector<std::string> inTable) {
       std::string rule_name = string_line.substr(0, 0 + found);
       temp_rule.name = rule_name;
       // Rule has always two ranges
-      found_enclosing = string_line.find("or");
+      found_enclosing = string_line.find("or ");
       std::string rule1 =
           string_line.substr(found + 2, found_enclosing - found - 3);
       std::string rule2 = string_line.substr(
