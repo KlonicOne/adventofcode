@@ -78,6 +78,12 @@ void day16::format_input(std::vector<std::string> inTable) {
     std::size_t found_enclosing;
     t_rule temp_rule;
     t_range temp_range;
+    t_ticket temp_ticket;
+
+    // variables to loop through string
+    std::string::size_type start{0};
+    std::string::size_type pos;
+    std::string delimiter = ",";
 
     // Get single line as string_line
     string_line = (*i);
@@ -132,9 +138,43 @@ void day16::format_input(std::vector<std::string> inTable) {
     } break;
 
     case MY_TICKET: {
+      if (string_line == "your ticket:") {
+        continue;
+      }
+      // extract my ticket to vector of ints
+      // Split string_line and store in vector of strings
+      do {
+        // get pos from start to first delimiter
+        pos = string_line.find_first_of(delimiter, start);
+        // get substring until delimiter
+        std::string element = string_line.substr(start, pos - start);
+        // add element to end of vector
+        temp_ticket.ticket_vals.push_back(stoi(element));
+        // next position to start searching for delimiter
+        start = pos + 1;
+      } while (pos != std::string::npos);
+      // Take over the ticket
+      this->m_my_ticket = temp_ticket;
     } break;
 
     case NEARBY_TICKET: {
+      if (string_line == "nearby tickets:") {
+        continue;
+      }
+      // extract nearby ticket to vector of ints
+      // Split string_line and store in vector of strings
+      do {
+        // get pos from start to first delimiter
+        pos = string_line.find_first_of(delimiter, start);
+        // get substring until delimiter
+        std::string element = string_line.substr(start, pos - start);
+        // add element to end of vector
+        temp_ticket.ticket_vals.push_back(stoi(element));
+        // next position to start searching for delimiter
+        start = pos + 1;
+      } while (pos != std::string::npos);
+      // Take over the ticket
+      this->m_nearby_tickets.push_back(temp_ticket);
     } break;
 
     default:
@@ -148,6 +188,18 @@ void day16::format_input(std::vector<std::string> inTable) {
       for (auto iter_ranges : iter.ranges) {
         std::cout << iter_ranges.min_val << "-" << iter_ranges.max_val
                   << " or ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << "My ticket: ";
+    for (auto iter : this->m_my_ticket.ticket_vals) {
+      std::cout << iter << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "Nearby tickets: " << std::endl;
+    for (auto iter : this->m_nearby_tickets) {
+      for (auto iter_tick : iter.ticket_vals) {
+        std::cout << iter_tick << ", ";
       }
       std::cout << std::endl;
     }
