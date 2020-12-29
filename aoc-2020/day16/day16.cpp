@@ -63,6 +63,7 @@ void day16::solver_part1(void) {
     std::cout << std::endl;
     std::cout << "Nearby tickets: " << std::endl;
     for (auto iter : this->m_nearby_tickets) {
+      std::cout << "(" << iter.ticket_valid << "):";
       for (auto iter_tick : iter.ticket_vals) {
         std::cout << iter_tick << ", ";
       }
@@ -187,6 +188,7 @@ void day16::format_input(std::vector<std::string> inTable) {
       } while (pos != std::string::npos);
       // Take over the ticket
       this->m_my_ticket = temp_ticket;
+      this->m_my_ticket.ticket_valid = true;
     } break;
 
     case NEARBY_TICKET: {
@@ -206,6 +208,7 @@ void day16::format_input(std::vector<std::string> inTable) {
         start = pos + 1;
       } while (pos != std::string::npos);
       // Take over the ticket
+      temp_ticket.ticket_valid = true;
       this->m_nearby_tickets.push_back(temp_ticket);
     } break;
 
@@ -221,10 +224,11 @@ void day16::format_input(std::vector<std::string> inTable) {
  */
 void day16::eval_values_out_of_range(void) {
   bool value_valid = false;
-  for (auto iter : this->m_nearby_tickets) {
+  for (auto &iter : this->m_nearby_tickets) {
     for (auto iter_tick : iter.ticket_vals) {
       if (!this->check_value_for_rules(iter_tick)) {
         this->m_values_out_of_range.push_back(iter_tick);
+        iter.ticket_valid = false;
       }
     }
   }

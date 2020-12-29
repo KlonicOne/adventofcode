@@ -51,6 +51,7 @@ typedef struct t_rule {
  */
 typedef struct t_ticket {
   std::vector<int> ticket_vals;
+  bool ticket_valid;
 } t_ticket;
 
 /**
