@@ -28,7 +28,7 @@ using namespace std;
  * @brief constructor
  *
  */
-day16::day16(/* args */) {}
+day16::day16(/* args */) { this->m_sum_out_of_range = 0; }
 
 /**
  * @brief Destroy the day16::day16
@@ -41,7 +41,38 @@ day16::~day16() {}
  *
  */
 void day16::solver_part1(void) {
-  unsigned long long answer = 0;
+  int answer = 0;
+
+  this->eval_values_out_of_range();
+  this->calc_sum_out_of_range();
+  answer = this->get_sum_out_of_range();
+
+  if (DEBUG_OUT) {
+    for (auto iter : this->m_rules) {
+      std::cout << iter.name << ": ";
+      for (auto iter_ranges : iter.ranges) {
+        std::cout << iter_ranges.min_val << "-" << iter_ranges.max_val
+                  << " or ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << "My ticket: ";
+    for (auto iter : this->m_my_ticket.ticket_vals) {
+      std::cout << iter << ", ";
+    }
+    std::cout << std::endl;
+    std::cout << "Nearby tickets: " << std::endl;
+    for (auto iter : this->m_nearby_tickets) {
+      for (auto iter_tick : iter.ticket_vals) {
+        std::cout << iter_tick << ", ";
+      }
+      std::cout << std::endl;
+    }
+    std::cout << "Values out of range: " << std::endl;
+    for (auto iter : this->m_values_out_of_range) {
+      std::cout << iter << ", ";
+    }
+  }
 
   // Out result
   std::cout << "Result Part1: " << std::dec << answer << std::endl;
@@ -181,27 +212,61 @@ void day16::format_input(std::vector<std::string> inTable) {
       break;
     }
   }
+}
 
-  if (DEBUG_OUT) {
-    for (auto iter : this->m_rules) {
-      std::cout << iter.name << ": ";
-      for (auto iter_ranges : iter.ranges) {
-        std::cout << iter_ranges.min_val << "-" << iter_ranges.max_val
-                  << " or ";
+/**
+ * @brief Evaluate all values out of range and store in member
+ *
+ */
+void day16::eval_values_out_of_range(void) {
+  bool value_valid = false;
+  for (auto iter : this->m_nearby_tickets) {
+    for (auto iter_tick : iter.ticket_vals) {
+      if (!this->check_value_for_rules(iter_tick)) {
+        this->m_values_out_of_range.push_back(iter_tick);
       }
-      std::cout << std::endl;
-    }
-    std::cout << "My ticket: ";
-    for (auto iter : this->m_my_ticket.ticket_vals) {
-      std::cout << iter << ", ";
-    }
-    std::cout << std::endl;
-    std::cout << "Nearby tickets: " << std::endl;
-    for (auto iter : this->m_nearby_tickets) {
-      for (auto iter_tick : iter.ticket_vals) {
-        std::cout << iter_tick << ", ";
-      }
-      std::cout << std::endl;
     }
   }
 }
+
+/**
+ * @brief Function checks the given value is within all rules
+ *
+ * @param val Value to check against all rules
+ * @return true Value correct
+ * @return false Value out of any rule
+ */
+bool day16::check_value_for_rules(int val) {
+  bool correct = false;
+  for (auto iter : this->m_rules) {
+    for (auto iter_ranges : iter.ranges) {
+      if (val >= iter_ranges.min_val && val <= iter_ranges.max_val) {
+        correct = true;
+        break; // inner for
+      }
+    }
+    if (correct) {
+      break; // outer for
+    }
+  }
+  return (correct);
+}
+
+/**
+ * @brief Calculate the sum of all values in vector for out of range
+ *
+ */
+void day16::calc_sum_out_of_range(void) {
+  int temp_sum = 0;
+  for (auto iter : this->m_values_out_of_range) {
+    temp_sum += iter;
+  }
+  this->m_sum_out_of_range = temp_sum;
+}
+
+/**
+ * @brief Provide result
+ *
+ * @return int Sum of all out of range values
+ */
+int day16::get_sum_out_of_range(void) { return (this->m_sum_out_of_range); }

@@ -63,6 +63,8 @@ private:
   std::vector<t_rule> m_rules;
   t_ticket m_my_ticket;
   std::vector<t_ticket> m_nearby_tickets;
+  std::vector<int> m_values_out_of_range;
+  int m_sum_out_of_range;
 
 public:
   day16(/* args */);
@@ -70,6 +72,10 @@ public:
 
   // Part1
   void solver_part1(void);
+  void eval_values_out_of_range(void);
+  bool check_value_for_rules(int val);
+  void calc_sum_out_of_range(void);
+  int get_sum_out_of_range(void);
 
   // Part2
   void solver_part2(void);
