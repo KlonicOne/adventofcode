@@ -11,7 +11,9 @@
 #include "show_container.h"
 
 #include <algorithm>
+#include <bitset>
 #include <chrono>
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <istream>
@@ -22,7 +24,7 @@
 
 using namespace std;
 
-#define DEBUG_OUT false
+#define DEBUG_OUT true
 
 /**
  * @brief constructor
@@ -81,6 +83,49 @@ void day14::solver_part1(void) {
 void day14::solver_part2(void) {
   long answer = 0;
 
+  // Clear result used in part 1
+  this->m_mem.clear();
+
+  // Loop through format input and apply the masks to store value
+  for (auto iter : this->m_format_input) {
+    // Take input value from mem input
+    for (auto iter_mem : iter.mem_entry) {
+      std::vector<unsigned long> address_vector;
+      unsigned long address = iter_mem.first;
+      unsigned long value = iter_mem.second;
+      // Apply unchange mask on address
+      address = this->apply_unchange(address, iter.unchange_mask);
+      // Apply overwrite mask on address
+      address = this->apply_overwrite(address, iter.overwrite_one_mask);
+      // Apply floating mask on address
+      address_vector = this->apply_floating(address, iter.floating_mask);
+
+      // Saturate to 36 bit the value
+      value = value & SAT_MASK;
+
+      // Loop through all addresses calculated with the
+      for (auto iter_add : address_vector) {
+        // Store value in memory
+        this->m_mem[iter_add] = value;
+      }
+
+      if (DEBUG_OUT) {
+        std::cout << "Found addresses: ";
+        show_container(address_vector);
+      }
+    }
+  }
+
+  answer = this->calc_sum_mem();
+
+  if (DEBUG_OUT) {
+    std::cout << "Memory content: " << std::endl;
+    for (auto iter : this->m_mem) {
+      std::cout << "[" << std::dec << iter.first << "]: " << iter.second
+                << std::endl;
+    }
+  }
+
   // Out result
   std::cout << "Result Part2: " << answer << std::endl;
 }
@@ -125,6 +170,9 @@ void day14::format_input(std::vector<std::string> inTable) {
       // Clear last content
       temp_input_element.set_mask = 0;
       temp_input_element.reset_mask = 1;
+      temp_input_element.unchange_mask = 0;
+      temp_input_element.overwrite_one_mask = 0;
+      temp_input_element.floating_mask = 0;
       temp_input_element.mem_entry.clear();
 
       // Get the masks mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
@@ -133,6 +181,11 @@ void day14::format_input(std::vector<std::string> inTable) {
       // Store masks in temp element
       temp_input_element.set_mask = get_set_mask(mask);
       temp_input_element.reset_mask = get_reset_mask(mask);
+
+      // For part 2 we have further maks to store
+      temp_input_element.unchange_mask = get_unchage_mask(mask);
+      temp_input_element.overwrite_one_mask = get_overwriteone_mask(mask);
+      temp_input_element.floating_mask = get_floating_mask(mask);
 
       // We found first one
       first_found = true;
@@ -161,7 +214,10 @@ void day14::format_input(std::vector<std::string> inTable) {
     std::cout << "Format input: " << std::endl;
     for (auto iter_input : this->m_format_input) {
       std::cout << "set: " << std::hex << iter_input.set_mask;
-      std::cout << ", reset: " << std::hex << iter_input.reset_mask
+      std::cout << ", reset: " << std::hex << iter_input.reset_mask;
+      std::cout << ", unchange: " << std::hex << iter_input.unchange_mask;
+      std::cout << ", overwrite: " << std::hex << iter_input.overwrite_one_mask;
+      std::cout << ", floating: " << std::hex << iter_input.floating_mask
                 << std::endl;
       for (auto iter : iter_input.mem_entry) {
         std::cout << "[" << std::dec << iter.first << "]: " << iter.second
@@ -212,6 +268,71 @@ unsigned long day14::get_reset_mask(std::string str) {
 }
 
 /**
+ * @brief Return unchange mask containing a '1' on position not to be changed
+ * and '0' are ignored, so only take over the value on which this mask is '1'
+ *
+ * @param str input string with 0, X, and 1
+ * @return unsigned long return value as int mask
+ */
+unsigned long day14::get_unchage_mask(std::string str) {
+  unsigned long ret_val = 0;
+
+  if (str != "") {
+    for (int i = 0; i < str.size(); ++i) {
+      if (str.at(str.size() - 1 - i) == '0') {
+        ret_val = ret_val | (1ULL << i);
+      }
+    }
+  }
+
+  return (ret_val);
+}
+
+/**
+ * @brief Return the bit positions with '1' on which the value is overwritten
+ * with '1'. Only the bit position in value are overwritten with one having this
+ * mask with one
+ *
+ * @param str input string with 0, X, and 1
+ * @return unsigned long maks for overwriting with one
+ */
+unsigned long day14::get_overwriteone_mask(std::string str) {
+  unsigned long ret_val = 0;
+
+  if (str != "") {
+    for (int i = 0; i < str.size(); ++i) {
+      if (str.at(str.size() - 1 - i) == '1') {
+        ret_val = ret_val | (1ULL << i);
+      }
+    }
+  }
+
+  return (ret_val);
+}
+
+/**
+ * @brief Return the mask with the bit position having a floating bit. In case
+ * the returned int has a '1' on the postiont the bit is a flaoting bit and all
+ * combinations have to be applied
+ *
+ * @param str input string with 0, X, and 1
+ * @return unsigned long
+ */
+unsigned long day14::get_floating_mask(std::string str) {
+  unsigned long ret_val = 0;
+
+  if (str != "") {
+    for (int i = 0; i < str.size(); ++i) {
+      if (str.at(str.size() - 1 - i) == 'X') {
+        ret_val = ret_val | (1ULL << i);
+      }
+    }
+  }
+
+  return (ret_val);
+}
+
+/**
  * @brief Calculate the sum over the memory and return it
  *
  * @return unsigned long
@@ -224,5 +345,104 @@ unsigned long long day14::calc_sum_mem(void) {
   }
 
   this->m_sum_mem = ret_val;
+  return (ret_val);
+}
+
+/**
+ * @brief Apply the unchange mask on putting the bits where the mask is '1' into
+ * the new address as return value
+ *
+ * @param address Input address on which the mask is applied
+ * @param mask The mask with the '1' on position where to take over the value of
+ * the address into the return
+ * @return unsigned long New address with the bits taken over unchanged
+ */
+unsigned long day14::apply_unchange(unsigned long address, unsigned long mask) {
+  std::bitset<NUM_BITS_ADDRESS> bit_mask_temp = mask;
+  std::bitset<NUM_BITS_ADDRESS> bit_address_temp = address;
+  std::bitset<NUM_BITS_ADDRESS> ret_val;
+
+  for (int current_bit_pos = 0; current_bit_pos < NUM_BITS_ADDRESS;
+       current_bit_pos++) {
+    if (bit_mask_temp[current_bit_pos] == true) {
+      // In case the flag is set just take over the address bit
+      ret_val[current_bit_pos] = bit_address_temp[current_bit_pos];
+    }
+  }
+
+  if (DEBUG_OUT) {
+    std::cout << "Unchange:" << std::endl;
+    std::cout << "Input: " << bit_address_temp << ", output: " << ret_val
+              << ", mask: " << bit_mask_temp << std::endl;
+  }
+
+  return (ret_val.to_ulong());
+}
+
+unsigned long day14::apply_overwrite(unsigned long address,
+                                     unsigned long mask) {
+  std::bitset<NUM_BITS_ADDRESS> bit_mask_temp = mask;
+  std::bitset<NUM_BITS_ADDRESS> bit_address_temp = address;
+  std::bitset<NUM_BITS_ADDRESS> ret_val = address;
+
+  for (int current_bit_pos = 0; current_bit_pos < NUM_BITS_ADDRESS;
+       current_bit_pos++) {
+    if (bit_mask_temp[current_bit_pos] == true) {
+      // In case the flag is set overwrite with one
+      ret_val.set(current_bit_pos, true);
+    }
+  }
+
+  if (DEBUG_OUT) {
+    std::cout << "Overwrite:" << std::endl;
+    std::cout << "Input: " << bit_address_temp << ", output: " << ret_val
+              << ", mask: " << bit_mask_temp << std::endl;
+  }
+
+  return (ret_val.to_ulong());
+}
+
+std::vector<unsigned long> day14::apply_floating(unsigned long address,
+                                                 unsigned long mask) {
+  unsigned long number_floating_bits = 0;
+  unsigned long counter_comb = 0;
+  unsigned long current_address = 0;
+  std::vector<unsigned long> ret_val;
+  std::bitset<NUM_BITS_ADDRESS> bit_mask_temp = mask;
+  std::bitset<NUM_BITS_ADDRESS> bit_address_temp = address;
+  std::bitset<NUM_BITS_ADDRESS> bit_address_calc;
+
+  // Get number of floating bits
+  for (int i = 0; i < bit_mask_temp.size(); ++i) {
+    if (bit_mask_temp[i] == true) {
+      ++number_floating_bits;
+    }
+  }
+
+  // Calc all combinations
+  for (int i = 0; i < pow(2, number_floating_bits); ++i) {
+    bit_address_calc = counter_comb;
+    ++counter_comb;
+
+    unsigned long pos_in_comb_mask = 0;
+    for (int current_bit_pos = 0; current_bit_pos < NUM_BITS_ADDRESS;
+         current_bit_pos++) {
+      if (bit_mask_temp[current_bit_pos] == true) {
+        bit_address_temp[current_bit_pos] = bit_address_calc[pos_in_comb_mask];
+        ++pos_in_comb_mask;
+      }
+    }
+
+    ret_val.push_back(bit_address_temp.to_ulong());
+  }
+
+  if (DEBUG_OUT) {
+    std::cout << "Overwrite:" << std::endl;
+    std::cout << "Input: " << bit_address_temp << ", mask: " << bit_mask_temp
+              << std::endl;
+    std::cout << "Floating bits: " << number_floating_bits << std::endl;
+  }
+
+  ret_val.push_back(address);
   return (ret_val);
 }

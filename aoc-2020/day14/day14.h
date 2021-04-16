@@ -23,10 +23,15 @@ using namespace std;
 
 // Sat mask
 #define SAT_MASK (0x0000000FFFFFFFFF)
+// Number of bits in address
+#define NUM_BITS_ADDRESS (36u)
 
 typedef struct t_input_element {
   unsigned long set_mask;
   unsigned long reset_mask;
+  unsigned long unchange_mask;
+  unsigned long overwrite_one_mask;
+  unsigned long floating_mask;
   map<unsigned long, unsigned long> mem_entry;
 } t_input_element;
 
@@ -49,9 +54,17 @@ public:
 
   // Part2
   void solver_part2(void);
+  unsigned long get_unchage_mask(std::string str);
+  unsigned long get_overwriteone_mask(std::string str);
+  unsigned long get_floating_mask(std::string str);
+  unsigned long apply_unchange(unsigned long address, unsigned long mask);
+  unsigned long apply_overwrite(unsigned long address, unsigned long mask);
+  std::vector<unsigned long> apply_floating(unsigned long address,
+                                            unsigned long mask);
 
   // Common
   void format_input(std::vector<std::string> inTable);
+  void format_input_sec(std::vector<std::string> inTable);
 };
 
 #endif // _DAY06_H_
