@@ -32,17 +32,17 @@ typedef struct t_input_element {
   unsigned long unchange_mask;
   unsigned long overwrite_one_mask;
   unsigned long floating_mask;
-  map<unsigned long, unsigned long> mem_entry;
+  std::vector<std::pair<unsigned long, unsigned long>> mem_entry;
 } t_input_element;
 
 class day14 {
-private:
+ private:
   /* data */
   unsigned long long m_sum_mem;
   std::vector<t_input_element> m_format_input;
   map<unsigned long, unsigned long> m_mem;
 
-public:
+ public:
   day14(/* args */);
   ~day14();
 
@@ -67,4 +67,4 @@ public:
   void format_input_sec(std::vector<std::string> inTable);
 };
 
-#endif // _DAY06_H_
+#endif  // _DAY06_H_

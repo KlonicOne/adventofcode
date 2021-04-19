@@ -8,7 +8,8 @@
  *
  */
 #include "day14.h"
-#include "show_container.h"
+
+#include <time.h>
 
 #include <algorithm>
 #include <bitset>
@@ -19,12 +20,13 @@
 #include <istream>
 #include <map>
 #include <numeric>
-#include <time.h>
 #include <vector>
+
+#include "show_container.h"
 
 using namespace std;
 
-#define DEBUG_OUT true
+#define DEBUG_OUT false
 
 /**
  * @brief constructor
@@ -44,6 +46,8 @@ day14::~day14() {}
  */
 void day14::solver_part1(void) {
   unsigned long long answer = 0;
+
+  std::cout << "Part 1" << std::endl;
 
   // Loop through format input and apply the masks to store value
   for (auto iter : this->m_format_input) {
@@ -83,6 +87,8 @@ void day14::solver_part1(void) {
 void day14::solver_part2(void) {
   long answer = 0;
 
+  std::cout << "Part 2" << std::endl;
+
   // Clear result used in part 1
   this->m_mem.clear();
 
@@ -93,13 +99,13 @@ void day14::solver_part2(void) {
       std::vector<unsigned long> address_vector;
       unsigned long address = iter_mem.first;
       unsigned long value = iter_mem.second;
+
       // Apply unchange mask on address
       address = this->apply_unchange(address, iter.unchange_mask);
       // Apply overwrite mask on address
       address = this->apply_overwrite(address, iter.overwrite_one_mask);
       // Apply floating mask on address
       address_vector = this->apply_floating(address, iter.floating_mask);
-
       // Saturate to 36 bit the value
       value = value & SAT_MASK;
 
@@ -107,11 +113,6 @@ void day14::solver_part2(void) {
       for (auto iter_add : address_vector) {
         // Store value in memory
         this->m_mem[iter_add] = value;
-      }
-
-      if (DEBUG_OUT) {
-        std::cout << "Found addresses: ";
-        show_container(address_vector);
       }
     }
   }
@@ -202,7 +203,7 @@ void day14::format_input(std::vector<std::string> inTable) {
       unsigned long val =
           stoi(string_line.substr(found + 1, std::string::npos - (found + 1)));
       // Now add to mem
-      temp_input_element.mem_entry[adr] = val;
+      temp_input_element.mem_entry.push_back(make_pair(adr, val));
     }
   }
 
@@ -254,7 +255,7 @@ unsigned long day14::get_set_mask(std::string str) {
  * @return unsigned long reset mask
  */
 unsigned long day14::get_reset_mask(std::string str) {
-  unsigned long ret_val = SAT_MASK; // Set all lower 36 bit
+  unsigned long ret_val = SAT_MASK;  // Set all lower 36 bit
 
   if (str != "") {
     for (int i = 0; i < str.size(); ++i) {
@@ -370,12 +371,6 @@ unsigned long day14::apply_unchange(unsigned long address, unsigned long mask) {
     }
   }
 
-  if (DEBUG_OUT) {
-    std::cout << "Unchange:" << std::endl;
-    std::cout << "Input: " << bit_address_temp << ", output: " << ret_val
-              << ", mask: " << bit_mask_temp << std::endl;
-  }
-
   return (ret_val.to_ulong());
 }
 
@@ -393,12 +388,6 @@ unsigned long day14::apply_overwrite(unsigned long address,
     }
   }
 
-  if (DEBUG_OUT) {
-    std::cout << "Overwrite:" << std::endl;
-    std::cout << "Input: " << bit_address_temp << ", output: " << ret_val
-              << ", mask: " << bit_mask_temp << std::endl;
-  }
-
   return (ret_val.to_ulong());
 }
 
@@ -407,6 +396,7 @@ std::vector<unsigned long> day14::apply_floating(unsigned long address,
   unsigned long number_floating_bits = 0;
   unsigned long counter_comb = 0;
   unsigned long current_address = 0;
+  unsigned long number_of_combintations = 0;
   std::vector<unsigned long> ret_val;
   std::bitset<NUM_BITS_ADDRESS> bit_mask_temp = mask;
   std::bitset<NUM_BITS_ADDRESS> bit_address_temp = address;
@@ -419,12 +409,20 @@ std::vector<unsigned long> day14::apply_floating(unsigned long address,
     }
   }
 
-  // Calc all combinations
-  for (int i = 0; i < pow(2, number_floating_bits); ++i) {
-    bit_address_calc = counter_comb;
-    ++counter_comb;
+  // Two in power of number of bits are all possible combinations
+  number_of_combintations = pow(2, number_floating_bits);
 
+  // Calc all combinations
+  for (int i = 0; i < number_of_combintations; ++i) {
+    bit_address_calc =
+        counter_comb;  // bitset used to access the single position of a bit
+
+    // Current position of the bit to be take over on position of floating bit
     unsigned long pos_in_comb_mask = 0;
+
+    // Check in the address for the floating bits and copy over the bit in the
+    // current combination on the floating position. The number of bits in
+    // combination must fit with the number of floating bits in the address
     for (int current_bit_pos = 0; current_bit_pos < NUM_BITS_ADDRESS;
          current_bit_pos++) {
       if (bit_mask_temp[current_bit_pos] == true) {
@@ -432,17 +430,11 @@ std::vector<unsigned long> day14::apply_floating(unsigned long address,
         ++pos_in_comb_mask;
       }
     }
-
+    // Add address to the return vector
     ret_val.push_back(bit_address_temp.to_ulong());
+    // count up for next address combination
+    ++counter_comb;
   }
 
-  if (DEBUG_OUT) {
-    std::cout << "Overwrite:" << std::endl;
-    std::cout << "Input: " << bit_address_temp << ", mask: " << bit_mask_temp
-              << std::endl;
-    std::cout << "Floating bits: " << number_floating_bits << std::endl;
-  }
-
-  ret_val.push_back(address);
   return (ret_val);
 }
